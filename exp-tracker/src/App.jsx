@@ -16,21 +16,19 @@ function App() {
     const filteredItems = inventoryData.filter((item) => item.expirationDate);
     setItemsWithExpiration(filteredItems);
     resetDate();
-    console.log("date reset");
   }, [inventoryData]);
 
-  // handle updating expiration date for an item
-  const handExpirationDateChange = (index, newDate) => {
-    const updatedData = [...inventoryData];
-
-    updatedData[index] = {
-      ...updatedData[index],
-      expirationDate: newDate,
-    };
-
+  const handleExpirationDateChange = (itemName, itemCategory, newDate) => {
+    const updatedData = inventoryData.map((item) => {
+      if (item["Category"] === itemCategory && item["Item Name"] === itemName) {
+        return {
+          ...item,
+          expirationDate: newDate,
+        };
+      }
+      return item;
+    });
     setInventoryData(updatedData);
-
-    setExpirationDate(null);
   };
 
   const handleOnReset = () => {
@@ -69,7 +67,15 @@ function App() {
           show list
         </Button> */}
         <Typography>
-          {fileName ? <p>File Name: {fileName}</p> : null}
+          {fileName ? (
+            <>
+              <p>File Name: {fileName}</p>
+              <p>
+                Number of items without Expiration Dates:{" "}
+                {itemsWithoutExpiration.length}
+              </p>
+            </>
+          ) : null}
         </Typography>
 
         {/* Display the parsed data as ItemCards */}
@@ -82,13 +88,17 @@ function App() {
           >
             {itemsWithoutExpiration.map((item, index) => (
               <ItemCard
-                key={index}
+                key={`${item["Item Name"]}-${item["Category"]}`}
                 title={item["Item Name"] || "Unknown Item"} // Adjust based on your CSV column names
                 expirationDate={item["Expiration Date"] || null} // Same here
                 category={item["Category"] || "Unknown Category"}
                 quantity={item["Quantity"]}
                 onDateChange={(newDate) =>
-                  handExpirationDateChange(index, newDate)
+                  handleExpirationDateChange(
+                    item["Item Name"],
+                    item["Category"],
+                    newDate
+                  )
                 }
               />
             ))}
@@ -98,6 +108,10 @@ function App() {
         {itemsWithExpiration.length > 0 && (
           <Box mt={4}>
             <Typography variant="h5">Items with Expiration Dates:</Typography>
+            <p>
+              Number of items with Expiration Dates:{" "}
+              {itemsWithExpiration.length}
+            </p>
             <Box
               display="flex"
               flexWrap="wrap"
@@ -106,12 +120,18 @@ function App() {
             >
               {itemsWithExpiration.map((item, index) => (
                 <ItemCard
-                  key={index}
+                  key={`${item["Item Name"]}-${item["Category"]}`}
                   title={item["Item Name"] || "Unknown Item"}
                   expirationDate={item["expirationDate"] || null}
                   category={item["Category"] || "Unknown Category"}
                   quantity={item["Quantity"]}
-                  onDateChange={() => {}}
+                  onDateChange={(newDate) =>
+                    handleExpirationDateChange(
+                      item["Item Name"],
+                      item["Category"],
+                      newDate
+                    )
+                  }
                 />
               ))}
             </Box>

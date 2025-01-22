@@ -26,7 +26,7 @@ export const parseExcel = (file, setInventoryData, setError) => {
             const workbook = XLSX.read(data, { type: "array" });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false });
 
             // Format the data to handle dates
             const dateFormattedData = jsonData.map((row) => {
@@ -40,17 +40,33 @@ export const parseExcel = (file, setInventoryData, setError) => {
                 });
             });
 
+            if (dateFormattedData.length === 0) {
+                setError("No data found in the Excel file");
+                throw new Error("No data found in the Excel file");
+            }
+
             // Convert array of arrays to an array of objects
             const header = jsonData[0]; // The first row will be the header
-            const dataRows = jsonData.slice(1); // The rest are data rows
+            if (!header || header.length === 0) {
+                setError("No headers found in the Excel file");
+                throw new Error("No headers found in the Excel file");
+            }
+            const dataRows = dateFormattedData.slice(1); // The rest are data rows
 
-            // convert data rows to objects
-            const finalFormattedData = dataRows.map((row) => {
-                return header.reduce((obj, headerKey, index) => {
-                    obj[headerKey] = row[index];
-                    return obj
-                }, {});
-            });
+            const finalFormattedData = dataRows.filter(row => {
+                return row.some(cell => {
+                    if (cell === null || cell === undefined) return false;
+                    if (typeof cell === 'string' && cell.trim() === '') return false;
+                    return true;
+                });
+            })
+                .map((row) => {
+                    return header.reduce((obj, headerKey, index) => {
+
+                        obj[headerKey] = row[index];
+                        return obj
+                    }, {});
+                });
 
             console.log("Parsed Excel data:", finalFormattedData);
 

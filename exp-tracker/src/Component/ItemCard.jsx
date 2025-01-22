@@ -4,6 +4,7 @@ import {
   TextField,
   Typography,
   Button,
+  Box,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -28,10 +29,22 @@ export default function ItemCard({
   quantity,
   onDateChange,
 }) {
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [buttonText, setButtonText] = useState("Edit Expiration");
+
   const handleDateChange = (newDate) => {
     if (newDate && newDate.isValid()) {
       onDateChange(newDate.toDate());
     }
+  };
+
+  const handleShowDatePicker = () => {
+    if (!showDatePicker) {
+      setButtonText("Done");
+    } else {
+      setButtonText("Edit Expiration");
+    }
+    setShowDatePicker(!showDatePicker);
   };
 
   return (
@@ -71,14 +84,22 @@ export default function ItemCard({
             Count: {quantity != null ? quantity : "unknown quantity"}
           </Typography>
 
+          <Box style={{ display: "flex", flexDirection: "column", gap: 15 }}>
+            <Button variant="contained" onClick={handleShowDatePicker}>
+              {buttonText}
+            </Button>
+            {showDatePicker ? (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Select Expiration Date"
+                  value={expirationDate ? dayjs(expirationDate) : null}
+                  onChange={handleDateChange}
+                />
+              </LocalizationProvider>
+            ) : null}
+          </Box>
+
           {/* Add Datepicker */}
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="Select Expiration Date"
-              value={expirationDate ? dayjs(expirationDate) : null}
-              onChange={handleDateChange}
-            />
-          </LocalizationProvider>
         </CardContent>
       </Card>
     </>
