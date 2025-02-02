@@ -22,33 +22,12 @@ const categoryEmojis = {
   Produce: "🍏",
 };
 
-export default function ItemCard({
+export default function ExpiredItemCard({
   title,
   expirationDate,
   category,
   quantity,
-  onDateChange,
-  onExpired,
 }) {
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [buttonText, setButtonText] = useState("Set Expiration");
-
-
-  const handleDateChange = (newDate) => {
-    if (newDate && newDate.isValid()) {
-      onDateChange(newDate.toDate());
-    }
-  };
-
-  const handleShowDatePicker = () => {
-    if (!showDatePicker) {
-      setButtonText("Done");
-    } else {
-      setButtonText("Edit Expiration");
-    }
-    setShowDatePicker(!showDatePicker);
-  };
-
   return (
     <>
       <Card
@@ -57,7 +36,7 @@ export default function ItemCard({
           maxWidth: 570,
           display: "flex",
           flexDirection: "column",
-          padding: "10px 5px",
+          padding: "5px",
         }}
       >
         <CardContent>
@@ -87,25 +66,10 @@ export default function ItemCard({
           </Typography>
 
           <Box style={{ display: "flex", flexDirection: "column", gap: 15 }}>
-            <Button variant="contained" onClick={handleShowDatePicker}>
-              {buttonText}
+            <Button variant="contained" color="success" onClick={() => {}}>
+              Restore Item
             </Button>
-            <Button variant="outlined" color="error" onClick={onExpired}>
-              Expired
-            </Button>
-
-            {showDatePicker ? (
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Select Expiration Date"
-                  value={expirationDate ? dayjs(expirationDate) : null}
-                  onChange={handleDateChange}
-                />
-              </LocalizationProvider>
-            ) : null}
           </Box>
-
-          {/* Add Datepicker */}
         </CardContent>
       </Card>
     </>

@@ -8,10 +8,15 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('getAllItems called');
             return ipcRenderer.invoke('db:getAllItems');
         },
+        getExpiredItems: () => {
+            console.log('getExpiredItems called');
+            return ipcRenderer.invoke('db:getExpiredItems');
+        },
         addItems: (items) => {
             console.log('addItems called with:', items);
             return ipcRenderer.invoke('db:addItems', items);
         },
+
         updateExpirationDate: (itemName, category, date) => {
             console.log('updateExpirationDate called:', { itemName, category, date });
             return ipcRenderer.invoke('db:updateExpirationDate', itemName, category, date);
@@ -29,6 +34,10 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('moveExpiredItems called');
             return ipcRenderer.invoke('db:moveExpiredItems');
         },
+        window: {
+            minimize: () => ipcRenderer.invoke('window:minimize'),
+            hide: () => ipcRenderer.invoke('window:hide'),
+        }
     }
 
 });

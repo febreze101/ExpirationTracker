@@ -22,7 +22,7 @@ const categoryEmojis = {
   Produce: "🍏",
 };
 
-export default function ItemCard({
+export default function ItemCardwithExpirationSet({
   title,
   expirationDate,
   category,
@@ -31,8 +31,7 @@ export default function ItemCard({
   onExpired,
 }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [buttonText, setButtonText] = useState("Set Expiration");
-
+  const [buttonText, setButtonText] = useState("Edit Expiration");
 
   const handleDateChange = (newDate) => {
     if (newDate && newDate.isValid()) {

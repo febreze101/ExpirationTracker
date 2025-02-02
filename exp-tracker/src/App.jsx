@@ -4,8 +4,10 @@ import Box from "@mui/material/Box";
 import "./App.css";
 import DragAndDropCSV from "./Component/DragnDropCSV";
 import ItemCard from "./Component/ItemCard";
-import { Button, Typography, Chip } from "@mui/material";
-
+import ExpiredItemCard from "./Component/ExpiredItemCard";
+import ItemCardwithExpirationSet from "./Component/ItemCardwithExpirationSet";
+import { Button, Typography, Chip, Stack } from "@mui/material";
+import NewItemForm from "./Component/NewItemForm";
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
 if (!dbOps) {
@@ -28,19 +30,61 @@ function App() {
   const [itemsWithExpiration, setItemsWithExpiration] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState(new Set());
   const [itemsWithoutExpiration, setItemsWithoutExpiration] = useState([]);
+  const [expiredItems, setExpiredItems] = useState([]);
+  const [isExpired, setIsExpired] = useState(false);
+  const [showAddItemForm, setShowAddItemForm] = useState(false);
+
+  const handleExpired = async (item) => {
+    try {
+      setIsExpired(true);
+      if (isExpired) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // update the expiration date in the database
+        console.log("item", item);
+        await dbOps.updateExpirationDate(
+          item["Item Name"],
+          item["Category"],
+          today
+        );
+
+        await dbOps.moveExpiredItems();
+
+        // Reload inventory data
+        await loadInventoryData();
+        await getExpiredItems();
+      }
+    } catch (error) {
+      console.error("Error updating expiration date: ", error);
+
+      // revert the isExpired state
+      setIsExpired(!isExpired);
+    }
+  };
+
+  const handleShowAddItemForm = () => {
+    setShowAddItemForm(!showAddItemForm);
+  };
 
   // move expired items to expired_inventory table
   const moveExpiredItems = async () => {
     try {
-      await dbOps.moveExpiredItems();
       await loadInventoryData();
     } catch (error) {
       console.error("Error moving expired items: ", error);
     }
   };
 
+  const getExpiredItems = async () => {
+    const expiredItems = await dbOps.getExpiredItems();
+    console.log("expiredItems", expiredItems);
+    setExpiredItems(expiredItems);
+  };
+
   useEffect(() => {
     moveExpiredItems();
+    getExpiredItems();
   }, []);
 
   const loadInventoryData = async () => {
@@ -50,15 +94,11 @@ function App() {
 
       // seperate items with and without expiration dates
       const withExpiration = allItems.filter((item) => {
-        console.log(item["Expiration Date"]);
         return item["Expiration Date"];
       });
       const withoutExpiration = allItems.filter(
         (item) => !item["Expiration Date"]
       );
-
-      console.log("withExpiration", withExpiration);
-      console.log("withoutExpiration", withoutExpiration);
 
       setItemsWithExpiration(withExpiration);
       setItemsWithoutExpiration(withoutExpiration);
@@ -120,7 +160,14 @@ function App() {
     itemCategory,
     newDate
   ) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     try {
+      if (new Date(newDate) <= today) {
+        alert("Expiration date cannot be in the past");
+        return;
+      }
       // update the expiration date in the database
       await dbOps.updateExpirationDate(itemName, itemCategory, newDate);
 
@@ -146,14 +193,23 @@ function App() {
           setInventoryData={handleNewData}
           setFileName={setFileName}
         />
-        <Button variant="outlined" onClick={handleLoad}>
-          Load inventory
-        </Button>
-        {inventoryData.length > 0 && (
-          <Button variant="outlined" onClick={handleOnReset}>
-            Reset
+        <Stack direction="row" spacing={2} justifyContent="center">
+          <Button variant="outlined" onClick={handleLoad}>
+            Load inventory
           </Button>
-        )}
+          {inventoryData.length > 0 && (
+            <Button variant="outlined" onClick={handleOnReset}>
+              Reset
+            </Button>
+          )}
+          <Button variant="outlined" onClick={handleShowAddItemForm}>
+            Add Item
+          </Button>
+          <NewItemForm
+            open={showAddItemForm}
+            handleClose={handleShowAddItemForm}
+          />
+        </Stack>
         <Typography>
           {inventoryData.length > 0 ? (
             <>
@@ -203,9 +259,11 @@ function App() {
                 style={{ justifyContent: "center", alignItems: "center" }}
                 gap={2}
               >
-                {getFilteredItems(itemsWithoutExpiration).map((item) => (
+                {getFilteredItems(itemsWithoutExpiration).map((item, index) => (
                   <ItemCard
-                    key={`${item["Item Name"]}-${item["Category"]}`}
+                    key={`${item["Item Name"] || "Unknown Item"}-${
+                      item["Category"] || "Unknown Category"
+                    }-${index}`}
                     title={item["Item Name"] || "Unknown Item"} // Adjust based on your CSV column names
                     expirationDate={item["Expiration Date"] || null} // Same here
                     category={item["Category"] || "Unknown Category"}
@@ -217,6 +275,7 @@ function App() {
                         newDate
                       )
                     }
+                    onExpired={() => handleExpired(item)}
                   />
                 ))}
               </Box>
@@ -237,8 +296,10 @@ function App() {
                 gap={2}
               >
                 {getFilteredItems(itemsWithExpiration).map((item, index) => (
-                  <ItemCard
-                    key={`${item["Item Name"]}-${item["Category"]}`}
+                  <ItemCardwithExpirationSet
+                    key={`${item["Item Name"] || "Unknown Item"}-${
+                      item["Category"] || "Unknown Category"
+                    }-${index}`}
                     title={item["Item Name"] || "Unknown Item"}
                     expirationDate={item["Expiration Date"] || null}
                     category={item["Category"] || "Unknown Category"}
@@ -247,6 +308,39 @@ function App() {
                       handleExpirationDateChange(
                         item["Item Name"],
                         item["Category"],
+                        newDate
+                      )
+                    }
+                    onExpired={() => handleExpired(item)}
+                  />
+                ))}
+              </Box>
+            </Box>
+          )}
+
+          {expiredItems.length > 0 && (
+            <Box mt={4}>
+              <Typography variant="h5">Expired Items:</Typography>
+              <p>Number of expired items: {expiredItems.length}</p>
+              <Box
+                display="flex"
+                flexWrap="wrap"
+                style={{ justifyContent: "center", alignItems: "center" }}
+                gap={2}
+              >
+                {expiredItems.map((item, index) => (
+                  <ExpiredItemCard
+                    key={`${item["item_name"] || "Unknown Item"}-${
+                      item["category"] || "Unknown Category"
+                    }-${index}`}
+                    title={item["item_name"] || "Unknown Item"}
+                    expirationDate={item["expiration_date"] || null}
+                    category={item["category"] || "Unknown Category"}
+                    quantity={item["quantity"]}
+                    onDateChange={(newDate) =>
+                      handleExpirationDateChange(
+                        item["item_name"],
+                        item["category"],
                         newDate
                       )
                     }

@@ -120,6 +120,16 @@ const dbOperations = {
         }));
     },
 
+    // Get expired items
+    getExpiredItems: () => {
+        const stmt = db.prepare(`
+            SELECT * FROM expired_inventory
+        `);
+        const expiredItems = stmt.all();
+        console.log("expiredItems", expiredItems);
+        return expiredItems;
+    },
+
     // Clear all inventory
     clearInventory: () => {
         const stmt = db.prepare('DELETE FROM inventory');
