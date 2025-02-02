@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "postinstall": "electron-builder install-app-deps",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "vite",
-    "electron": "electron src/main.js",
+    "electron": "electron main.js",
     "dev": "concurrently \"npm run start\" \"npm run electron\""
   },
   "dependencies": {
@@ -16,6 +18,7 @@
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^6.4.1",
     "@mui/x-date-pickers": "^7.24.0",
+    "better-sqlite3": "^11.8.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "papaparse": "^5.5.1",
@@ -24,6 +27,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@electron/rebuild": "^3.7.1",
     "@eslint/js": "^9.17.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
