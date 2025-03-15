@@ -22,12 +22,7 @@ const categoryEmojis = {
   Produce: "🍏",
 };
 
-export default function ExpiredItemCard({
-  title,
-  expirationDate,
-  category,
-  quantity,
-}) {
+export default function ExpiredItemCard({ title, expirationDate, onRestore }) {
   return (
     <>
       <Card
@@ -40,33 +35,21 @@ export default function ExpiredItemCard({
         }}
       >
         <CardContent>
-          <Typography variant="h5" component="div">
+          <Typography variant="body1" component="div">
             {title}
           </Typography>
           <Typography
             gutterBottom
-            sx={{ color: "text.secondary", fontSize: 14 }}
+            sx={{ color: "text.secondary", fontSize: 12 }}
           >
-            Expiring on:
+            Expired on:
             {expirationDate
               ? dayjs(expirationDate).format("MM/DD/YYYY")
               : " No date selected"}
           </Typography>
-          <Typography
-            gutterBottom
-            sx={{ color: "text.secondary", fontSize: 14 }}
-          >
-            Category: {category} {categoryEmojis[category] || ""}
-          </Typography>
-          <Typography
-            gutterBottom
-            sx={{ color: "text.secondary", fontSize: 14 }}
-          >
-            Count: {quantity != null ? quantity : "unknown quantity"}
-          </Typography>
 
           <Box style={{ display: "flex", flexDirection: "column", gap: 15 }}>
-            <Button variant="contained" color="success" onClick={() => {}}>
+            <Button variant="contained" color="success" onClick={onRestore}>
               Restore Item
             </Button>
           </Box>

@@ -148,17 +148,37 @@ function setupIpcHandlers() {
         return dbOps.addItems(items);
     });
 
-    ipcMain.handle('db:updateExpirationDate', (_, itemName, category, date) => {
-        return dbOps.updateExpirationDate(itemName, category, date);
+    ipcMain.handle('db:updateExpirationDate', (event, itemName, date) => {
+        console.log("update exp date log: ", event)
+        try {
+            console.log('Received update request:', { itemName, date });
+            return dbOps.updateExpirationDate(itemName, date);
+
+        } catch (error) {
+            console.error('Error in updateExpirationDate handler:', error);
+            throw error;
+        }
     });
 
     ipcMain.handle('db:clearInventory', () => {
         return dbOps.clearInventory();
     });
 
-    ipcMain.handle('db:deleteItem', (_, itemName, category) => {
-        return dbOps.deleteItem(itemName, category);
+    ipcMain.handle('db:deleteItem', (itemName) => {
+        return dbOps.deleteItem(itemName);
     });
+
+    ipcMain.handle(`db:restoreExpiredItem`, (event, itemName) => {
+        // console.log('restore expired item name: ', itemName);
+        try {
+            console.log('Received restore request:', itemName);
+            return dbOps.restoreExpiredItem(itemName);
+        } catch (error) {
+
+            console.error('Error restoring expired item: ', error);
+            return false;
+        }
+    })
 
     ipcMain.handle('db:moveExpiredItems', async () => {
         try {

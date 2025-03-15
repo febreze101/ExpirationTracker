@@ -12,31 +12,23 @@ import { useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-const categoryEmojis = {
-  Dairy: "🥛",
-  Snacks: "🍿",
-  Meat: "🍖",
-  Beverages: "🥤",
-  Bakery: "🍞",
-  Frozen: "❄️",
-  Produce: "🍏",
-};
+import { IconButton } from "@mui/material";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import ButtonDatePicker from "./PickerWithButtonField";
 
 export default function ItemCard({
   title,
   expirationDate,
-  category,
-  quantity,
   onDateChange,
   onExpired,
 }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [buttonText, setButtonText] = useState("Set Expiration");
 
-
   const handleDateChange = (newDate) => {
     if (newDate && newDate.isValid()) {
-      onDateChange(newDate.toDate());
+      const date = newDate.toDate();
+      onDateChange(date);
     }
   };
 
@@ -61,29 +53,15 @@ export default function ItemCard({
         }}
       >
         <CardContent>
-          <Typography variant="h5" component="div">
+          <Typography variant="body1" component="div">
             {title}
           </Typography>
           <Typography
             gutterBottom
-            sx={{ color: "text.secondary", fontSize: 14 }}
+            sx={{ color: "text.secondary", fontSize: 12 }}
           >
             Expiring on:
-            {expirationDate
-              ? dayjs(expirationDate).format("MM/DD/YYYY")
-              : " No date selected"}
-          </Typography>
-          <Typography
-            gutterBottom
-            sx={{ color: "text.secondary", fontSize: 14 }}
-          >
-            Category: {category} {categoryEmojis[category] || ""}
-          </Typography>
-          <Typography
-            gutterBottom
-            sx={{ color: "text.secondary", fontSize: 14 }}
-          >
-            Count: {quantity != null ? quantity : "unknown quantity"}
+            {expirationDate ? dayjs(expirationDate) : " No date selected"}
           </Typography>
 
           <Box style={{ display: "flex", flexDirection: "column", gap: 15 }}>
@@ -95,13 +73,19 @@ export default function ItemCard({
             </Button>
 
             {showDatePicker ? (
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Select Expiration Date"
-                  value={expirationDate ? dayjs(expirationDate) : null}
-                  onChange={handleDateChange}
-                />
-              </LocalizationProvider>
+              <>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <ButtonDatePicker
+                    label={
+                      expirationDate == null
+                        ? null
+                        : expirationDate.format("MM/DD/YYYY")
+                    }
+                    value={expirationDate ? dayjs(expirationDate) : null}
+                    onChange={handleDateChange}
+                  />
+                </LocalizationProvider>
+              </>
             ) : null}
           </Box>
 

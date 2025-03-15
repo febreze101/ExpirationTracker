@@ -17,23 +17,30 @@ contextBridge.exposeInMainWorld('electron', {
             return ipcRenderer.invoke('db:addItems', items);
         },
 
-        updateExpirationDate: (itemName, category, date) => {
-            console.log('updateExpirationDate called:', { itemName, category, date });
-            return ipcRenderer.invoke('db:updateExpirationDate', itemName, category, date);
+        updateExpirationDate: (itemName, date) => {
+            console.log('updateExpirationDate called:', { itemName, date });
+            return ipcRenderer.invoke('db:updateExpirationDate', itemName, date);
         },
+
         clearInventory: () => {
             console.log('clearInventory called');
             return ipcRenderer.invoke('db:clearInventory');
         },
-        deleteItem: (itemName, category) => {
-            console.log('deleteItem called:', { itemName, category });
-            return ipcRenderer.invoke('db:deleteItem', itemName, category);
+        deleteItem: (itemName) => {
+            console.log('deleteItem called:', { itemName });
+            return ipcRenderer.invoke('db:deleteItem', itemName);
         },
+
         printDatabase: () => ipcRenderer.invoke('db:printDatabase'),
         moveExpiredItems: () => {
             console.log('moveExpiredItems called');
             return ipcRenderer.invoke('db:moveExpiredItems');
         },
+        restoreExpiredItem: (itemName) => {
+            console.log('restoreExpiredItem called:', { itemName });
+            return ipcRenderer.invoke('db:restoreExpiredItem', itemName);
+        },
+
         window: {
             minimize: () => ipcRenderer.invoke('window:minimize'),
             hide: () => ipcRenderer.invoke('window:hide'),

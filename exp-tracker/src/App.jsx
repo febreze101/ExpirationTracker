@@ -6,23 +6,23 @@ import DragAndDropCSV from "./Component/DragnDropCSV";
 import ItemCard from "./Component/ItemCard";
 import ExpiredItemCard from "./Component/ExpiredItemCard";
 import ItemCardwithExpirationSet from "./Component/ItemCardwithExpirationSet";
-import { Button, Typography, Chip, Stack } from "@mui/material";
+import {
+  Button,
+  Typography,
+  Chip,
+  Stack,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import NewItemForm from "./Component/NewItemForm";
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
 if (!dbOps) {
   console.error("Electron IPC not available");
 }
-
-const categories = [
-  "Dairy",
-  "Snacks",
-  "Meat",
-  "Beverages",
-  "Bakery",
-  "Frozen",
-  "Produce",
-];
 
 function App() {
   const [inventoryData, setInventoryData] = useState([]);
@@ -34,6 +34,17 @@ function App() {
   const [isExpired, setIsExpired] = useState(false);
   const [showAddItemForm, setShowAddItemForm] = useState(false);
 
+  const [expanded, setExpanded] = useState("panel1");
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("error");
+
+  const handleChange = (panel) => (event, newExpanded) => {
+    console.log("panel", panel);
+    console.log("newExpanded", newExpanded);
+    setExpanded(newExpanded ? panel : false);
+  };
+
   const handleExpired = async (item) => {
     try {
       setIsExpired(true);
@@ -41,13 +52,12 @@ function App() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        const dateString = today.toISOString();
+
+        console.log("Expiring item:", item, "with date:", dateString);
+
         // update the expiration date in the database
-        console.log("item", item);
-        await dbOps.updateExpirationDate(
-          item["Item Name"],
-          item["Category"],
-          today
-        );
+        await dbOps.updateExpirationDate(item["Item Name"], dateString);
 
         await dbOps.moveExpiredItems();
 
@@ -65,6 +75,14 @@ function App() {
 
   const handleShowAddItemForm = () => {
     setShowAddItemForm(!showAddItemForm);
+  };
+
+  // Add handleAlertClose function
+  const handleAlertClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setAlertOpen(false);
   };
 
   // move expired items to expired_inventory table
@@ -107,32 +125,16 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    if (itemsWithExpiration.length > 0) {
-      itemsWithExpiration.forEach((item) => {
-        dbOps.updateExpirationDate(
-          item["Item Name"],
-          item["Category"],
-          item["Expiration Date"]
-        );
-      });
-    }
-  });
+  // useEffect(() => {
+  //   if (itemsWithExpiration.length > 0) {
+  //     itemsWithExpiration.forEach((item) => {
+  //       dbOps.updateExpirationDate(item["Item Name"], item["Expiration Date"]);
+  //     });
+  //   }
+  // });
 
   const handleLoad = async () => {
     await loadInventoryData();
-  };
-
-  const handleChipClick = (category) => {
-    setSelectedCategories((prev) => {
-      const newSelected = new Set(prev);
-      if (newSelected.has(category)) {
-        newSelected.delete(category);
-      } else {
-        newSelected.add(category);
-      }
-      return newSelected;
-    });
   };
 
   // Update the filtered items when the selected categories change
@@ -155,26 +157,60 @@ function App() {
     }
   };
 
-  const handleExpirationDateChange = async (
-    itemName,
-    itemCategory,
-    newDate
-  ) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
+  const handleExpirationDateChange = async (itemName, expirationDate) => {
     try {
-      if (new Date(newDate) <= today) {
-        alert("Expiration date cannot be in the past");
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // check if the expiration date is in the past
+      const dateToCheck = new Date(expirationDate);
+      if (dateToCheck <= today) {
+        setAlertMessage("Expiration date cannot be in the past");
+        setAlertSeverity("error");
+        setAlertOpen(true);
         return;
       }
+
+      // Format date for SQLite
+      const formattedDate = dateToCheck
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ");
+      console.log("Sending to DB:", { itemName, formattedDate });
+
       // update the expiration date in the database
-      await dbOps.updateExpirationDate(itemName, itemCategory, newDate);
+      await dbOps.updateExpirationDate(itemName, formattedDate);
 
       // reload the inventory data
       await loadInventoryData();
+      await getExpiredItems();
     } catch (error) {
       console.error("Error updating expiration date: ", error);
+    }
+  };
+
+  const handleAddItem = async (itemName, expirationDate) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dateToCheck = new Date(expirationDate);
+
+    if (dateToCheck <= today) {
+      setAlertMessage("Expiration date cannot be in the past");
+      setAlertSeverity("error");
+      setAlertOpen(true);
+      return;
+    }
+    const formattedDate = expirationDate
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
+
+    console.log("Adding item:", itemName, formattedDate);
+    try {
+      await dbOps.updateExpirationDate(itemName, formattedDate);
+      await loadInventoryData();
+    } catch (error) {
+      console.error("Error adding item: ", error);
     }
   };
 
@@ -184,10 +220,22 @@ function App() {
     setItemsWithExpiration([]);
   };
 
+  const handleRestore = async (item) => {
+    try {
+      console.log("Restoring item:", item);
+      await dbOps.restoreExpiredItem(item["item_name"]);
+      await loadInventoryData();
+      await getExpiredItems();
+    } catch (error) {
+      console.error("Error restoring expired item: ", error);
+    }
+  };
+
   return (
     <>
-      <Typography variant="h3">Expiration Tracker</Typography>
-      <Box style={{ minWidth: "500px" }}>
+      {/* START HEADER SECTION */}
+      <Typography variant="h3">SpoilSport</Typography>
+      <Box style={{ minWidth: "500px", width: "100%" }}>
         {/* Pass the state update function as a prop to DragAndDropCSV */}
         <DragAndDropCSV
           setInventoryData={handleNewData}
@@ -208,6 +256,9 @@ function App() {
           <NewItemForm
             open={showAddItemForm}
             handleClose={handleShowAddItemForm}
+            onAddItem={(itemName, expirationDate) =>
+              handleAddItem(itemName, expirationDate)
+            }
           />
         </Stack>
         <Typography>
@@ -221,136 +272,176 @@ function App() {
             </>
           ) : null}
         </Typography>
+        {/* END HEADER SECTION */}
 
-        {/* chips/tags */}
-        <Box>
-          {categories.map((category, index) => (
-            <Chip
-              key={index}
-              label={category}
-              onClick={() => handleChipClick(category)}
-              style={{
-                margin: 5,
-                backgroundColor: selectedCategories.has(category)
-                  ? "#1976d2"
-                  : "#464a68",
-                color: "white",
-              }}
-            />
-          ))}
-        </Box>
-
-        {/* Display the parsed data as ItemCards */}
-        <Box
-          style={{
-            // border: "2px solid white",
-            borderRadius: "8px",
-            padding: "5px",
-            margin: "0 auto",
-          }}
+        {/* START ITEM WITHOUT EXPIRATION SECTION */}
+        <Accordion
+          expanded={expanded === "panel1"}
+          onChange={handleChange("panel1")}
         >
-          {inventoryData.length == 0 ? (
-            <p>It's empty in here, add or import inventory to get started!</p>
-          ) : (
-            itemsWithoutExpiration.length > 0 && (
-              <Box
-                display="flex"
-                flexWrap="wrap"
-                style={{ justifyContent: "center", alignItems: "center" }}
-                gap={2}
-              >
-                {getFilteredItems(itemsWithoutExpiration).map((item, index) => (
-                  <ItemCard
-                    key={`${item["Item Name"] || "Unknown Item"}-${
-                      item["Category"] || "Unknown Category"
-                    }-${index}`}
-                    title={item["Item Name"] || "Unknown Item"} // Adjust based on your CSV column names
-                    expirationDate={item["Expiration Date"] || null} // Same here
-                    category={item["Category"] || "Unknown Category"}
-                    quantity={item["Quantity"]}
-                    onDateChange={(newDate) =>
-                      handleExpirationDateChange(
-                        item["Item Name"],
-                        item["Category"],
-                        newDate
-                      )
-                    }
-                    onExpired={() => handleExpired(item)}
-                  />
-                ))}
-              </Box>
-            )
-          )}
-
-          {itemsWithExpiration.length > 0 && (
-            <Box mt={4}>
-              <Typography variant="h5">Items with Expiration Dates:</Typography>
-              <p>
-                Number of items with Expiration Dates:{" "}
-                {itemsWithExpiration.length}
-              </p>
-              <Box
-                display="flex"
-                flexWrap="wrap"
-                style={{ justifyContent: "center", alignItems: "center" }}
-                gap={2}
-              >
-                {getFilteredItems(itemsWithExpiration).map((item, index) => (
-                  <ItemCardwithExpirationSet
-                    key={`${item["Item Name"] || "Unknown Item"}-${
-                      item["Category"] || "Unknown Category"
-                    }-${index}`}
-                    title={item["Item Name"] || "Unknown Item"}
-                    expirationDate={item["Expiration Date"] || null}
-                    category={item["Category"] || "Unknown Category"}
-                    quantity={item["Quantity"]}
-                    onDateChange={(newDate) =>
-                      handleExpirationDateChange(
-                        item["Item Name"],
-                        item["Category"],
-                        newDate
-                      )
-                    }
-                    onExpired={() => handleExpired(item)}
-                  />
-                ))}
-              </Box>
+          <AccordionSummary>
+            <Typography>Untracked Items</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box
+              style={{
+                // border: "2px solid white",
+                borderRadius: "8px",
+                padding: "5px",
+                margin: "0 auto",
+              }}
+            >
+              {inventoryData.length == 0 ? (
+                <p>
+                  It's empty in here, add or import inventory to get started!
+                </p>
+              ) : (
+                itemsWithoutExpiration.length > 0 && (
+                  <Box mt={4}>
+                    <Typography variant="h5">Untracked Items</Typography>
+                    <Box
+                      display="flex"
+                      flexWrap="wrap"
+                      style={{ justifyContent: "center", alignItems: "center" }}
+                      gap={2}
+                    >
+                      {getFilteredItems(itemsWithoutExpiration).map(
+                        (item, index) => (
+                          <ItemCard
+                            key={`${item["Item Name"] || "Unknown Item"}-${
+                              item["Expiration Date"] ||
+                              "Unknown Expiration Date"
+                            }-${index}`}
+                            title={item["Item Name"] || "Unknown Item"} // Adjust based on your CSV column names
+                            expirationDate={item["Expiration Date"] || null} // Same here
+                            onDateChange={(newDate) =>
+                              handleExpirationDateChange(
+                                item["Item Name"],
+                                newDate
+                              )
+                            }
+                            onExpired={() => handleExpired(item)}
+                          />
+                        )
+                      )}
+                    </Box>
+                  </Box>
+                )
+              )}
             </Box>
-          )}
+          </AccordionDetails>
+        </Accordion>
 
-          {expiredItems.length > 0 && (
-            <Box mt={4}>
-              <Typography variant="h5">Expired Items:</Typography>
-              <p>Number of expired items: {expiredItems.length}</p>
-              <Box
-                display="flex"
-                flexWrap="wrap"
-                style={{ justifyContent: "center", alignItems: "center" }}
-                gap={2}
-              >
-                {expiredItems.map((item, index) => (
-                  <ExpiredItemCard
-                    key={`${item["item_name"] || "Unknown Item"}-${
-                      item["category"] || "Unknown Category"
-                    }-${index}`}
-                    title={item["item_name"] || "Unknown Item"}
-                    expirationDate={item["expiration_date"] || null}
-                    category={item["category"] || "Unknown Category"}
-                    quantity={item["quantity"]}
-                    onDateChange={(newDate) =>
-                      handleExpirationDateChange(
-                        item["item_name"],
-                        item["category"],
-                        newDate
+        {/* START ITEM WITH EXPIRATION SECTION */}
+        <Accordion
+          expanded={expanded === "panel2"}
+          onChange={handleChange("panel2")}
+        >
+          <AccordionSummary>
+            <Typography>Expiring Soon</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box
+              style={{
+                // border: "2px solid white",
+                borderRadius: "8px",
+                padding: "5px",
+                margin: "0 auto",
+              }}
+            >
+              {itemsWithExpiration.length > 0 && (
+                <Box mt={4}>
+                  <Typography variant="h5">
+                    Upcoming Expiration Dates:
+                  </Typography>
+                  <p>
+                    Number of items with Expiration Dates:{" "}
+                    {itemsWithExpiration.length}
+                  </p>
+                  <Box
+                    display="flex"
+                    flexWrap="wrap"
+                    style={{ justifyContent: "center", alignItems: "center" }}
+                    gap={2}
+                  >
+                    {getFilteredItems(itemsWithExpiration).map(
+                      (item, index) => (
+                        <ItemCardwithExpirationSet
+                          key={`${item["Item Name"] || "Unknown Item"}-${
+                            item["Expiration Date"] || "Unknown Expiration Date"
+                          }-${index}`}
+                          title={item["Item Name"] || "Unknown Item"}
+                          expirationDate={item["Expiration Date"] || null}
+                          onDateChange={(newDate) =>
+                            handleExpirationDateChange(
+                              item["Item Name"],
+                              newDate
+                            )
+                          }
+                          onExpired={() => handleExpired(item)}
+                        />
                       )
-                    }
-                  />
-                ))}
-              </Box>
+                    )}
+                  </Box>
+                </Box>
+              )}
             </Box>
-          )}
-        </Box>
+          </AccordionDetails>
+        </Accordion>
+
+        {/* START EXPIRED ITEMS SECTION */}
+        <Accordion
+          expanded={expanded === "panel3"}
+          onChange={handleChange("panel3")}
+        >
+          <AccordionSummary>
+            <Typography>Remove Immediately</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {expiredItems.length > 0 && (
+              <Box mt={4}>
+                <Typography variant="h5">Expired Items:</Typography>
+                <p>Number of expired items: {expiredItems.length}</p>
+                <Box
+                  display="flex"
+                  flexWrap="wrap"
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                  gap={2}
+                >
+                  {expiredItems.map((item, index) => (
+                    <ExpiredItemCard
+                      key={`${item["item_name"] || "Unknown Item"}-${
+                        item["expiration_date"] || "Unknown Expiration Date"
+                      }-${index}`}
+                      title={item["item_name"] || "Unknown Item"}
+                      expirationDate={item["expiration_date"] || null}
+                      onDateChange={(newDate) =>
+                        handleExpirationDateChange(item["item_name"], newDate)
+                      }
+                      onRestore={() => handleRestore(item)}
+                    />
+                  ))}
+                </Box>
+              </Box>
+            )}
+          </AccordionDetails>
+        </Accordion>
       </Box>
+
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={6000}
+        onClose={handleAlertClose}
+        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+      >
+        <Alert
+          onClose={handleAlertClose}
+          severity={alertSeverity}
+          sx={{ width: "100%" }}
+        >
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

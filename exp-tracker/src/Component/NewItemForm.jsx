@@ -8,8 +8,31 @@ import {
   Stack,
   Button,
 } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import { Controller, useForm } from "react-hook-form";
 
-export default function NewItemForm({ open, handleClose }) {
+export default function NewItemForm({ open, handleClose, onAddItem }) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    control,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      itemName: "",
+      expirationDate: dayjs(),
+    },
+  });
+
+  const onSubmit = (data) => {
+    onAddItem(data.itemName, data.expirationDate);
+    handleClose();
+  };
+
   return (
     <Modal
       aria-labelledby="transition-modal-title"
@@ -38,7 +61,7 @@ export default function NewItemForm({ open, handleClose }) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            width: "50%",
+            width: "30%",
             border: "1px solid black",
             borderRadius: 24,
           }}
@@ -46,15 +69,46 @@ export default function NewItemForm({ open, handleClose }) {
           <Typography id="transition-modal-title" variant="h6" component="h2">
             Add Item
           </Typography>
-          <Stack direction="column" spacing={2}>
-            <TextField label="Item Name" />
-            <TextField label="Category" />
-            <TextField label="Quantity" />
-            <TextField label="Expiration Date" />
-            <Button variant="contained" color="primary">
-              Add Item
-            </Button>
-          </Stack>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack direction="column" spacing={2}>
+              <TextField
+                {...register("itemName", { required: "Item name is required" })}
+                label="Item Name"
+                error={!!errors.itemName}
+                helperText={errors.itemName?.message}
+              />
+
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Controller
+                  name="expirationDate"
+                  control={control}
+                  rules={{ required: "Expiration date is required" }}
+                  render={({ field }) => (
+                    <DatePicker
+                      {...field}
+                      label="Expiration Date"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          error={!!errors.expirationDate}
+                          helperText={errors.expirationDate?.message}
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ width: "50%", alignSelf: "center" }}
+              >
+                Add Item
+              </Button>
+            </Stack>
+          </form>
         </Box>
       </Fade>
     </Modal>

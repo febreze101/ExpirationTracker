@@ -4,48 +4,65 @@ const dbOperations = {
     // Add multiple items to inventory
     addItems: (items) => {
         const insert = db.prepare(`
-            INSERT INTO inventory (item_name, category, quantity, expiration_date)
-            VALUES (@itemName, @category, @quantity, @expirationDate)    
+            INSERT INTO inventory (item_name)
+            VALUES (@itemName)    
         `);
 
         const insertMany = db.transaction((items) => {
             for (const item of items) {
-                // Convert expiration date string or Date object to ISO string
-                let expirationDate = null;
-                if (item['Expiration Date'] || item.expirationDate) {
-                    const date = new Date(item['Expiration Date'] || item.expirationDate);
-                    expirationDate = isNaN(date.getTime()) ? null : date.toISOString();
-                }
-
                 insert.run({
                     itemName: item['Item Name'],
-                    category: item['Category'],
-                    quantity: item['Quantity'],
-                    expirationDate: expirationDate,
                 });
             }
         });
 
-        return insertMany(items);
+        try {
+            insertMany(items);
+            return true;
+        } catch (error) {
+            console.error("Error adding items: ", error);
+            return false;
+        }
     },
 
     // Update items's expiration date
-    updateExpirationDate: (itemName, category, expirationDate) => {
-        const stmt = db.prepare(`
-            UPDATE inventory
-            SET expiration_date = ?
-            WHERE item_name = ? AND category = ?
-        `);
+    updateExpirationDate: (itemName, expirationDate) => {
+        try {
+            console.log('DB received:', { itemName, expirationDate });
+            console.log('item name:', itemName);
+            console.log('Expiration Date:', expirationDate);
 
-        // Convert date to ISO string if valid
-        let dateToStore = null;
-        if (expirationDate) {
-            const date = new Date(expirationDate);
-            dateToStore = isNaN(date.getTime()) ? null : date.toISOString();
+            const checkItem = db.prepare(`SELECT item_name FROM inventory WHERE item_name = ?`);
+            const exist = checkItem.get(itemName);
+            console.log('exist:', exist);
+            if (!exist) {
+                // item does not exist, add it
+                console.log('Item does not exist, adding it');
+                const insertItem = db.prepare(`
+                    INSERT INTO inventory (item_name, expiration_date) 
+                    VALUES (?, ?)`);
+                const result = insertItem.run(itemName, expirationDate);
+                console.log("DB insert result:", result);
+                return result;
+            } else {
+                // item exists, update the expiration date
+                const updateItem = db.prepare(`
+                    UPDATE inventory 
+                    SET expiration_date = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                    WHERE item_name = ?
+                `);
+                const result = updateItem.run(expirationDate, itemName);
+                console.log("DB result:", result);
+                return result;
+            }
+        } catch (error) {
+            console.error("Error updating expiration date: ", error);
+            throw error;
         }
-
-        return stmt.run(dateToStore, itemName, category);
     },
+
+
 
     // Get all inventory items
     getAllItems: () => {
@@ -53,8 +70,6 @@ const dbOperations = {
             SELECT 
                 id,
                 item_name as "Item Name",
-                category as "Category",
-                quantity as "Quantity",
                 expiration_date as "Expiration Date",
                 created_at,
                 updated_at
@@ -75,18 +90,9 @@ const dbOperations = {
     // Get items without expiration
     getItemsWithoutExpiration: () => {
         const stmt = db.prepare(`
-            SELECT 
-                id,
-                item_name as "Item Name",
-                category as "Category",
-                quantity as "Quantity",
-                expiration_date as "Expiration Date",
-                created_at,
-                updated_at
-            FROM inventory 
+            SELECT * FROM inventory 
             WHERE expiration_date IS NULL
         `);
-
 
         const items = stmt.all();
         return items.map(item => ({
@@ -99,15 +105,7 @@ const dbOperations = {
     // Get items with expiration date
     getItemsWithExpiration: () => {
         const stmt = db.prepare(`
-            SELECT 
-                id,
-                item_name as "Item Name",
-                category as "Category",
-                quantity as "Quantity",
-                expiration_date as "Expiration Date",
-                created_at,
-                updated_at
-            FROM inventory 
+            SELECT * FROM inventory 
             WHERE expiration_date IS NOT NULL
         `);
 
@@ -122,12 +120,7 @@ const dbOperations = {
 
     // Get expired items
     getExpiredItems: () => {
-        const stmt = db.prepare(`
-            SELECT * FROM expired_inventory
-        `);
-        const expiredItems = stmt.all();
-        console.log("expiredItems", expiredItems);
-        return expiredItems;
+        return db.prepare('SELECT * FROM expired_inventory').all();
     },
 
     // Clear all inventory
@@ -137,9 +130,9 @@ const dbOperations = {
     },
 
     // Delete specific item
-    deleteItem: (itemName, category) => {
-        const stmt = db.prepare('DELETE FROM inventory WHERE item_name = ? AND category = ?')
-        return stmt.run(itemName, category)
+    deleteItem: (itemName) => {
+        const stmt = db.prepare('DELETE FROM inventory WHERE item_name = ?');
+        return stmt.run(itemName);
     },
 
     // Move expired items to expired_inventory table
@@ -159,10 +152,11 @@ const dbOperations = {
         if (expiredItems.length > 0) {
             // Copy expired items to expired_inventory table
             const insertStmt = db.prepare(`
-                INSERT INTO expired_inventory (item_name, category, quantity, expiration_date)
-                SELECT item_name, category, quantity, expiration_date 
+                INSERT INTO expired_inventory (item_name, expiration_date)
+                SELECT item_name, expiration_date 
                 FROM inventory 
                 WHERE date(expiration_date) <= date(?)
+
             `);
 
             // Delete expired items from inventory table
@@ -183,6 +177,43 @@ const dbOperations = {
         return [];
 
     },
+
+    restoreExpiredItem: (itemName) => {
+        console.log('Restoring expired item:', itemName);
+        try {
+            const getItemStmt = db.prepare(`
+                SELECT * from expired_inventory
+                WHERE item_name = ?
+            `);
+
+            const item = getItemStmt.get(itemName);
+
+            if (!item) {
+                throw new Error('Item not found in expired_inventory');
+            }
+
+            const insertStmt = db.prepare(`
+                INSERT INTO inventory (item_name)
+                VALUES (?)
+            `);
+
+            const deleteStmt = db.prepare(`
+                DELETE FROM expired_inventory
+                WHERE item_name = ?
+            `);
+
+            db.transaction(() => {
+                insertStmt.run(item['item_name']);
+                deleteStmt.run(itemName);
+            })();
+        } catch (error) {
+            console.error("Error restoring expired item: ", error);
+            throw error;
+        }
+    },
+
+
+
 
     // Add this function to check table contents
     checkTables: () => {
