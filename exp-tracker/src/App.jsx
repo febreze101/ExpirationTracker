@@ -18,6 +18,8 @@ import {
   Alert,
 } from "@mui/material";
 import NewItemForm from "./Component/NewItemForm";
+
+import ItemsAccordion from "./Component/ItemsAccordion";
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
 if (!dbOps) {
@@ -272,160 +274,48 @@ function App() {
             </>
           ) : null}
         </Typography>
-        {/* END HEADER SECTION */}
 
-        {/* START ITEM WITHOUT EXPIRATION SECTION */}
-        <Accordion
-          expanded={expanded === "panel1"}
-          onChange={handleChange("panel1")}
-        >
-          <AccordionSummary>
-            <Typography>Untracked Items</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Box
-              style={{
-                // border: "2px solid white",
-                borderRadius: "8px",
-                padding: "5px",
-                margin: "0 auto",
-              }}
-            >
-              {inventoryData.length == 0 ? (
-                <p>
-                  It's empty in here, add or import inventory to get started!
-                </p>
-              ) : (
-                itemsWithoutExpiration.length > 0 && (
-                  <Box mt={4}>
-                    <Typography variant="h5">Untracked Items</Typography>
-                    <Box
-                      display="flex"
-                      flexWrap="wrap"
-                      style={{ justifyContent: "center", alignItems: "center" }}
-                      gap={2}
-                    >
-                      {getFilteredItems(itemsWithoutExpiration).map(
-                        (item, index) => (
-                          <ItemCard
-                            key={`${item["Item Name"] || "Unknown Item"}-${
-                              item["Expiration Date"] ||
-                              "Unknown Expiration Date"
-                            }-${index}`}
-                            title={item["Item Name"] || "Unknown Item"} // Adjust based on your CSV column names
-                            expirationDate={item["Expiration Date"] || null} // Same here
-                            onDateChange={(newDate) =>
-                              handleExpirationDateChange(
-                                item["Item Name"],
-                                newDate
-                              )
-                            }
-                            onExpired={() => handleExpired(item)}
-                          />
-                        )
-                      )}
-                    </Box>
-                  </Box>
-                )
-              )}
-            </Box>
-          </AccordionDetails>
-        </Accordion>
+        {/* START UNTRACKED ITEMS SECTION */}
+        <ItemsAccordion
+          expanded={expanded}
+          chipColor="success"
+          panel="panel1"
+          handleChange={handleChange}
+          title="Untracked Items"
+          searchLabel="Search Untracked Items"
+          items={itemsWithoutExpiration}
+          ItemComponent={ItemCard}
+          handleExpirationDateChange={handleExpirationDateChange}
+          handleExpired={handleExpired}
+        />
 
-        {/* START ITEM WITH EXPIRATION SECTION */}
-        <Accordion
-          expanded={expanded === "panel2"}
-          onChange={handleChange("panel2")}
-        >
-          <AccordionSummary>
-            <Typography>Expiring Soon</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Box
-              style={{
-                // border: "2px solid white",
-                borderRadius: "8px",
-                padding: "5px",
-                margin: "0 auto",
-              }}
-            >
-              {itemsWithExpiration.length > 0 && (
-                <Box mt={4}>
-                  <Typography variant="h5">
-                    Upcoming Expiration Dates:
-                  </Typography>
-                  <p>
-                    Number of items with Expiration Dates:{" "}
-                    {itemsWithExpiration.length}
-                  </p>
-                  <Box
-                    display="flex"
-                    flexWrap="wrap"
-                    style={{ justifyContent: "center", alignItems: "center" }}
-                    gap={2}
-                  >
-                    {getFilteredItems(itemsWithExpiration).map(
-                      (item, index) => (
-                        <ItemCardwithExpirationSet
-                          key={`${item["Item Name"] || "Unknown Item"}-${
-                            item["Expiration Date"] || "Unknown Expiration Date"
-                          }-${index}`}
-                          title={item["Item Name"] || "Unknown Item"}
-                          expirationDate={item["Expiration Date"] || null}
-                          onDateChange={(newDate) =>
-                            handleExpirationDateChange(
-                              item["Item Name"],
-                              newDate
-                            )
-                          }
-                          onExpired={() => handleExpired(item)}
-                        />
-                      )
-                    )}
-                  </Box>
-                </Box>
-              )}
-            </Box>
-          </AccordionDetails>
-        </Accordion>
+        {/* START EXPIRING ITEMS SECTION */}
+        <ItemsAccordion
+          expanded={expanded}
+          chipColor="warning"
+          panel="panel2"
+          handleChange={handleChange}
+          title="Expiring Soon"
+          searchLabel="Search Items Expiring Soon"
+          items={itemsWithExpiration}
+          ItemComponent={ItemCardwithExpirationSet}
+          handleExpirationDateChange={handleExpirationDateChange}
+          handleExpired={handleExpired}
+        />
 
         {/* START EXPIRED ITEMS SECTION */}
-        <Accordion
-          expanded={expanded === "panel3"}
-          onChange={handleChange("panel3")}
-        >
-          <AccordionSummary>
-            <Typography>Remove Immediately</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            {expiredItems.length > 0 && (
-              <Box mt={4}>
-                <Typography variant="h5">Expired Items:</Typography>
-                <p>Number of expired items: {expiredItems.length}</p>
-                <Box
-                  display="flex"
-                  flexWrap="wrap"
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                  gap={2}
-                >
-                  {expiredItems.map((item, index) => (
-                    <ExpiredItemCard
-                      key={`${item["item_name"] || "Unknown Item"}-${
-                        item["expiration_date"] || "Unknown Expiration Date"
-                      }-${index}`}
-                      title={item["item_name"] || "Unknown Item"}
-                      expirationDate={item["expiration_date"] || null}
-                      onDateChange={(newDate) =>
-                        handleExpirationDateChange(item["item_name"], newDate)
-                      }
-                      onRestore={() => handleRestore(item)}
-                    />
-                  ))}
-                </Box>
-              </Box>
-            )}
-          </AccordionDetails>
-        </Accordion>
+        <ItemsAccordion
+          expanded={expanded}
+          chipColor="error"
+          panel="panel3"
+          handleChange={handleChange}
+          title="Remove Immediately"
+          searchLabel="Search Expired Items"
+          items={expiredItems}
+          ItemComponent={ExpiredItemCard}
+          handleExpirationDateChange={handleExpirationDateChange}
+          handleRestore={handleRestore}
+        />
       </Box>
 
       <Snackbar
