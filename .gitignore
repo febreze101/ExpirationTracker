@@ -3,3 +3,5 @@
 /fake_inventory_varied_01.xlsx
 /import csv.py
 /python
+.env
+/node_modules

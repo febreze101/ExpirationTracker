@@ -11,24 +11,33 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-
-import { IconButton } from "@mui/material";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ButtonDatePicker from "./PickerWithButtonField";
+const categoryEmojis = {
+  Dairy: "🥛",
+  Snacks: "🍿",
+  Meat: "🍖",
+  Beverages: "🥤",
+  Bakery: "🍞",
+  Frozen: "❄️",
+  Produce: "🍏",
+};
 
-export default function ItemCard({
+export default function ItemCardwithExpirationSet({
   title,
   expirationDate,
+  category,
+  quantity,
   onDateChange,
   onExpired,
 }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [buttonText, setButtonText] = useState("Set Expiration");
+  const [buttonText, setButtonText] = useState("Edit Expiration");
+
+  const formattedDate = expirationDate ? dayjs(expirationDate) : null;
 
   const handleDateChange = (newDate) => {
     if (newDate && newDate.isValid()) {
-      const date = newDate.toDate();
-      onDateChange(date);
+      onDateChange(newDate.toDate());
     }
   };
 
@@ -61,7 +70,9 @@ export default function ItemCard({
             sx={{ color: "text.secondary", fontSize: 12 }}
           >
             Expiring on:
-            {expirationDate ? dayjs(expirationDate) : " No date selected"}
+            {expirationDate
+              ? dayjs(expirationDate).format("MM/DD/YYYY")
+              : " No date selected"}
           </Typography>
 
           <Box style={{ display: "flex", flexDirection: "column", gap: 15 }}>
@@ -73,19 +84,17 @@ export default function ItemCard({
             </Button>
 
             {showDatePicker ? (
-              <>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <ButtonDatePicker
-                    label={
-                      expirationDate == null
-                        ? null
-                        : expirationDate.format("MM/DD/YYYY")
-                    }
-                    value={expirationDate ? dayjs(expirationDate) : null}
-                    onChange={handleDateChange}
-                  />
-                </LocalizationProvider>
-              </>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <ButtonDatePicker
+                  label={
+                    formattedDate == null
+                      ? null
+                      : formattedDate.format("MM/DD/YYYY")
+                  }
+                  value={formattedDate}
+                  onChange={handleDateChange}
+                />
+              </LocalizationProvider>
             ) : null}
           </Box>
 
