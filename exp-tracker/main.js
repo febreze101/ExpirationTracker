@@ -17,8 +17,8 @@ let isQuiting = false;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 1920,
-        height: 1080,
+        width: 1200,
+        height: 800,
         fullscreenable: true,
         webPreferences: {
             nodeIntegration: false,

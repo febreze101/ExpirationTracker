@@ -236,7 +236,7 @@ function App() {
   return (
     <>
       {/* START HEADER SECTION */}
-      <Typography variant="h3">SpoilSport</Typography>
+      <Typography variant="h3">Spoilage Tracker</Typography>
       <Box style={{ minWidth: "500px", width: "100%" }}>
         {/* Pass the state update function as a prop to DragAndDropCSV */}
         <DragAndDropCSV
