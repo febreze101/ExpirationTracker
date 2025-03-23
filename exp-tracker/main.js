@@ -1,5 +1,6 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -7,7 +8,7 @@ const __dirname = path.dirname(__filename);
 import { app, BrowserWindow, ipcMain, Notification, Tray, Menu } from 'electron';
 import dbOps from './src/db/operations.js';
 import schedule from 'node-schedule';
-import { sendExpirationEmail } from './src/utils/emailService.js';
+import { sendEmail, } from './src/utils/emailService.js';
 const clockIcon = path.join(__dirname, './src/assets/clock.png');
 
 let mainWindow;
@@ -106,10 +107,9 @@ function createTray() {
 }
 
 // Schedule a job to move expired items every day at 12:00 AM
-
 function setupDailyCheck() {
-    console.log('Initial table state:');
-    dbOps.checkTables();
+    // console.log('Initial table state:');
+    // dbOps.checkTables();
     // check for expired items
     const checkExpiredItems = async () => {
         try {
@@ -118,8 +118,8 @@ function setupDailyCheck() {
             if (expiredItems.length > 0) {
                 // Show expired items notification
                 new Notification({
-                    title: 'Expired Items Found',
-                    body: `${expiredItems.length} items have expired.`,
+                    title: 'Spoilage Alert',
+                    body: `${expiredItems.length} items have expired!`,
                 }).show();
 
                 await sendExpirationEmail(expiredItems);
@@ -137,6 +137,54 @@ function setupDailyCheck() {
 
     // schedule daily check
     schedule.scheduleJob('0 0 * * *', checkExpiredItems)
+}
+
+function setupPreemptiveExpirationCheck(numDays) {
+    console.log('Checking for items expiring in %d days', numDays);
+
+    // function to check for items expiring soon
+    const checkExpiringSoon = async () => {
+        try {
+            const expiredItems = await dbOps.moveExpiredItems();
+            const soonExpiringItems = await dbOps.getItemsExpiringSoon(numDays);
+
+            if (expiredItems.length > 0) {
+                // Show expired items notification
+                new Notification({
+                    title: 'Spoilage Alert',
+                    body: `${expiredItems.length} items have expired!`,
+                }).show();
+            } else {
+                console.log('No expired items found');
+            }
+
+
+            if (soonExpiringItems.length > 0) {
+                console.log(soonExpiringItems)
+
+                // send desktop notification
+                new Notification({
+                    title: 'Spoilage Alert',
+                    body: `${soonExpiringItems.length} items expiring in ${numDays} days!`,
+                }).show();
+
+                // send email notification
+                await sendEmail(expiredItems, numDays, soonExpiringItems);
+                console.log(`${soonExpiringItems.length} items expiring soon! Notifications sent!`);
+
+            } else {
+                console.log('No items will spoil in %d days', numDays);
+            }
+        } catch (error) {
+            console.error('Error finding items that will expire within the next %d days:', numDays, error)
+        }
+    };
+
+    // initial check
+    checkExpiringSoon();
+
+    // schedule daily check
+    schedule.scheduleJob('0 0 * * *', () => checkExpiringSoon());
 }
 
 // Set up IPC handlers
@@ -195,6 +243,16 @@ function setupIpcHandlers() {
         return dbOps.getExpiredItems();
     });
 
+    ipcMain.handle('db:getItemsExpiringSoon', async (event, numDays) => {
+        try {
+            const items = await dbOps.getItemsExpiringSoon(numDays);
+            return items;
+        } catch (error) {
+            console.error('Error fetching expiring items:', error);
+            return [];
+        }
+    })
+
     ipcMain.on('window:minimize', () => {
         mainWindow.minimize();
     });
@@ -211,6 +269,7 @@ app.whenReady().then(() => {
     createTray();
     setupIpcHandlers();
     setupDailyCheck();
+    setupPreemptiveExpirationCheck(30);
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

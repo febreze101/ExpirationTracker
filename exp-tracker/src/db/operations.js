@@ -73,7 +73,7 @@ const dbOperations = {
                 expiration_date as "Expiration Date",
                 created_at,
                 updated_at
-            FROM inventory
+            FROM sorted_inventory 
         `);
 
         const items = stmt.all();
@@ -105,7 +105,7 @@ const dbOperations = {
     // Get items with expiration date
     getItemsWithExpiration: () => {
         const stmt = db.prepare(`
-            SELECT * FROM inventory 
+            SELECT * FROM sorted_inventory 
             WHERE expiration_date IS NOT NULL
         `);
 
@@ -116,6 +116,19 @@ const dbOperations = {
             created_at: new Date(item.created_at),
             updated_at: new Date(item.updated_at)
         }));
+    },
+
+    // Get items expiring in "x" amount of days
+    getItemsExpiringSoon: (numDays) => {
+        if (typeof numDays !== 'number') {
+            throw new Error("numDays should be a number.");
+        }
+
+        const stmt = db.prepare(`
+            SELECT * FROM sorted_inventory
+            WHERE expiration_date BETWEEN DATE('now') AND DATE('now', ? || ' days')
+        `);
+        return stmt.all(numDays.toString());  // Append 'days' to numDays
     },
 
     // Get expired items

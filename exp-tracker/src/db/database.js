@@ -49,6 +49,18 @@ const initDb = () => {
             WHERE id = NEW.id;
         END
     `);
+
+    // create an view for inventory sorted by expiration
+    db.exec(`
+        CREATE VIEW IF NOT EXISTS sorted_inventory AS
+        SELECT * FROM inventory ORDER BY expiration_date ASC    
+    `);
+
+    // create an view expired_invenotry sorted by expiration
+    db.exec(`
+        CREATE VIEW IF NOT EXISTS sorted_expired_inventory AS
+        SELECT * FROM expired_inventory ORDER BY expiration_date DESC    
+    `);
 };
 
 // Initialize database

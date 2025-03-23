@@ -102,9 +102,19 @@ function App() {
     setExpiredItems(expiredItems);
   };
 
+  const getItemsExpiringSoon = async (numDays) => {
+    try {
+      const expiringSoon = await dbOps.getItemsExpiringSoon(numDays);
+      console.log("expiring soon", expiringSoon);
+    } catch (error) {
+      console.error("Error fetching expiring items:", error)
+    }
+  }
+
   useEffect(() => {
     moveExpiredItems();
     getExpiredItems();
+    // getItemsExpiringSoon(60);
   }, []);
 
   const loadInventoryData = async () => {

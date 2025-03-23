@@ -12,6 +12,10 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('getExpiredItems called');
             return ipcRenderer.invoke('db:getExpiredItems');
         },
+        getItemsExpiringSoon: (numDays) => {
+            console.log('getItemsExpiringSoon called with numDays:', numDays);
+            return ipcRenderer.invoke('db:getItemsExpiringSoon', numDays);
+        },
         addItems: (items) => {
             console.log('addItems called with:', items);
             return ipcRenderer.invoke('db:addItems', items);
