@@ -6,6 +6,7 @@ import DragAndDropCSV from "./Component/DragnDropCSV";
 import ItemCard from "./Component/ItemCard";
 import ExpiredItemCard from "./Component/ExpiredItemCard";
 import ItemCardwithExpirationSet from "./Component/ItemCardwithExpirationSet";
+import dayjs from "dayjs";
 import {
   Button,
   Typography,
@@ -16,15 +17,81 @@ import {
   AccordionDetails,
   Snackbar,
   Alert,
+  createTheme,
+  ThemeProvider,
 } from "@mui/material";
+
+
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router';
+
 import NewItemForm from "./Component/NewItemForm";
 
 import ItemsAccordion from "./Component/ItemsAccordion";
+import DashboardPage from "./Component/Pages/DashbaordPage";
+import NewItemsPage from "./Component/Pages/NewItemsPage";
+import ExpiringItemsPage from "./Component/Pages/ExpiringItemsPage";
+import ExpiredItemsPage from "./Component/Pages/ExpiredItemsPage";
+import Layout from "./Component/Layout";
+import UpdatedExpiringCard from "./Component/ItemCards/UpdatedExpiringCard";
+import UpdatedExpiredItemCard from "./Component/ItemCards/UpdatedExpiredCard";
+import UpdatedNewItemForm from "./Component/PopUps/UpdatedNewItemForm";
+import UpdatedConfirmDiag from "./Component/PopUps/UpdatedConfirmDiag";
+import UpdatedNewItemCard from "./Component/ItemCards/UpdatedNewItemCard";
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
 if (!dbOps) {
   console.error("Electron IPC not available");
 }
+
+const theme = createTheme({
+  typography: {
+    fontFamily: [
+      'adobe-garamond-pro',
+      'ff-meta-headline-web-pro',
+    ].join(','),
+    h1: {
+      fontSize: '3.5rem',
+      fontFamily: ['adobe-garamond-pro', 'serif'].join(',')
+    },
+    h2: {
+      fontSize: '2.25rem',
+      fontFamily: ['adobe-garamond-pro', 'serif'].join(',')
+    },
+    h3: {
+      fontSize: '1rem',
+      fontFamily: ['adobe-garamond-pro', 'serif'].join(',')
+    },
+    body1: {
+      fontSize: '1rem',
+      fontFamily: ['ff-meta-headline-web-pro', 'sans-serif'].join(',')
+    },
+    body2: {
+      fontSize: '1rem',
+      fontFamily: ['ff-meta-headline-web-pro', 'sans-serif'].join(','),
+      color: 'rgba(128, 128, 128, 0.5)'
+    },
+  },
+  palette: {
+    black: {
+      main: '#171717'
+    },
+    forest: {
+      main: '#063B27'
+    },
+    washiPaper: {
+      main: '#F1EAE3'
+    },
+    red: {
+      main: '#91383A'
+    },
+    Tan: {
+      main: '#907C64'
+    },
+    grey: {
+      main: '#444444'
+    }
+  }
+})
 
 function App() {
   const [inventoryData, setInventoryData] = useState([]);
@@ -36,15 +103,15 @@ function App() {
   const [isExpired, setIsExpired] = useState(false);
   const [showAddItemForm, setShowAddItemForm] = useState(false);
 
-  const [expanded, setExpanded] = useState("panel1");
+  const [expanded, setExpanded] = useState(true);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("error");
 
   const handleChange = (panel) => (event, newExpanded) => {
-    console.log("panel", panel);
-    console.log("newExpanded", newExpanded);
-    setExpanded(newExpanded ? panel : false);
+    // console.log("panel", panel);
+    // console.log("newExpanded", newExpanded);
+    setExpanded(!newExpanded);
   };
 
   const handleExpired = async (item) => {
@@ -102,19 +169,9 @@ function App() {
     setExpiredItems(expiredItems);
   };
 
-  const getItemsExpiringSoon = async (numDays) => {
-    try {
-      const expiringSoon = await dbOps.getItemsExpiringSoon(numDays);
-      console.log("expiring soon", expiringSoon);
-    } catch (error) {
-      console.error("Error fetching expiring items:", error)
-    }
-  }
-
   useEffect(() => {
     moveExpiredItems();
     getExpiredItems();
-    // getItemsExpiringSoon(60);
   }, []);
 
   const loadInventoryData = async () => {
@@ -137,24 +194,8 @@ function App() {
     }
   };
 
-  // useEffect(() => {
-  //   if (itemsWithExpiration.length > 0) {
-  //     itemsWithExpiration.forEach((item) => {
-  //       dbOps.updateExpirationDate(item["Item Name"], item["Expiration Date"]);
-  //     });
-  //   }
-  // });
-
   const handleLoad = async () => {
     await loadInventoryData();
-  };
-
-  // Update the filtered items when the selected categories change
-  const getFilteredItems = (items) => {
-    if (selectedCategories.size === 0) {
-      return items; // show all items if no categories are selected
-    }
-    return items.filter((item) => selectedCategories.has(item["Category"]));
   };
 
   // handle new data from csv
@@ -244,89 +285,78 @@ function App() {
   };
 
   return (
-    <>
-      {/* START HEADER SECTION */}
-      <Typography variant="h3">Spoilage Tracker</Typography>
-      <Box style={{ minWidth: "500px", width: "100%" }}>
-        {/* Pass the state update function as a prop to DragAndDropCSV */}
-        <DragAndDropCSV
-          setInventoryData={handleNewData}
-          setFileName={setFileName}
+    <ThemeProvider theme={theme}>
+
+      {/* <Stack gap={2}>
+        <UpdatedExpiringCard
+          title="Jacobsen Salt Co. Pure Sea Salt"
+          expirationDate={dayjs().add(7, 'day')}  // Default to 7 days from today
+          onDateChange={(date) => console.log("New expiration date:", date)}
+          onExpired={() => console.log("Item marked as expired")}
         />
-        <Stack direction="row" spacing={2} justifyContent="center">
-          <Button variant="outlined" onClick={handleLoad}>
-            Load inventory
-          </Button>
-          {inventoryData.length > 0 && (
-            <Button variant="outlined" onClick={handleOnReset}>
-              Reset
-            </Button>
-          )}
-          <Button variant="outlined" onClick={handleShowAddItemForm}>
-            Add Item
-          </Button>
-          <NewItemForm
-            open={showAddItemForm}
-            handleClose={handleShowAddItemForm}
-            onAddItem={(itemName, expirationDate) =>
-              handleAddItem(itemName, expirationDate)
+
+        <UpdatedExpiredItemCard />
+
+        <UpdatedNewItemForm />
+
+        <UpdatedConfirmDiag />
+
+        <UpdatedNewItemCard />
+      </Stack> */}
+
+      {/* Router */}
+      <Routes>
+        <Route
+          element={
+            <Layout
+              handleShowAddItemForm={handleShowAddItemForm}
+            />
+          }
+        >
+          <Route path="/" element={<DashboardPage handNewDate={handleNewData} setFileName={setFileName} />} />
+          <Route
+            path="/dashboard"
+            element={
+              <DashboardPage />
             }
           />
-        </Stack>
-        <Typography>
-          {inventoryData.length > 0 ? (
-            <>
-              {fileName && <p>File Name: {fileName}</p>}
-              <p>
-                Number of items without Expiration Dates:{" "}
-                {itemsWithoutExpiration.length}
-              </p>
-            </>
-          ) : null}
-        </Typography>
+          <Route
+            path="/new-items"
+            element={
+              <NewItemsPage
+                expanded={expanded}
+                // handleChange={handleChange}
+                items={itemsWithoutExpiration}
+                handleExpirationDateChange={handleExpirationDateChange}
+                handleExpired={handleExpired}
+              />
+            }
+          />
+          <Route
+            path="/expiring-items"
+            element={
+              <ExpiringItemsPage
+                expanded={expanded}
+                // handleChange={handleChange}
+                items={itemsWithExpiration}
+                handleExpirationDateChange={handleExpirationDateChange}
+                handleExpired={handleExpired}
+              />
+            }
+          />
+          <Route
+            path="/expired-items"
+            element={
+              <ExpiredItemsPage
+                items={expiredItems}
+                handleExpirationDateChange={handleExpirationDateChange}
+                handleRestore={handleRestore}
+              />
+            }
+          />
+        </Route>
 
-        {/* START UNTRACKED ITEMS SECTION */}
-        <ItemsAccordion
-          expanded={expanded}
-          chipColor="success"
-          panel="panel1"
-          handleChange={handleChange}
-          title="Untracked Items"
-          searchLabel="Search Untracked Items"
-          items={itemsWithoutExpiration}
-          ItemComponent={ItemCard}
-          handleExpirationDateChange={handleExpirationDateChange}
-          handleExpired={handleExpired}
-        />
-
-        {/* START EXPIRING ITEMS SECTION */}
-        <ItemsAccordion
-          expanded={expanded}
-          chipColor="warning"
-          panel="panel2"
-          handleChange={handleChange}
-          title="Expiring Soon"
-          searchLabel="Search Items Expiring Soon"
-          items={itemsWithExpiration}
-          ItemComponent={ItemCardwithExpirationSet}
-          handleExpirationDateChange={handleExpirationDateChange}
-          handleExpired={handleExpired}
-        />
-
-        {/* START EXPIRED ITEMS SECTION */}
-        <ItemsAccordion
-          expanded={expanded}
-          chipColor="error"
-          panel="panel3"
-          handleChange={handleChange}
-          title="Remove Immediately"
-          searchLabel="Search Expired Items"
-          items={expiredItems}
-          ItemComponent={ExpiredItemCard}
-          handleExpirationDateChange={handleExpirationDateChange}
-          handleRestore={handleRestore}
-        />
-      </Box>
+      </Routes>
 
       <Snackbar
         open={alertOpen}
@@ -342,7 +372,7 @@ function App() {
           {alertMessage}
         </Alert>
       </Snackbar>
-    </>
+    </ThemeProvider>
   );
 }
 

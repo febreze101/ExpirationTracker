@@ -32,8 +32,8 @@ export default function ItemsAccordion({
 
     return (
         <Accordion
-            expanded={expanded === panel}
-            onChange={handleChange(panel)}>
+            expanded={expanded}
+            onChange={() => handleChange(!expanded)}>
 
             <AccordionSummary>
                 <Typography>{title} <Chip color={chipColor} label={filteredItems.length} size="small" /></Typography>

@@ -26,39 +26,42 @@ const dbOperations = {
     },
 
     // Update items's expiration date
-    updateExpirationDate: (itemName, expirationDate) => {
+    updateExpirationDate: (itemName, expirationDate, quantity = 1) => {
         try {
             console.log('DB received:', { itemName, expirationDate });
             console.log('item name:', itemName);
             console.log('Expiration Date:', expirationDate);
 
-            const checkItem = db.prepare(`SELECT item_name FROM inventory WHERE item_name = ?`);
-            const exist = checkItem.get(itemName);
-            console.log('exist:', exist);
-            if (!exist) {
+            const checkItem = db.prepare(`SELECT id FROM inventory WHERE item_name = ?`);
+            let item = checkItem.get(itemName);
+
+            console.log("ITEM FOUND: ", item);
+
+            let itemId;
+
+            if (!item) {
                 // item does not exist, add it
-                console.log('Item does not exist, adding it');
-                const insertItem = db.prepare(`
-                    INSERT INTO inventory (item_name, expiration_date) 
-                    VALUES (?, ?)`);
-                const result = insertItem.run(itemName, expirationDate);
+                console.log('Item does not exist, adding it to inventory');
+                const insertItem = db.prepare(`INSERT INTO inventory (item_name) VALUES (?)`);
+                const result = insertItem.run(itemName);
+                itemId = result.lastInsertRowid;
                 console.log("DB insert result:", result);
-                return result;
             } else {
-                // item exists, update the expiration date
-                const updateItem = db.prepare(`
-                    UPDATE inventory 
-                    SET expiration_date = ?,
-                    updated_at = CURRENT_TIMESTAMP
-                    WHERE item_name = ?
-                `);
-                const result = updateItem.run(expirationDate, itemName);
-                console.log("DB result:", result);
-                return result;
+                itemId = item.id;
             }
+
+            // insert date into batch
+            const insertBatch = db.prepare(`
+                INSERT INTO batches (inventory_id, expiration_date, quantity)
+                VALUES (?, ?, ?)
+            `);
+            insertBatch.run(itemId, expirationDate, quantity);
+
+            return true;
+
         } catch (error) {
             console.error("Error updating expiration date: ", error);
-            throw error;
+            return false;
         }
     },
 
@@ -67,13 +70,13 @@ const dbOperations = {
     // Get all inventory items
     getAllItems: () => {
         const stmt = db.prepare(`
-            SELECT 
-                id,
-                item_name as "Item Name",
-                expiration_date as "Expiration Date",
-                created_at,
-                updated_at
-            FROM sorted_inventory 
+            SELECT i.id, i.item_name AS "Item Name",
+                    b.expiration_date AS "Expiration Date",
+                    b.quantity,
+                    i.created_at, i.updated_at
+            FROM inventory i
+            LEFT JOIN batches b ON i.id = b.inventory_id
+            ORDER BY b.expiration_date ASC 
         `);
 
         const items = stmt.all();
@@ -91,43 +94,39 @@ const dbOperations = {
     getItemsWithoutExpiration: () => {
         const stmt = db.prepare(`
             SELECT * FROM inventory 
-            WHERE expiration_date IS NULL
+            WHERE id NOT IN (SELECT DISTINCT inventory_id FROM batches)
         `);
 
-        const items = stmt.all();
-        return items.map(item => ({
-            ...item,
-            created_at: new Date(item.created_at),
-            updated_at: new Date(item.updated_at)
-        }));
+        return stmt.all();
     },
 
     // Get items with expiration date
     getItemsWithExpiration: () => {
         const stmt = db.prepare(`
-            SELECT * FROM sorted_inventory 
-            WHERE expiration_date IS NOT NULL
+            SELECT i.item_name, b.expiration_date, b.quantity
+            FROM batches b
+            JOIN inventory i ON i.id = b.inventory_id
+            ORDER BY b.expiration_date ASC
         `);
 
         const items = stmt.all();
         return items.map(item => ({
             ...item,
             "Expiration Date": new Date(item["Expiration Date"]),
-            created_at: new Date(item.created_at),
-            updated_at: new Date(item.updated_at)
         }));
     },
 
     // Get items expiring in "x" amount of days
     getItemsExpiringSoon: (numDays) => {
-        if (typeof numDays !== 'number') {
-            throw new Error("numDays should be a number.");
-        }
+        if (typeof numDays !== 'number') throw new Error("numDays should be a number.");
 
         const stmt = db.prepare(`
-            SELECT * FROM sorted_inventory
-            WHERE expiration_date BETWEEN DATE('now') AND DATE('now', ? || ' days')
+            SELECT i.item_name, b.expiration_date, b.quantity
+            FROM batches b
+            JOIN inventory i ON i.id = b.inventory_id
+            WHERE b.expiration_date BETWEEN DATE('now') AND DATE('now', ? || ' days')
         `);
+
         return stmt.all(numDays.toString());  // Append 'days' to numDays
     },
 
@@ -138,14 +137,37 @@ const dbOperations = {
 
     // Clear all inventory
     clearInventory: () => {
-        const stmt = db.prepare('DELETE FROM inventory');
-        return stmt.run();
+        try {
+            db.transaction(() => {
+                db.prepare('DELETE FROM batches').run();
+                db.prepare('DELETE FROM inventory').run();
+            })();
+            return true;
+        } catch (error) {
+            console.error("Error clearing inventory:", error);
+            return false;
+        }
     },
 
     // Delete specific item
     deleteItem: (itemName) => {
-        const stmt = db.prepare('DELETE FROM inventory WHERE item_name = ?');
-        return stmt.run(itemName);
+        try {
+            const getItem = db.prepare(`SELECT id FROM inventory WHERE item_name = ?`).get(itemName);
+            if (!getItem) throw new Error('Item not found');
+
+            const deleteBatches = db.prepare('DELETE FROM batches WHERE inventory_id = ?')
+            const deleteItem = db.prepare('DELETE FROM inventory WHERE id = ?')
+
+            db.transaction(() => {
+                deleteBatches.run(getItem.id);
+                deleteItem.run(getItem.id);
+            })();
+
+            return truel
+        } catch (error) {
+            console.error("Error deleting item: ", itemName);
+            return false
+        }
     },
 
     // Move expired items to expired_inventory table
@@ -157,31 +179,34 @@ const dbOperations = {
 
         // get expired items
         const expiredItems = db.prepare(`
-            SELECT * FROM inventory WHERE date(expiration_date) <= date(?)
+            SELECT i.id, i.item_name, b.expiration_date, b.quantity, b.id AS batch_id
+            FROM batches b
+            JOIN inventory i ON i.id = b.inventory_id 
+            WHERE date(b.expiration_date) <= date(?)
         `).all(today.toISOString());
 
         console.log('Expired items:', expiredItems);
 
         if (expiredItems.length > 0) {
             // Copy expired items to expired_inventory table
-            const insertStmt = db.prepare(`
+            const insertExpired = db.prepare(`
                 INSERT INTO expired_inventory (item_name, expiration_date)
-                SELECT item_name, expiration_date 
-                FROM inventory 
-                WHERE date(expiration_date) <= date(?)
-
+                VALUES (?, ?)
+                ON CONFLICT(item_name) DO NOTHING
             `);
 
             // Delete expired items from inventory table
-            const deleteStmt = db.prepare(`
-                DELETE FROM inventory 
-                WHERE date(expiration_date) <= date(?)
-            `);
+            const deleteExpired = db.prepare(`DELETE FROM batches WHERE inventory_id = ?`);
 
             // Execute the statements
             db.transaction(() => {
-                insertStmt.run(today.toISOString());
-                deleteStmt.run(today.toISOString());
+                for (const item of expiredItems) {
+                    // insert expired item into expired_inventory table
+                    insertExpired.run(item.item_name, item.expiration_date);
+
+                    // delete the batch from batches
+                    deleteExpired.run(item.id);
+                }
             })();
 
             console.log(`Moved ${expiredItems.length} expired items`);
@@ -194,25 +219,17 @@ const dbOperations = {
     restoreExpiredItem: (itemName) => {
         console.log('Restoring expired item:', itemName);
         try {
-            const getItemStmt = db.prepare(`
-                SELECT * from expired_inventory
-                WHERE item_name = ?
-            `);
-
+            const getItemStmt = db.prepare(`SELECT * from expired_inventory WHERE item_name = ?`);
             const item = getItemStmt.get(itemName);
 
-            if (!item) {
-                throw new Error('Item not found in expired_inventory');
-            }
+            if (!item) throw new Error('Item not found in expired_inventory');
 
             const insertStmt = db.prepare(`
-                INSERT INTO inventory (item_name)
-                VALUES (?)
+                INSERT INTO inventory (item_name) VALUES (?)
             `);
 
             const deleteStmt = db.prepare(`
-                DELETE FROM expired_inventory
-                WHERE item_name = ?
+                DELETE FROM expired_inventory WHERE item_name = ?
             `);
 
             db.transaction(() => {
@@ -230,11 +247,11 @@ const dbOperations = {
 
     // Add this function to check table contents
     checkTables: () => {
-        const inventory = db.prepare('SELECT * FROM inventory').all();
-        const expired = db.prepare('SELECT * FROM expired_inventory').all();
-        console.log('Current inventory:', inventory);
-        console.log('Expired inventory:', expired);
-        return { inventory, expired };
+        return {
+            inventory: db.prepare('SELECT * FROM inventory').all(),
+            batches: db.prepare('SELECT * FROM batches').all(),
+            expired: db.prepare('SELECT * FROM expired_inventory').all()
+        };
     }
 
 

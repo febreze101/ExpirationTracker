@@ -22,7 +22,6 @@ const initDb = () => {
         CREATE TABLE IF NOT EXISTS inventory (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             item_name TEXT NOT NULL,
-            expiration_date DATETIME,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
@@ -32,12 +31,26 @@ const initDb = () => {
     db.exec(`
         CREATE TABLE IF NOT EXISTS expired_inventory (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            item_name TEXT NOT NULL,
+            item_name TEXT UNIQUE NOT NULL,
             expiration_date DATETIME,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     `);
+
+    // Create a batches table
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS batches (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            inventory_id INTEGER NOT NULL,
+            expiration_date DATETIME,
+            quantity INTEGER NOT NULL DEFAULT 1,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (inventory_id) REFERENCES inventory(id) ON DELETE CASCADE,
+            UNIQUE (inventory_id, expiration_date)
+        )    
+    `)
 
     // Create trigger to update the updated_at timestamp
     db.exec(`
