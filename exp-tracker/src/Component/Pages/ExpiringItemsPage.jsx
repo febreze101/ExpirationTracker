@@ -1,6 +1,9 @@
 import { useState } from "react";
 import ItemCardwithExpirationSet from "../ItemCardwithExpirationSet";
 import ItemsAccordion from "../ItemsAccordion";
+import UpdatedNewItemCard from "../ItemCards/UpdatedNewItemCard";
+import ItemsDisplay from "../ItemsDisplay";
+import UpdatedExpiringCard from "../ItemCards/UpdatedExpiringCard";
 
 
 export default function ExpiringItemsPage(props) {
@@ -11,7 +14,7 @@ export default function ExpiringItemsPage(props) {
     }
     return (
         <>
-            <ItemsAccordion
+            {/* <ItemsAccordion
                 // expanded={props.expanded}
                 chipColor="warning"
                 panel="panel2"
@@ -20,6 +23,14 @@ export default function ExpiringItemsPage(props) {
                 searchLabel="Search Items Expiring Soon"
                 items={props.items}
                 ItemComponent={ItemCardwithExpirationSet}
+                handleExpirationDateChange={props.handleExpirationDateChange}
+                handleExpired={props.handleExpired}
+            /> */}
+
+            <ItemsDisplay
+                items={props.items}
+                ItemComponent={UpdatedExpiringCard}
+                getExpirationDetails={props.getExpirationDetails}
                 handleExpirationDateChange={props.handleExpirationDateChange}
                 handleExpired={props.handleExpired}
             />

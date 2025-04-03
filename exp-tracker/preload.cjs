@@ -44,6 +44,18 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('restoreExpiredItem called:', { itemName });
             return ipcRenderer.invoke('db:restoreExpiredItem', itemName);
         },
+        getExpirationDetails: (item) => {
+            console.log('getExpirationDetails called:', { item });
+            return ipcRenderer.invoke('db:getExpirationDetails', item);
+        },
+        getItemsWithExpiration: () => {
+            console.log('getItemsWithExpiration called:');
+            return ipcRenderer.invoke('db:getItemsWithExpiration',);
+        },
+        removeFromInventory: (itemName) => {
+            console.log('removeFromInventory called:', { item: itemName });
+            return ipcRenderer.invoke('db:removeFromInventory', itemName);
+        },
 
         window: {
             minimize: () => ipcRenderer.invoke('window:minimize'),

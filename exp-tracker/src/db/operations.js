@@ -4,14 +4,15 @@ const dbOperations = {
     // Add multiple items to inventory
     addItems: (items) => {
         const insert = db.prepare(`
-            INSERT INTO inventory (item_name)
-            VALUES (@itemName)    
+            INSERT INTO inventory (item_name, date_set)
+            VALUES (@itemName, @dateSet)    
         `);
 
         const insertMany = db.transaction((items) => {
             for (const item of items) {
                 insert.run({
                     itemName: item['Item Name'],
+                    dateSet: 0
                 });
             }
         });
@@ -26,36 +27,38 @@ const dbOperations = {
     },
 
     // Update items's expiration date
-    updateExpirationDate: (itemName, expirationDate, quantity = 1) => {
+    updateExpirationDate: (itemName, expirationDates, quantity = 1) => {
         try {
-            console.log('DB received:', { itemName, expirationDate });
-            console.log('item name:', itemName);
-            console.log('Expiration Date:', expirationDate);
+            console.log('DB received:', { itemName, expirationDates });
 
-            const checkItem = db.prepare(`SELECT id FROM inventory WHERE item_name = ?`);
-            let item = checkItem.get(itemName);
+            const inventoryStmt = db.prepare(`SELECT id FROM inventory WHERE item_name = ?`);
 
-            console.log("ITEM FOUND: ", item);
+            const inventory = inventoryStmt.get(itemName);
 
-            let itemId;
+            console.log('ITEM ID FOUND: ', inventory.id)
 
-            if (!item) {
-                // item does not exist, add it
-                console.log('Item does not exist, adding it to inventory');
-                const insertItem = db.prepare(`INSERT INTO inventory (item_name) VALUES (?)`);
-                const result = insertItem.run(itemName);
-                itemId = result.lastInsertRowid;
-                console.log("DB insert result:", result);
-            } else {
-                itemId = item.id;
+            if (!inventory) {
+                throw new Error("Item not found in inventory.");
             }
 
+            const inventoryId = inventory.id
+
+            // ensure expirationDates is an array
+            if (!Array.isArray(expirationDates)) {
+                expirationDates = [expirationDates]
+            }
             // insert date into batch
-            const insertBatch = db.prepare(`
+            const insertStmt = db.prepare(`
                 INSERT INTO batches (inventory_id, expiration_date, quantity)
                 VALUES (?, ?, ?)
             `);
-            insertBatch.run(itemId, expirationDate, quantity);
+
+            for (const date of expirationDates) {
+                insertStmt.run(inventoryId, date, quantity);
+            }
+
+            const updateDateSet = db.prepare(`UPDATE inventory SET date_set = 1 WHERE id = ?`);
+            updateDateSet.run(inventory.id);
 
             return true;
 
@@ -69,51 +72,67 @@ const dbOperations = {
 
     // Get all inventory items
     getAllItems: () => {
-        const stmt = db.prepare(`
-            SELECT i.id, i.item_name AS "Item Name",
-                    b.expiration_date AS "Expiration Date",
-                    b.quantity,
-                    i.created_at, i.updated_at
-            FROM inventory i
-            LEFT JOIN batches b ON i.id = b.inventory_id
-            ORDER BY b.expiration_date ASC 
-        `);
-
+        const stmt = db.prepare(`SELECT * FROM inventory;`);
         const items = stmt.all();
 
-        // convert ISO date strings back to Date objects
-        return items.map(item => ({
-            ...item,
-            "Expiration Date": item["Expiration Date"] ? new Date(item["Expiration Date"]) : null,
-            created_at: new Date(item.created_at),
-            updated_at: new Date(item.updated_at)
-        }))
-    },
-
-    // Get items without expiration
-    getItemsWithoutExpiration: () => {
-        const stmt = db.prepare(`
-            SELECT * FROM inventory 
-            WHERE id NOT IN (SELECT DISTINCT inventory_id FROM batches)
-        `);
-
-        return stmt.all();
+        return items;
     },
 
     // Get items with expiration date
     getItemsWithExpiration: () => {
+        console.log('Getting Items with expiration')
         const stmt = db.prepare(`
-            SELECT i.item_name, b.expiration_date, b.quantity
+            SELECT
+                i.item_name, 
+                GROUP_CONCAT(b.expiration_date, ', ') as all_expiration_dates,
+                MIN(b.expiration_date) AS earliest_expiration,
+                SUM(b.quantity) AS total_quantity,
+                COUNT(b.expiration_date) AS num_dates_set
             FROM batches b
             JOIN inventory i ON i.id = b.inventory_id
-            ORDER BY b.expiration_date ASC
+            WHERE i.date_set = 1,
+            GROUP BY i.item_name
+            ORDER BY earliest_expiration ASC;
         `);
 
         const items = stmt.all();
-        return items.map(item => ({
-            ...item,
-            "Expiration Date": new Date(item["Expiration Date"]),
-        }));
+
+        console.log('items with exp: ', items)
+        return items;
+    },
+
+    // get expiration details about an item
+    getExpirationDetails: (item) => {
+        if (!item) return;
+
+        const itemId = item.id;
+        const itemName = item.item_name;
+        const dateSet = item.date_set;
+
+        try {
+            console.log(`Retrieving expiration details about ${itemName}`)
+
+            const stmt = db.prepare(`
+                SELECT    
+                    i.item_name, 
+                    GROUP_CONCAT(b.expiration_date, ', ') as all_expiration_dates,
+                    MIN(b.expiration_date) AS earliest_expiration,
+                    COUNT(b.expiration_date) AS num_dates_set
+                FROM batches b
+                JOIN inventory i on i.id = b.inventory_id
+                WHERE i.date_set = 1 and i.item_name = ?
+                GROUP BY i.item_name
+                ORDER BY earliest_expiration ASC;
+            `)
+
+            const itemDetails = stmt.get(itemName);
+
+            console.log("Item Details: ", itemDetails);
+            return itemDetails;
+        } catch (error) {
+            console.error('Error trying to retrieve expiration details for: ', itemName);
+            return null;
+        }
     },
 
     // Get items expiring in "x" amount of days
@@ -166,6 +185,20 @@ const dbOperations = {
             return truel
         } catch (error) {
             console.error("Error deleting item: ", itemName);
+            return false
+        }
+    },
+
+    removeFromInventory: (itemName) => {
+        console.log('Remove from inventory called.')
+        try {
+            const removeStmt = db.prepare(`DELETE FROM inventory WHERE item_name = ?`)
+            const result = removeStmt.run(itemName);
+
+            console.log(`Removed ${result.changes} items named "${itemName}" from inventory`);
+            return result.changes > 0;
+        } catch (error) {
+            console.error(`Error removing Item: ${itemName} from inventory`)
             return false
         }
     },

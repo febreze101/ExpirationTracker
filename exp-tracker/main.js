@@ -239,6 +239,16 @@ function setupIpcHandlers() {
         }
     });
 
+    ipcMain.handle('db:getExpirationDetails', async (event, item) => {
+        try {
+            console.log('Received request to get expiration details for: ', item);
+            return dbOps.getExpirationDetails(item);
+        } catch (error) {
+            console.error('Error retrieving expiration details: ', error)
+            return [];
+        }
+    });
+
     ipcMain.handle('db:getExpiredItems', async () => {
         return dbOps.getExpiredItems();
     });
@@ -251,7 +261,24 @@ function setupIpcHandlers() {
             console.error('Error fetching expiring items:', error);
             return [];
         }
-    })
+    });
+
+    ipcMain.handle('db:removeFromInventory', async (event, itemName) => {
+        try {
+            dbOps.removeFromInventory(itemName);
+        } catch (error) {
+            console.error('Error removing item from inventory:', error);
+        }
+    });
+
+    ipcMain.handle('db:getItemsWithExpiration', () => {
+        try {
+            return dbOps.getItemsWithExpiration();
+        } catch (error) {
+            console.error('Error fetching items with expiration dates: ', error);
+            return [];
+        }
+    });
 
     ipcMain.on('window:minimize', () => {
         mainWindow.minimize();

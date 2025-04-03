@@ -4,7 +4,7 @@ import { Box, Typography, Button } from "@mui/material";
 import ErrorDisplay from "./ErrorDisplay";
 import uploadCloud from './../assets/upload-to-cloud.svg'
 
-const DragAndDropCSV = ({ setInventoryData, setFileName }) => {
+const DragAndDropCSV = ({ handleNewData, setFileName }) => {
   const [error, setError] = useState(null);
 
   // On drop
@@ -18,7 +18,7 @@ const DragAndDropCSV = ({ setInventoryData, setFileName }) => {
       // csv fiels
       if (file.type === "text/csv") {
         setFileName(file.name);
-        parseCSV(file, setInventoryData, setError);
+        parseCSV(file, handleNewData, setError);
       } else if (
         //xlsl file
         file.type ===
@@ -27,7 +27,7 @@ const DragAndDropCSV = ({ setInventoryData, setFileName }) => {
       ) {
         setFileName(file.name);
         // Handle Excel file types
-        parseExcel(file, setInventoryData, setError);
+        parseExcel(file, handleNewData, setError);
       } else {
         setError("Please drop a valid CSV or Excel file");
       }

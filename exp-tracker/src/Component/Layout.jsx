@@ -1,11 +1,12 @@
-import React from "react"
-import { createTheme, ThemeProvider, Box, Typography } from "@mui/material"
+import React, { useState, useCallback } from "react"
+import { createTheme, ThemeProvider, Box, Typography, Modal, Fade } from "@mui/material"
 
 import { Outlet, NavLink } from "react-router"
 
 import CircleButton from "./CustomButtons/CircleButton"
 import AddIcon from '@mui/icons-material/Add';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import UpdatedNewItemForm from "./PopUps/UpdatedNewItemForm";
 
 const theme = createTheme({
     typography: {
@@ -58,6 +59,16 @@ const theme = createTheme({
 })
 
 export default function Layout(props) {
+    const [showAddItemForm, setShowAddItemForm] = useState(false);
+
+    const handleShowAddItemForm = useCallback(() => {
+        setShowAddItemForm(prev => !prev);
+    }, []);
+
+    function handleCancelNewItem() {
+        console.log("Closing modal...");
+        setShowAddItemForm(false);
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -76,7 +87,7 @@ export default function Layout(props) {
                                 textDecoration: isActive ? 'underline' : 'none'
                             })}
                         >
-                            <Typography color={theme.palette.washiPaper} variant="body1">Dashboard</Typography>
+                            <Typography color={theme.palette.washiPaper.main} variant="body1">Dashboard</Typography>
                         </NavLink>
                         <NavLink
                             to="/new-items"
@@ -86,7 +97,7 @@ export default function Layout(props) {
                                 textDecoration: isActive ? 'underline' : 'none'
                             })}
                         >
-                            <Typography color={theme.palette.washiPaper} variant="body1">New Items</Typography>
+                            <Typography color={theme.palette.washiPaper.main} variant="body1">New Items</Typography>
                         </NavLink>
                         <NavLink
                             to="/expiring-items"
@@ -108,7 +119,7 @@ export default function Layout(props) {
                         >
                             <Typography variant="body1">Expired Items</Typography>
                         </NavLink>
-                        <CircleButton color={'forest'} onClick={props.handleShowAddItemForm} icon={<AddIcon />} />
+                        <CircleButton color={'forest'} onClick={handleShowAddItemForm} icon={<AddIcon />} />
                         <CircleButton color={'washiPaper'} onClick={() => console.log('notification opened')} icon={<NotificationsOutlinedIcon color="black" />} />
                     </Box>
                 </Box>
@@ -118,6 +129,27 @@ export default function Layout(props) {
                     <Outlet />
                 </Box>
             </Box>
+
+            <Modal
+                open={showAddItemForm}
+                onClose={handleCancelNewItem}
+
+            >
+                <Fade in={showAddItemForm} timeout={500}>
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        height="100vh"
+                    >
+                        <UpdatedNewItemForm handleCancelNewItem={handleCancelNewItem} />
+
+                    </Box>
+
+                </Fade>
+            </Modal>
         </ThemeProvider>
     )
+
+
 }

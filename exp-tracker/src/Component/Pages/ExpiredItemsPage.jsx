@@ -1,16 +1,15 @@
 import { useState } from "react";
 import ExpiredItemCard from "../ExpiredItemCard";
 import ItemsAccordion from "../ItemsAccordion";
-
+import ItemsDisplay from "../ItemsDisplay";
+import UpdatedExpiredItemCard from "../ItemCards/UpdatedExpiredCard";
 
 export default function ExpiredItemsPage(props) {
     const [expanded, setExpanded] = useState(true)
-    function handleChange() {
-        setExpanded(!expanded)
-    }
+
     return (
         <>
-            <ItemsAccordion
+            {/* <ItemsAccordion
                 // expanded={expanded}
                 chipColor="error"
                 panel="panel3"
@@ -20,6 +19,13 @@ export default function ExpiredItemsPage(props) {
                 items={props.items}
                 ItemComponent={ExpiredItemCard}
                 handleExpirationDateChange={props.handleExpirationDateChange}
+                handleRestore={props.handleRestore}
+            /> */}
+            <ItemsDisplay
+                items={props.items}
+                ItemComponent={UpdatedExpiredItemCard}
+                handleExpirationDateChange={props.handleExpirationDateChange}
+                // handleExpired={props.handleExpired}
                 handleRestore={props.handleRestore}
             />
         </>

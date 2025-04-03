@@ -10,11 +10,8 @@ const CustomWideButton = styled(Button)(({ bgcolor, color, border }) => ({
     textTransform: 'uppercase',
 
     "& .buttonText": {
-        display: "inline-block",
         transition: "all 0.3s ease",
-        willChange: "transform",
         backfaceVisibility: "hidden",
-        transform: "translateZ(0)", // This will help with rendering clarity
         WebkitFontSmoothing: "antialiased",
         MozOsxFontSmoothing: "grayscale",
     },
@@ -22,7 +19,6 @@ const CustomWideButton = styled(Button)(({ bgcolor, color, border }) => ({
     '&:hover': {
         "& .buttonText": {
             textDecoration: "underline",
-            // transform: "scale(1.048)",
 
         }
     },
@@ -43,6 +39,7 @@ export default function WideButton({ children, onClick, ...props }) {
             {...props}
             onClick={onClick}
         >
+            {/* {children} */}
             <span className="buttonText">{children}</span>
         </CustomWideButton>
     )

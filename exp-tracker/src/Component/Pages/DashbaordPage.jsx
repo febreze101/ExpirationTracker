@@ -7,13 +7,9 @@ export default function DashboardPage(props) {
     return (
         <>
             <DragAndDropCSV
-                setInventoryData={props.handleNewData}
+                handleNewData={props.handleNewData}
                 setFileName={props.setFileName}
             />
-
-            {/* <ItemsDisplay
-                
-            /> */}
         </>
     )
 }

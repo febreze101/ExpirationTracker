@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Box from "@mui/material/Box";
 
 import "./App.css";
@@ -19,6 +19,7 @@ import {
   Alert,
   createTheme,
   ThemeProvider,
+  Modal,
 } from "@mui/material";
 
 
@@ -37,6 +38,7 @@ import UpdatedExpiredItemCard from "./Component/ItemCards/UpdatedExpiredCard";
 import UpdatedNewItemForm from "./Component/PopUps/UpdatedNewItemForm";
 import UpdatedConfirmDiag from "./Component/PopUps/UpdatedConfirmDiag";
 import UpdatedNewItemCard from "./Component/ItemCards/UpdatedNewItemCard";
+import ExpirationDetails from "./Component/PopUps/ExpirationDetails";
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
 if (!dbOps) {
@@ -97,24 +99,14 @@ function App() {
   const [inventoryData, setInventoryData] = useState([]);
   const [fileName, setFileName] = useState(null);
   const [itemsWithExpiration, setItemsWithExpiration] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState(new Set());
-  const [itemsWithoutExpiration, setItemsWithoutExpiration] = useState([]);
+  const [newItems, setNewItems] = useState([]);
   const [expiredItems, setExpiredItems] = useState([]);
   const [isExpired, setIsExpired] = useState(false);
-  const [showAddItemForm, setShowAddItemForm] = useState(false);
 
-  const [expanded, setExpanded] = useState(true);
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertSeverity, setAlertSeverity] = useState("error");
-
-  const handleChange = (panel) => (event, newExpanded) => {
-    // console.log("panel", panel);
-    // console.log("newExpanded", newExpanded);
-    setExpanded(!newExpanded);
-  };
+  const MemoizedLayout = React.memo(Layout);
 
   const handleExpired = async (item) => {
+    console.log('expiring item: ', item)
     try {
       setIsExpired(true);
       if (isExpired) {
@@ -142,18 +134,6 @@ function App() {
     }
   };
 
-  const handleShowAddItemForm = () => {
-    setShowAddItemForm(!showAddItemForm);
-  };
-
-  // Add handleAlertClose function
-  const handleAlertClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setAlertOpen(false);
-  };
-
   // move expired items to expired_inventory table
   const moveExpiredItems = async () => {
     try {
@@ -178,28 +158,49 @@ function App() {
     try {
       const allItems = await dbOps.getAllItems();
       setInventoryData(allItems);
+      console.log(allItems[0])
 
       // seperate items with and without expiration dates
       const withExpiration = allItems.filter((item) => {
-        return item["Expiration Date"];
+        return item["date_set"] === 1;
       });
-      const withoutExpiration = allItems.filter(
-        (item) => !item["Expiration Date"]
-      );
+      const withoutExpiration = allItems.filter((item) => {
+        return item["date_set"] === 0
+      });
 
       setItemsWithExpiration(withExpiration);
-      setItemsWithoutExpiration(withoutExpiration);
+      setNewItems(withoutExpiration);
+
+      // temp function call
+      // dbOps.getExpirationDetails(allItems[0])
+
     } catch (error) {
       console.error("Error loading inventory: ", error);
     }
   };
 
-  const handleLoad = async () => {
-    await loadInventoryData();
-  };
+  const getExpirationDetails = async (item) => {
+    console.log('In app retrieving details for: ', item.item_name)
+    const details = await dbOps.getExpirationDetails(item)
+    console.log('details retrieved: ', details)
+
+    return details
+  }
+
+  const loadItemsWithExpiration = async () => {
+    try {
+      console.log('loading items with expiration')
+      const items = await dbOps.getItemsWithExpiration();
+
+      console.log(items)
+
+      setItemsWithExpiration(items);
+    } catch (error) {
+      console.error("Error retrieving items with expiration dates: ", error)
+    }
+  }
 
   // handle new data from csv
-  // Todo: check the data for dupes first before adding to the table
   const handleNewData = async (data) => {
     try {
       await dbOps.addItems(data);
@@ -210,29 +211,31 @@ function App() {
     }
   };
 
-  const handleExpirationDateChange = async (itemName, expirationDate) => {
+  const handleExpirationDateChange = async (itemName, expirationDates) => {
+    if (!expirationDates || expirationDates.length < 1) {
+      console.error('No dates were selected.')
+      return
+    }
+
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
       // check if the expiration date is in the past
-      const dateToCheck = new Date(expirationDate);
-      if (dateToCheck <= today) {
-        setAlertMessage("Expiration date cannot be in the past");
-        setAlertSeverity("error");
-        setAlertOpen(true);
-        return;
-      }
+      const formattedDates = expirationDates.map(dateStr => {
+        const dateToCheck = new Date(dateStr);
+        if (dateToCheck <= today) {
+          setAlertMessage("Expiration date cannot be in the past");
+          setAlertSeverity("error");
+          setAlertOpen(true);
+          throw new Error('Invalid date: ' + dateStr)
+        }
 
-      // Format date for SQLite
-      const formattedDate = dateToCheck
-        .toISOString()
-        .slice(0, 19)
-        .replace("T", " ");
-      console.log("Sending to DB:", { itemName, formattedDate });
+        return dateToCheck.toISOString().slice(0, 19).replace("T", " ");
+      });
 
       // update the expiration date in the database
-      await dbOps.updateExpirationDate(itemName, formattedDate);
+      await dbOps.updateExpirationDate(itemName, formattedDates);
 
       // reload the inventory data
       await loadInventoryData();
@@ -267,12 +270,6 @@ function App() {
     }
   };
 
-  const handleOnReset = () => {
-    setInventoryData([]);
-    setFileName(null);
-    setItemsWithExpiration([]);
-  };
-
   const handleRestore = async (item) => {
     try {
       console.log("Restoring item:", item);
@@ -286,47 +283,27 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-
-      {/* <Stack gap={2}>
-        <UpdatedExpiringCard
-          title="Jacobsen Salt Co. Pure Sea Salt"
-          expirationDate={dayjs().add(7, 'day')}  // Default to 7 days from today
-          onDateChange={(date) => console.log("New expiration date:", date)}
-          onExpired={() => console.log("Item marked as expired")}
-        />
-
-        <UpdatedExpiredItemCard />
-
-        <UpdatedNewItemForm />
-
-        <UpdatedConfirmDiag />
-
-        <UpdatedNewItemCard />
-      </Stack> */}
-
       {/* Router */}
       <Routes>
         <Route
           element={
-            <Layout
-              handleShowAddItemForm={handleShowAddItemForm}
+            <MemoizedLayout
             />
           }
         >
-          <Route path="/" element={<DashboardPage handNewDate={handleNewData} setFileName={setFileName} />} />
+          <Route path="/" element={<DashboardPage handNewData={handleNewData} setFileName={setFileName} />} />
           <Route
             path="/dashboard"
             element={
-              <DashboardPage />
+              <DashboardPage handNewData={handleNewData} setFileName={setFileName} handleNewData={handleNewData} />
             }
           />
           <Route
             path="/new-items"
             element={
               <NewItemsPage
-                expanded={expanded}
                 // handleChange={handleChange}
-                items={itemsWithoutExpiration}
+                items={newItems}
                 handleExpirationDateChange={handleExpirationDateChange}
                 handleExpired={handleExpired}
               />
@@ -336,8 +313,7 @@ function App() {
             path="/expiring-items"
             element={
               <ExpiringItemsPage
-                expanded={expanded}
-                // handleChange={handleChange}
+                getExpirationDetails={getExpirationDetails}
                 items={itemsWithExpiration}
                 handleExpirationDateChange={handleExpirationDateChange}
                 handleExpired={handleExpired}
@@ -357,21 +333,6 @@ function App() {
         </Route>
 
       </Routes>
-
-      <Snackbar
-        open={alertOpen}
-        autoHideDuration={6000}
-        onClose={handleAlertClose}
-        anchorOrigin={{ vertical: "top", horizontal: "left" }}
-      >
-        <Alert
-          onClose={handleAlertClose}
-          severity={alertSeverity}
-          sx={{ width: "100%" }}
-        >
-          {alertMessage}
-        </Alert>
-      </Snackbar>
     </ThemeProvider>
   );
 }

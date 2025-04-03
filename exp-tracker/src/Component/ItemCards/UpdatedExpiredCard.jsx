@@ -2,30 +2,29 @@ import React from "react"
 import { Box, Typography, useTheme } from "@mui/material"
 import CustomWideButton from "../CustomButtons/CustomWideButton";
 
-export default function UpdatedExpiredItemCard() {
+export default function UpdatedExpiredItemCard({ title, onRestore }) {
 
     const theme = useTheme();
 
     return (
         <>
             <Box
-                width={354}
+                width={320}
                 height={204}
-                bgcolor={'black'}
+                bgcolor={theme.palette.black.main}
                 borderRadius={1}
                 boxShadow={1}
-                border={'1px solid white'}
             >
                 {/* Title section */}
                 <Box height={57} textAlign="center" alignContent={"center"}>
                     <Typography
                         variant="h3"
-                        fontSize={"1.5rem"}
+                        fontSize={"1.2rem"}
                         color={theme.palette.washiPaper.main}
                         noWrap={true}
                         sx={{ mx: 3 }}
                     >
-                        Jacobsen Salt Co. Pure Sea Salt
+                        {title}
                     </Typography>
                 </Box>
 
@@ -38,6 +37,7 @@ export default function UpdatedExpiredItemCard() {
                 >
                     <CustomWideButton
                         sx={{ mb: "12px", mt: "24px", width: "100%" }}
+                        onClick={onRestore}
                     >
                         Restore Item
                     </CustomWideButton>
