@@ -27,6 +27,13 @@ const dbOperations = {
         }
     },
 
+    // Add a single item
+    addItem: (itemName) => {
+        const insert = db.prepare("INSERT INTO inventory (item_name) VALUES (?)");
+        insert.run(itemName)
+        // console.log('backend: adding: ', itemName)
+    },
+
     // Update items's expiration date
     updateExpirationDate: (itemName, expirationDates, quantity = 1) => {
         try {

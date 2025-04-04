@@ -133,7 +133,7 @@ export default function Layout(props) {
             <Modal
                 open={showAddItemForm}
                 onClose={handleCancelNewItem}
-
+                keepMounted
             >
                 <Fade in={showAddItemForm} timeout={500}>
                     <Box
@@ -142,7 +142,7 @@ export default function Layout(props) {
                         alignItems="center"
                         height="100vh"
                     >
-                        <UpdatedNewItemForm handleCancelNewItem={handleCancelNewItem} />
+                        <UpdatedNewItemForm handleCancelNewItem={handleCancelNewItem} handleAddItem={props.handleAddItem} />
 
                     </Box>
 

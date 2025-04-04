@@ -20,7 +20,10 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('addItems called with:', items);
             return ipcRenderer.invoke('db:addItems', items);
         },
-
+        addItem: (itemName) => {
+            console.log('addItem called with:', itemName);
+            return ipcRenderer.invoke('db:addItem', itemName);
+        },
         updateExpirationDate: (itemName, date) => {
             console.log('updateExpirationDate called:', { itemName, date });
             return ipcRenderer.invoke('db:updateExpirationDate', itemName, date);

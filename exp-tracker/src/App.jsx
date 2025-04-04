@@ -1,17 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  Button,
-  Typography,
-  Chip,
-  Stack,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Snackbar,
-  Alert,
   createTheme,
   ThemeProvider,
-  Modal,
 } from "@mui/material";
 
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router';
@@ -78,12 +68,11 @@ const theme = createTheme({
 })
 
 function App() {
-  const [inventoryData, setInventoryData] = useState([]);
+  const [_, setInventoryData] = useState([]);
   const [fileName, setFileName] = useState(null);
   const [itemsWithExpiration, setItemsWithExpiration] = useState([]);
   const [newItems, setNewItems] = useState([]);
   const [expiredItems, setExpiredItems] = useState([]);
-  const [isExpired, setIsExpired] = useState(false);
 
   const MemoizedLayout = React.memo(Layout);
 
@@ -136,11 +125,10 @@ function App() {
     getExpiredItems();
   }, []);
 
-  const loadInventoryData = async () => {
+  const loadInventoryData = useCallback(async () => {
     try {
       const allItems = await dbOps.getAllItems();
       setInventoryData(allItems);
-      // console.log(allItems[0])
 
       // seperate items with and without expiration dates
       const withExpiration = allItems.filter((item) => {
@@ -153,31 +141,15 @@ function App() {
       setItemsWithExpiration(withExpiration);
       setNewItems(withoutExpiration);
 
-      // temp function call
-      // dbOps.getExpirationDetails(allItems[0])
-
     } catch (error) {
       console.error("Error loading inventory: ", error);
     }
-  };
+  });
 
   const getExpirationDetails = async (item) => {
     const details = await dbOps.getExpirationDetails(item)
 
     return details
-  }
-
-  const loadItemsWithExpiration = async () => {
-    try {
-      // console.log('loading items with expiration')
-      const items = await dbOps.getItemsWithExpiration();
-
-      console.log(items)
-
-      setItemsWithExpiration(items);
-    } catch (error) {
-      console.error("Error retrieving items with expiration dates: ", error)
-    }
   }
 
   // handle new data from csv
@@ -225,29 +197,10 @@ function App() {
     }
   };
 
-  const handleAddItem = async (itemName, expirationDate) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const dateToCheck = new Date(expirationDate);
+  const handleAddItem = async (itemName) => {
+    dbOps.addItem(itemName);
 
-    if (dateToCheck <= today) {
-      setAlertMessage("Expiration date cannot be in the past");
-      setAlertSeverity("error");
-      setAlertOpen(true);
-      return;
-    }
-    const formattedDate = expirationDate
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
-
-    console.log("Adding item:", itemName, formattedDate);
-    try {
-      await dbOps.updateExpirationDate(itemName, formattedDate);
-      await loadInventoryData();
-    } catch (error) {
-      console.error("Error adding item: ", error);
-    }
+    await loadInventoryData();
   };
 
   const handleRestore = async (item) => {
@@ -280,8 +233,7 @@ function App() {
       <Routes>
         <Route
           element={
-            <MemoizedLayout
-            />
+            <MemoizedLayout handleAddItem={handleAddItem} />
           }
         >
           <Route path="/" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />
@@ -295,7 +247,6 @@ function App() {
             path="/new-items"
             element={
               <NewItemsPage
-                // handleChange={handleChange}
                 items={newItems}
                 handleExpirationDateChange={handleExpirationDateChange}
                 handleExpired={handleExpired}
@@ -318,7 +269,6 @@ function App() {
             element={
               <ExpiredItemsPage
                 items={expiredItems}
-                handleExpirationDateChange={handleExpirationDateChange}
                 handleRestore={handleRestore}
                 handleOnDeleteItem={handleOnDeleteItem}
               />

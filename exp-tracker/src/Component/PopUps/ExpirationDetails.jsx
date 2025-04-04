@@ -121,7 +121,6 @@ export default function ExpirationDetails({ title, expirationDates = [], handleC
                     </Box>
                     <Stack gap={'16px'} pt={1.5}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-
                             <ButtonDatePicker
                                 value={dayjs(new Date())}
                                 onChange={handleDateChange} />

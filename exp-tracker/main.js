@@ -197,6 +197,9 @@ function setupIpcHandlers() {
     ipcMain.handle('db:addItems', (_, items) => {
         return dbOps.addItems(items);
     });
+    ipcMain.handle('db:addItem', (_, itemName) => {
+        return dbOps.addItem(itemName);
+    });
 
     ipcMain.handle('db:updateExpirationDate', (event, itemName, date) => {
         console.log("update exp date log: ", event)
