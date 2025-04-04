@@ -12,7 +12,7 @@ Spoilage Tracker helps users manage inventory by tracking expiration dates of mu
 - **Design work in Figma**
 ![MVP #1](exp-tracker/Screenshots/FigmaDesigns.png)
 
-- **The dashboard view is under development. I have plans to add key indicators of change in item spoilage over time as well as some graphs to visually reflect that date.**
+- **The dashboard view is under development. I have plans to add key indicators of change in item spoilage over time as well as some graphs to visually reflect that data.**
 ![Dashboard Page](exp-tracker/Screenshots/current_dashboard.png)
 
 - **Current view of recently uploaded inventory**
