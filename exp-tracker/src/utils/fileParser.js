@@ -3,11 +3,11 @@ import * as XLSX from "xlsx";
 
 const START_DATE = 25569;
 
-export const parseCSV = (file, setInventoryData, setError) => {
+export const parseCSV = (file, handleNewData, setError) => {
     Papa.parse(file, {
         complete: (results) => {
             console.log("Parsed CSV data:", results.data);
-            setInventoryData(results.data);
+            handleNewData(results.data);
         },
         header: true, // Use the first row as headers
         skipEmptyLines: true, // Skip empty lines in the CSV
@@ -18,7 +18,7 @@ export const parseCSV = (file, setInventoryData, setError) => {
     });
 }
 
-export const parseExcel = (file, setInventoryData, setError) => {
+export const parseExcel = (file, handleNewData, setError) => {
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
@@ -70,7 +70,7 @@ export const parseExcel = (file, setInventoryData, setError) => {
 
             console.log("Parsed Excel data:", finalFormattedData);
 
-            setInventoryData(finalFormattedData);
+            handleNewData(finalFormattedData);
             setError(null)
         } catch (error) {
             setError("Error reading or parsing the Excel file: ", error)

@@ -12,15 +12,6 @@ import { useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import ButtonDatePicker from "./PickerWithButtonField";
-const categoryEmojis = {
-  Dairy: "🥛",
-  Snacks: "🍿",
-  Meat: "🍖",
-  Beverages: "🥤",
-  Bakery: "🍞",
-  Frozen: "❄️",
-  Produce: "🍏",
-};
 
 export default function ItemCardwithExpirationSet({
   title,

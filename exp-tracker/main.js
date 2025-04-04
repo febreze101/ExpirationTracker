@@ -1,5 +1,6 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -7,7 +8,7 @@ const __dirname = path.dirname(__filename);
 import { app, BrowserWindow, ipcMain, Notification, Tray, Menu } from 'electron';
 import dbOps from './src/db/operations.js';
 import schedule from 'node-schedule';
-import { sendExpirationEmail } from './src/utils/emailService.js';
+import { sendEmail, } from './src/utils/emailService.js';
 const clockIcon = path.join(__dirname, './src/assets/clock.png');
 
 let mainWindow;
@@ -106,10 +107,9 @@ function createTray() {
 }
 
 // Schedule a job to move expired items every day at 12:00 AM
-
 function setupDailyCheck() {
-    console.log('Initial table state:');
-    dbOps.checkTables();
+    // console.log('Initial table state:');
+    // dbOps.checkTables();
     // check for expired items
     const checkExpiredItems = async () => {
         try {
@@ -118,8 +118,8 @@ function setupDailyCheck() {
             if (expiredItems.length > 0) {
                 // Show expired items notification
                 new Notification({
-                    title: 'Expired Items Found',
-                    body: `${expiredItems.length} items have expired.`,
+                    title: 'Spoilage Alert',
+                    body: `${expiredItems.length} items have expired!`,
                 }).show();
 
                 await sendExpirationEmail(expiredItems);
@@ -139,6 +139,54 @@ function setupDailyCheck() {
     schedule.scheduleJob('0 0 * * *', checkExpiredItems)
 }
 
+function setupPreemptiveExpirationCheck(numDays) {
+    console.log('Checking for items expiring in %d days', numDays);
+
+    // function to check for items expiring soon
+    const checkExpiringSoon = async () => {
+        try {
+            const expiredItems = await dbOps.moveExpiredItems();
+            const soonExpiringItems = await dbOps.getItemsExpiringSoon(numDays);
+
+            if (expiredItems.length > 0) {
+                // Show expired items notification
+                new Notification({
+                    title: 'Spoilage Alert',
+                    body: `${expiredItems.length} items have expired!`,
+                }).show();
+            } else {
+                console.log('No expired items found');
+            }
+
+
+            if (soonExpiringItems.length > 0) {
+                console.log(soonExpiringItems)
+
+                // send desktop notification
+                new Notification({
+                    title: 'Spoilage Alert',
+                    body: `${soonExpiringItems.length} items expiring in ${numDays} days!`,
+                }).show();
+
+                // send email notification
+                await sendEmail(expiredItems, numDays, soonExpiringItems);
+                console.log(`${soonExpiringItems.length} items expiring soon! Notifications sent!`);
+
+            } else {
+                console.log('No items will spoil in %d days', numDays);
+            }
+        } catch (error) {
+            console.error('Error finding items that will expire within the next %d days:', numDays, error)
+        }
+    };
+
+    // initial check
+    checkExpiringSoon();
+
+    // schedule daily check
+    schedule.scheduleJob('0 0 * * *', () => checkExpiringSoon());
+}
+
 // Set up IPC handlers
 function setupIpcHandlers() {
 
@@ -148,6 +196,9 @@ function setupIpcHandlers() {
 
     ipcMain.handle('db:addItems', (_, items) => {
         return dbOps.addItems(items);
+    });
+    ipcMain.handle('db:addItem', (_, itemName) => {
+        return dbOps.addItem(itemName);
     });
 
     ipcMain.handle('db:updateExpirationDate', (event, itemName, date) => {
@@ -166,8 +217,8 @@ function setupIpcHandlers() {
         return dbOps.clearInventory();
     });
 
-    ipcMain.handle('db:deleteItem', (itemName) => {
-        return dbOps.deleteItem(itemName);
+    ipcMain.handle('db:deleteItem', (event, item) => {
+        return dbOps.deleteItem(item);
     });
 
     ipcMain.handle(`db:restoreExpiredItem`, (event, itemName) => {
@@ -191,8 +242,55 @@ function setupIpcHandlers() {
         }
     });
 
+    ipcMain.handle('db:getExpirationDetails', async (event, item) => {
+        try {
+            console.log('Received request to get expiration details for: ', item);
+            return dbOps.getExpirationDetails(item);
+        } catch (error) {
+            console.error('Error retrieving expiration details: ', error)
+            return [];
+        }
+    });
+
+    ipcMain.handle('db:setAsExpired', async (event, item) => {
+        try {
+            console.log('Received request to set item as expired for: ', item);
+            return dbOps.setAsExpired(item);
+        } catch (error) {
+            console.error('Error setting as expired: ', error)
+            return false
+        }
+    });
+
     ipcMain.handle('db:getExpiredItems', async () => {
         return dbOps.getExpiredItems();
+    });
+
+    ipcMain.handle('db:getItemsExpiringSoon', async (event, numDays) => {
+        try {
+            const items = await dbOps.getItemsExpiringSoon(numDays);
+            return items;
+        } catch (error) {
+            console.error('Error fetching expiring items:', error);
+            return [];
+        }
+    });
+
+    ipcMain.handle('db:removeFromInventory', async (event, itemName) => {
+        try {
+            dbOps.removeFromInventory(itemName);
+        } catch (error) {
+            console.error('Error removing item from inventory:', error);
+        }
+    });
+
+    ipcMain.handle('db:getItemsWithExpiration', () => {
+        try {
+            return dbOps.getItemsWithExpiration();
+        } catch (error) {
+            console.error('Error fetching items with expiration dates: ', error);
+            return [];
+        }
     });
 
     ipcMain.on('window:minimize', () => {
@@ -211,6 +309,7 @@ app.whenReady().then(() => {
     createTray();
     setupIpcHandlers();
     setupDailyCheck();
+    setupPreemptiveExpirationCheck(30);
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

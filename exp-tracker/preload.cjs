@@ -12,11 +12,18 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('getExpiredItems called');
             return ipcRenderer.invoke('db:getExpiredItems');
         },
+        getItemsExpiringSoon: (numDays) => {
+            console.log('getItemsExpiringSoon called with numDays:', numDays);
+            return ipcRenderer.invoke('db:getItemsExpiringSoon', numDays);
+        },
         addItems: (items) => {
             console.log('addItems called with:', items);
             return ipcRenderer.invoke('db:addItems', items);
         },
-
+        addItem: (itemName) => {
+            console.log('addItem called with:', itemName);
+            return ipcRenderer.invoke('db:addItem', itemName);
+        },
         updateExpirationDate: (itemName, date) => {
             console.log('updateExpirationDate called:', { itemName, date });
             return ipcRenderer.invoke('db:updateExpirationDate', itemName, date);
@@ -26,9 +33,9 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('clearInventory called');
             return ipcRenderer.invoke('db:clearInventory');
         },
-        deleteItem: (itemName) => {
-            console.log('deleteItem called:', { itemName });
-            return ipcRenderer.invoke('db:deleteItem', itemName);
+        deleteItem: (item) => {
+            console.log('deleteItem called:', { item });
+            return ipcRenderer.invoke('db:deleteItem', item);
         },
 
         printDatabase: () => ipcRenderer.invoke('db:printDatabase'),
@@ -39,6 +46,22 @@ contextBridge.exposeInMainWorld('electron', {
         restoreExpiredItem: (itemName) => {
             console.log('restoreExpiredItem called:', { itemName });
             return ipcRenderer.invoke('db:restoreExpiredItem', itemName);
+        },
+        getExpirationDetails: (item) => {
+            console.log('getExpirationDetails called:', { item });
+            return ipcRenderer.invoke('db:getExpirationDetails', item);
+        },
+        setAsExpired: (item) => {
+            console.log('setAsExpired called:', { item });
+            return ipcRenderer.invoke('db:setAsExpired', item);
+        },
+        getItemsWithExpiration: () => {
+            console.log('getItemsWithExpiration called:');
+            return ipcRenderer.invoke('db:getItemsWithExpiration',);
+        },
+        removeFromInventory: (itemName) => {
+            console.log('removeFromInventory called:', { item: itemName });
+            return ipcRenderer.invoke('db:removeFromInventory', itemName);
         },
 
         window: {
