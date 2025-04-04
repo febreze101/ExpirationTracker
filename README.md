@@ -21,8 +21,6 @@ Spoilage Tracker helps users manage inventory by tracking expiration dates of mu
 - **Current view of the expired item section**
 ![Item Details View](exp-tracker/Screenshots/expiredInventory.png)
 
-
-*The intuitive dashboard makes tracking expirations simple and efficient.*
 ---
 ## 🛠 Tech Stack  
 - **Frontend**: React, MUI Components  
