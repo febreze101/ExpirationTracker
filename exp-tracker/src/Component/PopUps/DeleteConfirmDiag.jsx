@@ -2,7 +2,7 @@ import React from "react"
 import { Typography, Box, useTheme } from "@mui/material"
 import CustomWideButton from '../CustomButtons/CustomWideButton';
 
-export default function UpdatedConfirmDiag({ title, handleCancel, onDelete }) {
+export default function DeleteConfirmDiag({ title, handleCancel, onDelete }) {
 
     const theme = useTheme();
 

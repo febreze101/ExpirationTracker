@@ -1,16 +1,22 @@
 import React, { useState } from "react"
 import { Box, Fade, Modal, Typography, useTheme } from "@mui/material"
 import CustomWideButton from "../CustomButtons/CustomWideButton";
-import UpdatedConfirmDiag from "../PopUps/UpdatedConfirmDiag";
+import DeleteConfirmDiag from "../PopUps/DeleteConfirmDiag";
+import RestoreConfirmDiag from "../PopUps/restoreConfirmDiag";
 
 export default function UpdatedExpiredItemCard({ title, onRestore, onDelete }) {
 
     const theme = useTheme();
 
-    const [showConfirmation, setShowConfirmation] = useState(false)
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+    const [showRestoreConfirmation, setShowRestoreConfirmation] = useState(false)
 
-    const handleCancel = () => {
-        setShowConfirmation(false);
+    const handleDeleteCancel = () => {
+        setShowDeleteConfirmation(false);
+    }
+
+    const handleRestoreCancel = () => {
+        setShowRestoreConfirmation(false);
     }
 
     return (
@@ -44,14 +50,14 @@ export default function UpdatedExpiredItemCard({ title, onRestore, onDelete }) {
                 >
                     <CustomWideButton
                         sx={{ mb: "12px", mt: "24px", width: "100%" }}
-                        onClick={onRestore}
+                        onClick={() => setShowRestoreConfirmation(true)}
                     >
                         Restore Item
                     </CustomWideButton>
                     <CustomWideButton
                         sx={{ mb: 1, width: "100%" }}
                         bgcolor={theme.palette.red.main}
-                        onClick={() => setShowConfirmation(true)}
+                        onClick={() => setShowDeleteConfirmation(true)}
                     >
                         delete item
                     </CustomWideButton>
@@ -60,16 +66,31 @@ export default function UpdatedExpiredItemCard({ title, onRestore, onDelete }) {
 
             {/* Modal */}
             <Modal
-                open={showConfirmation}
+                open={showRestoreConfirmation}
             >
-                <Fade in={showConfirmation} timeout={500}>
+                <Fade in={showRestoreConfirmation} timeout={500}>
                     <Box
                         display="flex"
                         justifyContent="center"
                         alignItems="center"
                         height="100vh"
                     >
-                        <UpdatedConfirmDiag title={title} handleCancel={handleCancel} onDelete={onDelete} />
+                        <RestoreConfirmDiag title={title} handleCancel={handleRestoreCancel} onRestore={onRestore} />
+                    </Box>
+                </Fade>
+
+            </Modal>
+            <Modal
+                open={showDeleteConfirmation}
+            >
+                <Fade in={showDeleteConfirmation} timeout={500}>
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        height="100vh"
+                    >
+                        <DeleteConfirmDiag title={title} handleCancel={handleDeleteCancel} onDelete={onDelete} />
                     </Box>
                 </Fade>
 
