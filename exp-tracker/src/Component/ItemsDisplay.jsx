@@ -103,7 +103,7 @@ export default function ItemsDisplay(props) {
                     alignItems={'center'}
                     justifyContent={'space-between'}
                 >
-                    <Typography variant="h2" color="black">{props.title || 'Expiring Items'}</Typography>
+                    <Typography variant="h2" color="black">{props.pageTitle || 'Expiring Items'}</Typography>
 
                     <Box>
                         <Typography

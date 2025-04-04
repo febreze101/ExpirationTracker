@@ -36,7 +36,7 @@ export default function AddItemConfirmDiag({ title, handleCancel, onAdd }) {
                     textAlign="center"
                 >
                     <Typography variant="body1" color="black" sx={{ py: '24px' }}>
-                        Are you sure you want to stop tracking for{" "}
+                        Are you sure you want to add{" "}
                         <Typography component="span" fontWeight="bold">
                             {title}
                         </Typography>

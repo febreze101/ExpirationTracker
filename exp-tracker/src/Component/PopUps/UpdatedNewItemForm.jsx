@@ -36,8 +36,8 @@ export default function UpdatedNewItemForm({ handleCancelNewItem, handleAddItem 
         <>
             <Box
                 width={517}
-                height={276}
-                bgcolor={"#F1EAE3"}
+                minHeight={196}
+                bgcolor={theme.palette.forest.main}
                 borderRadius={1}
                 boxShadow={1}
             >
@@ -46,7 +46,7 @@ export default function UpdatedNewItemForm({ handleCancelNewItem, handleAddItem 
                     <Typography
                         variant="h3"
                         fontSize={"1.5rem"}
-                        color="black"
+                        color={theme.palette.washiPaper.main}
                         noWrap={true}
                         sx={{ mx: 3 }}
                     >
@@ -57,7 +57,7 @@ export default function UpdatedNewItemForm({ handleCancelNewItem, handleAddItem 
                 {/* White box containing buttons */}
                 <Box
                     bgcolor="white"
-                    height={215}
+                    minHeight={135}
                     sx={{ px: "24px", borderRadius: '0 0 3px 3px' }}
                 >
                     <Stack gap={'16px'}>
@@ -80,16 +80,16 @@ export default function UpdatedNewItemForm({ handleCancelNewItem, handleAddItem 
                                 cancel
                             </CustomWideButton>
                             <CustomWideButton
-                                sx={{ mb: 1, width: "100%" }}
+                                sx={{ mb: '24px', width: "100%" }}
                                 bgcolor={theme.palette.forest.main}
-                                onClick={() => setShowAddItemConfirm(true)}
+                                onClick={() => { itemName.length > 0 && setShowAddItemConfirm(true) }}
                             >
                                 add item
                             </CustomWideButton>
                         </Box>
                     </Stack>
-                </Box>
-            </Box>
+                </Box >
+            </Box >
 
             <Modal open={showAddItemConfirm} onClose={handleCancel}>
                 <Fade in={showAddItemConfirm} timeout={300}>

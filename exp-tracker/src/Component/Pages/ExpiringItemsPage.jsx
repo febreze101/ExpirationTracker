@@ -28,6 +28,7 @@ export default function ExpiringItemsPage(props) {
             /> */}
 
             <ItemsDisplay
+                pageTitle={'Expiring Items'}
                 items={props.items}
                 ItemComponent={UpdatedExpiringCard}
                 getExpirationDetails={props.getExpirationDetails}

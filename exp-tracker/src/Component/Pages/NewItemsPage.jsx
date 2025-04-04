@@ -11,6 +11,7 @@ export default function NewItemsPage(props) {
     return (
         <>
             <ItemsDisplay
+                pageTitle={'New Items'}
                 items={props.items}
                 ItemComponent={UpdatedNewItemCard}
                 handleExpirationDateChange={props.handleExpirationDateChange}
