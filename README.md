@@ -6,19 +6,19 @@ Spoilage Tracker helps users manage inventory by tracking expiration dates of mu
 
 ---
 ## 📸 Screenshots
-This was the initial MVP before I did any design work.
+- **This was the initial MVP before I did any design work.**
 ![MVP #1](exp-tracker/Screenshots/Spoiltracker.png)
 
-The dashboard view is under development. I have plans to add key indicators of change in item spoilage over time as well as some graphs to visually reflect that date.
+- **The dashboard view is under development. I have plans to add key indicators of change in item spoilage over time as well as some graphs to visually reflect that date.**
 ![Dashboard Page](exp-tracker/Screenshots/current_dashboard.png)
 
-Current view of recently uploaded inventory
+- **Current view of recently uploaded inventory**
 ![New Items Page](exp-tracker/Screenshots/NewItemsPage.png)
 
-Current view of the item details popup
+- **Current view of the item details popup**
 ![Item Details View](exp-tracker/Screenshots/ItemDetails.png)
 
-Current view of the expired item section
+- **Current view of the expired item section**
 ![Item Details View](exp-tracker/Screenshots/expiredInventory.png)
 
 
