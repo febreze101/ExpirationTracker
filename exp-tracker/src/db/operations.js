@@ -1,4 +1,5 @@
 import db from './database.js';
+import { format, startOfDay } from 'date-fns';
 
 const dbOperations = {
     // Add multiple items to inventory
@@ -54,11 +55,24 @@ const dbOperations = {
             `);
 
             for (const date of expirationDates) {
-                insertStmt.run(inventoryId, date, quantity);
+                const formattedDate = format(startOfDay(new Date(date)), 'yyyy-MM-dd HH:mm:ss')
+                console.log('Formatted date: ', formattedDate);
+                insertStmt.run(inventoryId, formattedDate, quantity);
             }
 
-            const updateDateSet = db.prepare(`UPDATE inventory SET date_set = 1 WHERE id = ?`);
-            updateDateSet.run(inventory.id);
+            // Update the days_until_next_expiration manually for this item
+            const updateExpirationDays = db.prepare(`
+                UPDATE inventory 
+                SET days_until_next_expiration = (
+                    SELECT CAST(CEIL(MIN(JULIANDAY(expiration_date) - JULIANDAY(DATE('now')))) AS INTEGER)
+                    FROM batches 
+                    WHERE inventory_id = ?
+                    AND DATE(expiration_date) >= DATE('now')
+                ),
+                date_set = 1
+                WHERE id = ?
+            `);
+            updateExpirationDays.run(inventoryId, inventoryId);
 
             return true;
 
@@ -67,8 +81,6 @@ const dbOperations = {
             return false;
         }
     },
-
-
 
     // Get all inventory items
     getAllItems: () => {
@@ -90,7 +102,7 @@ const dbOperations = {
                 COUNT(b.expiration_date) AS num_dates_set
             FROM batches b
             JOIN inventory i ON i.id = b.inventory_id
-            WHERE i.date_set = 1,
+            WHERE i.date_set = 1
             GROUP BY i.item_name
             ORDER BY earliest_expiration ASC;
         `);
@@ -104,6 +116,7 @@ const dbOperations = {
     // get expiration details about an item
     getExpirationDetails: (item) => {
         if (!item) return;
+        const formattedItemDetails = {};
 
         const itemId = item.id;
         const itemName = item.item_name;
@@ -115,20 +128,25 @@ const dbOperations = {
             const stmt = db.prepare(`
                 SELECT    
                     i.item_name, 
-                    GROUP_CONCAT(b.expiration_date, ', ') as all_expiration_dates,
-                    MIN(b.expiration_date) AS earliest_expiration,
-                    COUNT(b.expiration_date) AS num_dates_set
+                    GROUP_CONCAT(b.expiration_date, ', ') as all_expiration_dates
                 FROM batches b
                 JOIN inventory i on i.id = b.inventory_id
                 WHERE i.date_set = 1 and i.item_name = ?
                 GROUP BY i.item_name
-                ORDER BY earliest_expiration ASC;
+                ORDER BY all_expiration_dates ASC;
             `)
 
             const itemDetails = stmt.get(itemName);
+            const dates = itemDetails.all_expiration_dates.split(', ');
 
-            console.log("Item Details: ", itemDetails);
-            return itemDetails;
+            console.log('dates:', dates)
+
+            formattedItemDetails.item_name = itemDetails.item_name
+            formattedItemDetails.dates = dates
+
+
+            console.log("formattedItemDetails: ", formattedItemDetails);
+            return formattedItemDetails;
         } catch (error) {
             console.error('Error trying to retrieve expiration details for: ', itemName);
             return null;
@@ -169,20 +187,18 @@ const dbOperations = {
     },
 
     // Delete specific item
-    deleteItem: (itemName) => {
+    deleteItem: (item) => {
         try {
-            const getItem = db.prepare(`SELECT id FROM inventory WHERE item_name = ?`).get(itemName);
-            if (!getItem) throw new Error('Item not found');
+            if (item && item) {
+                const itemName = item.item_name;
 
-            const deleteBatches = db.prepare('DELETE FROM batches WHERE inventory_id = ?')
-            const deleteItem = db.prepare('DELETE FROM inventory WHERE id = ?')
+                console.log('item being deleted: ', itemName)
 
-            db.transaction(() => {
-                deleteBatches.run(getItem.id);
-                deleteItem.run(getItem.id);
-            })();
+                const removeStmt = db.prepare(`DELETE FROM expired_inventory WHERE item_name = ?`)
+                const result = removeStmt.run(itemName);
 
-            return truel
+                return true
+            }
         } catch (error) {
             console.error("Error deleting item: ", itemName);
             return false
@@ -192,7 +208,7 @@ const dbOperations = {
     removeFromInventory: (itemName) => {
         console.log('Remove from inventory called.')
         try {
-            const removeStmt = db.prepare(`DELETE FROM inventory WHERE item_name = ?`)
+            const removeStmt = db.prepare("DELETE FROM expired_inventory WHERE item_name = ?")
             const result = removeStmt.run(itemName);
 
             console.log(`Removed ${result.changes} items named "${itemName}" from inventory`);
@@ -204,7 +220,7 @@ const dbOperations = {
     },
 
     // Move expired items to expired_inventory table
-    moveExpiredItems: () => {
+    moveExpiredItems: (item = null) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -229,16 +245,30 @@ const dbOperations = {
             `);
 
             // Delete expired items from inventory table
-            const deleteExpired = db.prepare(`DELETE FROM batches WHERE inventory_id = ?`);
+            const deleteBatch = db.prepare(`DELETE FROM batches WHERE inventory_id = ?`);
 
             // Execute the statements
             db.transaction(() => {
                 for (const item of expiredItems) {
+                    const formattedDate = item.expiration_date
                     // insert expired item into expired_inventory table
-                    insertExpired.run(item.item_name, item.expiration_date);
+                    insertExpired.run(item.item_name, formattedDate);
 
                     // delete the batch from batches
-                    deleteExpired.run(item.id);
+                    deleteBatch.run(item.id);
+
+                    // Update the days_until_next_expiration for this item
+                    const updateExpirationDays = db.prepare(`
+                        UPDATE inventory 
+                        SET days_until_next_expiration = (
+                            SELECT CAST(CEIL(MIN(JULIANDAY(expiration_date) - JULIANDAY(DATE('now')))) AS INTEGER)
+                            FROM batches 
+                            WHERE inventory_id = ?
+                            AND DATE(expiration_date) >= DATE('now')
+                        )
+                        WHERE id = ?
+                    `);
+                    updateExpirationDays.run(item.id, item.id);
                 }
             })();
 
@@ -246,6 +276,34 @@ const dbOperations = {
             return expiredItems;
         }
         return [];
+
+    },
+
+    // Set item as expired
+    setAsExpired: (item) => {
+        try {
+            const itemName = item.item_name;
+            const today = startOfDay(new Date());
+            const formattedDate = format(today, 'yyyy-MM-dd HH:mm:ss');
+
+            // Move item out of inventory
+            console.log(`Removing expired item ${itemName} from inventory.`);
+            const removeFromInventory = db.prepare(`DELETE FROM inventory WHERE item_name = ?`)
+            removeFromInventory.run(itemName)
+
+            // add item to expired items
+            console.log(`Adding item ${itemName} to expired Table on ${formattedDate}.`)
+            const addToExpiredInventory = db.prepare(`
+                INSERT INTO expired_inventory (item_name, expiration_date)
+                VALUES (?, ?);    
+            `);
+            addToExpiredInventory.run(itemName, formattedDate)
+            return true
+        } catch (error) {
+            console.error('Error setting item as expired:', error);
+            return false
+        }
+
 
     },
 

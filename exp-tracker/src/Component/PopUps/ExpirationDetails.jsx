@@ -6,9 +6,17 @@ import ButtonDatePicker from "../PickerWithButtonField";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-export default function ExpirationDetails({ title, expirationDates = [], handleCancel, onDateChange, itemDetails }) {
+export default function ExpirationDetails({ title, expirationDates = [], handleCancel, onDateChange, }) {
     const theme = useTheme();
-    const [dates, setDates] = useState(expirationDates);
+
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`;
+    };
+
+    const [dates, setDates] = useState(() => expirationDates.map(date => formatDate(date)));
+
 
     const handleDateChange = (newDate) => {
         if (newDate && newDate.isValid()) {
@@ -18,16 +26,6 @@ export default function ExpirationDetails({ title, expirationDates = [], handleC
             setDates(updatedDates);
         }
     };
-
-    useEffect(() => {
-        if (itemDetails?.all_expiration_dates) {
-            const parsedDates = itemDetails.all_expiration_dates.split(", ").map(date => date.trim());
-
-            console.log('parsed Dates: ', parsedDates)
-
-            setDates(parsedDates);
-        }
-    }, [itemDetails?.all_expiration_dates])
 
     const handleAddDates = () => {
         onDateChange(dates);
@@ -95,7 +93,6 @@ export default function ExpirationDetails({ title, expirationDates = [], handleC
                             boxSizing: 'border-box'
                         }}
                     >
-                        {/* {itemDetails} */}
                         {dates.length > 0 ?
                             (dates.map((date, index) => (
                                 <Chip

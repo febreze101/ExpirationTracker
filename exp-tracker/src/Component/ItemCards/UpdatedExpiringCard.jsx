@@ -10,8 +10,8 @@ import ExpirationDetails from "../PopUps/ExpirationDetails";
 export default function UpdatedExpiringCard({
     title,
     expirationDates,
-    daysDiff,
     numDatesSet,
+    daysUntilNextExpiration,
     onDateChange,
     onExpired,
     onDetailRequest,
@@ -22,12 +22,6 @@ export default function UpdatedExpiringCard({
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [buttonText, setButtonText] = useState("Set Expiration");
     const [showDetails, setShowDetails] = useState(false);
-
-    useEffect(() => {
-        console.log('calculated diffDays: ', daysDiff)
-        console.log('item details: ', itemDetails)
-
-    })
 
     const handleDateChange = (newDate) => {
         if (newDate && newDate.isValid()) {
@@ -47,6 +41,7 @@ export default function UpdatedExpiringCard({
     };
 
     const handleShowDetails = useCallback(() => {
+        console.log(`Item details: ${itemDetails}`)
         onDetailRequest()
         setShowDetails(prev => !prev);
     }, [])
@@ -112,7 +107,7 @@ export default function UpdatedExpiringCard({
                                 }}
                             >
                                 <Typography variant="body1" fontSize={".75rem"}>
-                                    Expiring in {daysDiff} days
+                                    Expiring in {daysUntilNextExpiration} days
                                 </Typography>
                             </Box>
                             <Box
@@ -126,7 +121,7 @@ export default function UpdatedExpiringCard({
                                 }}
                             >
                                 <Typography variant="body1" fontSize={".75rem"}>
-                                    {itemDetails?.num_dates_set ? itemDetails.num_dates_set : <Typography>fdaf</Typography>} dates set
+                                    {numDatesSet} dates set
                                 </Typography>
                             </Box>
                         </Box>
@@ -150,7 +145,7 @@ export default function UpdatedExpiringCard({
                         height="100vh"
                     >
 
-                        <ExpirationDetails title={title} handleCancel={handleCancel} itemDetails={itemDetails} />
+                        <ExpirationDetails title={title} handleCancel={handleCancel} itemDetails={itemDetails} expirationDates={expirationDates} />
                     </Box>
                 </Fade>
             </Modal>

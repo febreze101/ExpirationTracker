@@ -6,20 +6,12 @@ export default function ItemsDisplay(props) {
     const theme = useTheme();
     const [searchQuery, setSearchQuery] = useState("");
 
-    const [selectedDates, setSelectedDates] = useState([]);
     const [currentItemDetails, setCurrentItemDetails] = useState('')
     const [daysDiff, setDaysDiff] = useState([]);
 
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
-    const handleDateChange = (itemName, newDates) => {
-        setSelectedDates(prev => ({
-            ...prev,
-            [itemName]: newDates, // Store dates by item name
-        }));
-    };
 
     // Lazy load the item component
     const LazyItemComponent = lazy(() =>
@@ -28,50 +20,51 @@ export default function ItemsDisplay(props) {
         })
     );
 
-    // useEffect(() => {
-    //     console.log("currentItemDetails: ", currentItemDetails)
-    // })
-
     const handleGetExpirationDetails = useCallback(async (item) => {
-        console.log("Fetching expiration details for:", item);
+        if (!props.getExpirationDetails) {
+            console.warn("getExpirationDetails function is not provided.");
+            return;
+        }
+
         const itemId = item["Item Name"] || item["item_name"] || "Unknown Item";
 
         try {
             const currDetails = await props.getExpirationDetails(item);
 
-            console.log('Resolved Item details: ', currDetails)
+            console.log("Current Details: ", currDetails)
 
             setCurrentItemDetails(prev => ({
                 ...prev,
                 [itemId]: currDetails
             }));
 
-            console.log("currentItemDetails: ", currentItemDetails)
         } catch (error) {
             console.error("Error fetching item details:", error);
         }
     }, [props.getExpirationDetails]);
 
     const calcDaysDiff = useCallback(async (item) => {
-        console.log("Fetching expiration details for:", item);
+        if (!props.getExpirationDetails) {
+            console.warn("getExpirationDetails function is not provided.");
+            return;
+        }
+
         const itemId = item["Item Name"] || item["item_name"] || "Unknown Item";
 
         try {
             const currDetails = await props.getExpirationDetails(item);
-            console.log("earliest exp: ", currDetails.earliest_expiration);
-
             const upcomingExp = new Date(currDetails.earliest_expiration);
             const diffTime = upcomingExp - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
             setDaysDiff(prev => ({
                 ...prev,
-                [itemId]: diffDays,  // Store per item
+                [itemId]: diffDays,
             }));
         } catch (error) {
             console.error("Error fetching item details: ", error);
         }
-    }, []);
+    }, [props.getExpirationDetails]);
 
 
     const filteredItems = props.items.filter(item =>
@@ -79,6 +72,14 @@ export default function ItemsDisplay(props) {
         item['item_Name']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item['item_name']?.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    useEffect(() => {
+        // Trigger fetching of expiration details for all items initially
+        filteredItems.forEach(item => {
+            handleGetExpirationDetails(item);
+        });
+    }, []);
+
 
     return (
         <>
@@ -166,19 +167,18 @@ export default function ItemsDisplay(props) {
                         }>
                             {filteredItems.map((item, index) => {
                                 const itemId = item["Item Name"] || item["item_name"] || "Unknown Item";
-                                useEffect(() => {
-                                    handleGetExpirationDetails(item)
-                                    calcDaysDiff(item)
-                                }, [item])
+                                const itemDetails = currentItemDetails[itemId] || null;
+
 
                                 return (
                                     <props.ItemComponent
                                         key={`${itemId}-${index}`}
                                         title={itemId}
-                                        expirationDates={selectedDates[itemId] || []}
+                                        expirationDates={itemDetails?.dates || []}
                                         daysDiff={daysDiff[itemId] || 0}
                                         numDatesSet={item.num_dates_set}
-                                        itemDetails={currentItemDetails[itemId] || null}
+                                        daysUntilNextExpiration={item.days_until_next_expiration}
+                                        itemDetails={itemDetails}
                                         onDateChange={
                                             props.handleExpirationDateChange
                                                 ? (newDate) =>
@@ -189,9 +189,14 @@ export default function ItemsDisplay(props) {
                                                 : undefined
                                         }
                                         onDetailRequest={() => handleGetExpirationDetails(item)}
+                                        onDelete={
+                                            props.handleOnDeleteItem
+                                                ? () => props.handleOnDeleteItem(item)
+                                                : undefined
+                                        }
                                         onExpired={
                                             props.handleExpired
-                                                ? () => props.handleExpirationDateChange(itemId, today)
+                                                ? () => props.handleExpired(item)
                                                 : undefined
                                         }
                                         onRestore={

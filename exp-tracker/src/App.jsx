@@ -1,12 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import Box from "@mui/material/Box";
-
-import "./App.css";
-import DragAndDropCSV from "./Component/DragnDropCSV";
-import ItemCard from "./Component/ItemCard";
-import ExpiredItemCard from "./Component/ExpiredItemCard";
-import ItemCardwithExpirationSet from "./Component/ItemCardwithExpirationSet";
-import dayjs from "dayjs";
 import {
   Button,
   Typography,
@@ -22,23 +14,13 @@ import {
   Modal,
 } from "@mui/material";
 
-
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router';
-
-import NewItemForm from "./Component/NewItemForm";
-
-import ItemsAccordion from "./Component/ItemsAccordion";
 import DashboardPage from "./Component/Pages/DashbaordPage";
 import NewItemsPage from "./Component/Pages/NewItemsPage";
 import ExpiringItemsPage from "./Component/Pages/ExpiringItemsPage";
 import ExpiredItemsPage from "./Component/Pages/ExpiredItemsPage";
 import Layout from "./Component/Layout";
-import UpdatedExpiringCard from "./Component/ItemCards/UpdatedExpiringCard";
-import UpdatedExpiredItemCard from "./Component/ItemCards/UpdatedExpiredCard";
-import UpdatedNewItemForm from "./Component/PopUps/UpdatedNewItemForm";
-import UpdatedConfirmDiag from "./Component/PopUps/UpdatedConfirmDiag";
-import UpdatedNewItemCard from "./Component/ItemCards/UpdatedNewItemCard";
-import ExpirationDetails from "./Component/PopUps/ExpirationDetails";
+
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
 if (!dbOps) {
@@ -108,29 +90,29 @@ function App() {
   const handleExpired = async (item) => {
     console.log('expiring item: ', item)
     try {
-      setIsExpired(true);
-      if (isExpired) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
 
-        const dateString = today.toISOString();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-        console.log("Expiring item:", item, "with date:", dateString);
+      const dateString = today.toISOString();
 
-        // update the expiration date in the database
-        await dbOps.updateExpirationDate(item["Item Name"], dateString);
+      console.log("Expiring item:", item, "with date:", dateString);
 
-        await dbOps.moveExpiredItems();
+      const ret = await dbOps.setAsExpired(item);
 
-        // Reload inventory data
-        await loadInventoryData();
-        await getExpiredItems();
-      }
+      console.log(`Expired result: ${ret}`)
+
+      await dbOps.moveExpiredItems();
+
+      // Reload inventory data
+      await loadInventoryData();
+      await getExpiredItems();
+
+
+      await dbOps.moveExpiredItems(item);
     } catch (error) {
       console.error("Error updating expiration date: ", error);
 
-      // revert the isExpired state
-      setIsExpired(!isExpired);
     }
   };
 
@@ -158,7 +140,7 @@ function App() {
     try {
       const allItems = await dbOps.getAllItems();
       setInventoryData(allItems);
-      console.log(allItems[0])
+      // console.log(allItems[0])
 
       // seperate items with and without expiration dates
       const withExpiration = allItems.filter((item) => {
@@ -180,16 +162,14 @@ function App() {
   };
 
   const getExpirationDetails = async (item) => {
-    console.log('In app retrieving details for: ', item.item_name)
     const details = await dbOps.getExpirationDetails(item)
-    console.log('details retrieved: ', details)
 
     return details
   }
 
   const loadItemsWithExpiration = async () => {
     try {
-      console.log('loading items with expiration')
+      // console.log('loading items with expiration')
       const items = await dbOps.getItemsWithExpiration();
 
       console.log(items)
@@ -281,6 +261,19 @@ function App() {
     }
   };
 
+  const handleOnDeleteItem = async (item) => {
+    try {
+      dbOps.deleteItem(item);
+      console.log("finished deleting Item: ", item);
+
+      // reload expired items
+      await getExpiredItems();
+
+    } catch (error) {
+      console.error("Error deleting item: ", item);
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
       {/* Router */}
@@ -291,11 +284,11 @@ function App() {
             />
           }
         >
-          <Route path="/" element={<DashboardPage handNewData={handleNewData} setFileName={setFileName} />} />
+          <Route path="/" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />
           <Route
             path="/dashboard"
             element={
-              <DashboardPage handNewData={handleNewData} setFileName={setFileName} handleNewData={handleNewData} />
+              <DashboardPage handleNewData={handleNewData} setFileName={setFileName} />
             }
           />
           <Route
@@ -327,6 +320,7 @@ function App() {
                 items={expiredItems}
                 handleExpirationDateChange={handleExpirationDateChange}
                 handleRestore={handleRestore}
+                handleOnDeleteItem={handleOnDeleteItem}
               />
             }
           />

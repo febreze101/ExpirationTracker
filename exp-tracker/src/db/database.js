@@ -22,7 +22,9 @@ const initDb = () => {
         CREATE TABLE IF NOT EXISTS inventory (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             item_name TEXT NOT NULL,
-            date_set INTEGER NOT NULL CHECK(date_set IN (0, 1)),
+            date_set INTEGER NOT NULL CHECK(date_set IN (0, 1)) DEFAULT 0,
+            num_dates_set INTEGER DEFAULT 0,
+            days_until_next_expiration INTEGER DEFAULT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
@@ -50,7 +52,7 @@ const initDb = () => {
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (inventory_id) REFERENCES inventory(id) ON DELETE CASCADE,
             UNIQUE (inventory_id, expiration_date)
-        )    
+        )  
     `)
 
     // Create trigger to update the updated_at timestamp
@@ -64,16 +66,52 @@ const initDb = () => {
         END
     `);
 
-    // create an view for inventory sorted by expiration
+    // create a trigger for num_dates_set
     db.exec(`
-        CREATE VIEW IF NOT EXISTS sorted_inventory AS
-        SELECT * FROM inventory ORDER BY expiration_date ASC    
+        CREATE TRIGGER IF NOT EXISTS update_num_dates_set
+        AFTER INSERT ON batches
+        BEGIN
+            UPDATE inventory
+            SET num_dates_set = (
+                SELECT COUNT(*) FROM batches WHERE inventory_id = NEW.inventory_id
+            )
+            WHERE id = NEW.inventory_id;
+        END;
     `);
 
-    // create an view expired_invenotry sorted by expiration
+    // Drop the existing trigger if it exists
+    db.exec(`DROP TRIGGER IF EXISTS update_days_until_next_expiration`);
+
+    // Create a fixed trigger for days until next expiration
     db.exec(`
-        CREATE VIEW IF NOT EXISTS sorted_expired_inventory AS
-        SELECT * FROM expired_inventory ORDER BY expiration_date DESC    
+        CREATE TRIGGER IF NOT EXISTS update_days_until_next_expiration
+        AFTER INSERT ON batches
+        BEGIN
+            UPDATE inventory
+            SET days_until_next_expiration = (
+                SELECT CAST(CEIL(MIN(JULIANDAY(expiration_date) - JULIANDAY(DATE('now')))) AS INTEGER)
+                FROM batches 
+                WHERE inventory_id = NEW.inventory_id
+                AND DATE(expiration_date) >= DATE('now')
+            )
+            WHERE id = NEW.inventory_id;
+        END;
+    `);
+
+    // Add a trigger for when batches are deleted
+    db.exec(`
+        CREATE TRIGGER IF NOT EXISTS update_days_after_delete
+        AFTER DELETE ON batches
+        BEGIN
+            UPDATE inventory
+            SET days_until_next_expiration = (
+                SELECT CAST(CEIL(MIN(JULIANDAY(expiration_date) - JULIANDAY(DATE('now')))) AS INTEGER)
+                FROM batches 
+                WHERE inventory_id = OLD.inventory_id
+                AND DATE(expiration_date) >= DATE('now')
+            )
+            WHERE id = OLD.inventory_id;
+        END;
     `);
 };
 

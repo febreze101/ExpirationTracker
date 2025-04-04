@@ -25,8 +25,8 @@ export default function ExpiredItemsPage(props) {
                 items={props.items}
                 ItemComponent={UpdatedExpiredItemCard}
                 handleExpirationDateChange={props.handleExpirationDateChange}
-                // handleExpired={props.handleExpired}
                 handleRestore={props.handleRestore}
+                handleOnDeleteItem={props.handleOnDeleteItem}
             />
         </>
     )

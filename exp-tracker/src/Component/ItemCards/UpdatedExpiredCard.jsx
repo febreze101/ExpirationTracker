@@ -1,10 +1,17 @@
-import React from "react"
-import { Box, Typography, useTheme } from "@mui/material"
+import React, { useState } from "react"
+import { Box, Fade, Modal, Typography, useTheme } from "@mui/material"
 import CustomWideButton from "../CustomButtons/CustomWideButton";
+import UpdatedConfirmDiag from "../PopUps/UpdatedConfirmDiag";
 
-export default function UpdatedExpiredItemCard({ title, onRestore }) {
+export default function UpdatedExpiredItemCard({ title, onRestore, onDelete }) {
 
     const theme = useTheme();
+
+    const [showConfirmation, setShowConfirmation] = useState(false)
+
+    const handleCancel = () => {
+        setShowConfirmation(false);
+    }
 
     return (
         <>
@@ -44,11 +51,29 @@ export default function UpdatedExpiredItemCard({ title, onRestore }) {
                     <CustomWideButton
                         sx={{ mb: 1, width: "100%" }}
                         bgcolor={theme.palette.red.main}
+                        onClick={() => setShowConfirmation(true)}
                     >
                         delete item
                     </CustomWideButton>
                 </Box>
             </Box>
+
+            {/* Modal */}
+            <Modal
+                open={showConfirmation}
+            >
+                <Fade in={showConfirmation} timeout={500}>
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        height="100vh"
+                    >
+                        <UpdatedConfirmDiag title={title} handleCancel={handleCancel} onDelete={onDelete} />
+                    </Box>
+                </Fade>
+
+            </Modal>
         </>
     )
 

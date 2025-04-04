@@ -214,8 +214,8 @@ function setupIpcHandlers() {
         return dbOps.clearInventory();
     });
 
-    ipcMain.handle('db:deleteItem', (itemName) => {
-        return dbOps.deleteItem(itemName);
+    ipcMain.handle('db:deleteItem', (event, item) => {
+        return dbOps.deleteItem(item);
     });
 
     ipcMain.handle(`db:restoreExpiredItem`, (event, itemName) => {
@@ -246,6 +246,16 @@ function setupIpcHandlers() {
         } catch (error) {
             console.error('Error retrieving expiration details: ', error)
             return [];
+        }
+    });
+
+    ipcMain.handle('db:setAsExpired', async (event, item) => {
+        try {
+            console.log('Received request to set item as expired for: ', item);
+            return dbOps.setAsExpired(item);
+        } catch (error) {
+            console.error('Error setting as expired: ', error)
+            return false
         }
     });
 
