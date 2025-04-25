@@ -53,7 +53,6 @@ const DragAndDropCSV = ({ handleNewData, setFileName }) => {
           alignItems: 'center',
           width: '100%',
           height: '300px',
-          margin: '20px auto',
           borderRadius: '8px',
           border: 2,
           borderStyle: 'dashed',
