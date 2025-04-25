@@ -29,7 +29,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.2",
-    "react-router": "^7.4.0",
+    "react-router": "^7.5.2",
     "react-virtualized-auto-sizer": "^1.0.25",
     "react-window": "^1.8.11",
     "xlsx": "^0.18.5"

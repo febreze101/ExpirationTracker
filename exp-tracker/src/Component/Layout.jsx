@@ -72,7 +72,7 @@ export default function Layout(props) {
 
     return (
         <ThemeProvider theme={theme}>
-            <Box display={'flex'} flexDirection={'column'} height={'98vh'} p={2} sx={{ boxSizing: 'border-box' }}>
+            <Box display={'flex'} flexDirection={'column'} height={'98vh'} p={2} sx={{ boxSizing: 'border-box', overflow: 'hidden' }}>
                 <Box display={"flex"} flexDirection={'row'} flexGrow={0} alignItems={'center'} justifyContent={'space-between'} mb={2} >
                     {/* header */}
                     <Typography variant="h1" color={theme.palette.washiPaper.main} >Campfield Spoilage Tracker</Typography>
