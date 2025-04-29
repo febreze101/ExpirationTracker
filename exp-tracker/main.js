@@ -191,14 +191,53 @@ function setupPreemptiveExpirationCheck(numDays) {
 function setupIpcHandlers() {
 
     ipcMain.handle('db:getAllItems', () => {
-        return dbOps.getAllItems();
+        try {
+            return dbOps.getAllItems();
+        } catch (error) {
+            console.error('Error getting all items', error)
+            throw error;
+        }
     });
 
+    ipcMain.handle('db:isFirstLaunch', () => {
+        try {
+            return dbOps.isFirstLaunch();
+        } catch (error) {
+            console.error('Error checking isFirstLaunch', error);
+            throw error;
+        }
+    });
+
+    ipcMain.handle('db:addUser', async (_, user) => {
+        try {
+            return dbOps.addUser(user);
+        } catch (error) {
+            console.error('Error adding user', error);
+            throw error;
+        }
+    })
+
+    ipcMain.handle('db:isOnboardingComplete', () => {
+        try {
+            return dbOps.isOnboardingComplete();
+        } catch (error) {
+            console.error('Error checking isOnboardingComplete', error)
+        }
+    })
+
     ipcMain.handle('db:addItems', (_, items) => {
-        return dbOps.addItems(items);
+        try {
+            return dbOps.addItems(items);
+        } catch (error) {
+            console.error('Error adding items', error)
+        }
     });
     ipcMain.handle('db:addItem', (_, itemName) => {
-        return dbOps.addItem(itemName);
+        try {
+            return dbOps.addItem(itemName);
+        } catch (error) {
+            console.error('Error add Item', error)
+        }
     });
 
     ipcMain.handle('db:updateExpirationDate', (event, itemName, date) => {

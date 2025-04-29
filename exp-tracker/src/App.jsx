@@ -10,6 +10,7 @@ import NewItemsPage from "./Component/Pages/NewItemsPage";
 import ExpiringItemsPage from "./Component/Pages/ExpiringItemsPage";
 import ExpiredItemsPage from "./Component/Pages/ExpiredItemsPage";
 import Layout from "./Component/Layout";
+import OnboardingForm from "./Component/Onboarding/OnboardingForm";
 
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
@@ -76,14 +77,37 @@ const theme = createTheme({
   }
 })
 
+
 function App() {
   const [_, setInventoryData] = useState([]);
   const [fileName, setFileName] = useState(null);
   const [itemsWithExpiration, setItemsWithExpiration] = useState([]);
   const [newItems, setNewItems] = useState([]);
   const [expiredItems, setExpiredItems] = useState([]);
-
+  const [showOnboarding, setShowOnboarding] = useState(localStorage.getItem('hasCompletedOnboarding') !== "true");
   const MemoizedLayout = React.memo(Layout);
+
+  useEffect(() => {
+    // console.log('showOnboarding', showOnboarding)
+    const determineOnboardingStatus = async () => {
+
+      const firstLaunch = await dbOps.isFirstLaunch();
+      if (firstLaunch) {
+        setShowOnboarding(true);
+        return;
+      }
+
+      const onboardingCompleted = await dbOps.isOnboardingComplete();
+      console.log("onboardingCompleted", onboardingCompleted);
+
+      setShowOnboarding(!onboardingCompleted);
+
+      localStorage.setItem('hasCompletedOnboarding', 'true')
+    }
+
+    determineOnboardingStatus();
+  }, [])
+
 
   const handleExpired = async (item) => {
     console.log('expiring item: ', item)
@@ -212,6 +236,14 @@ function App() {
     await loadInventoryData();
   };
 
+  const handleAddUser = async (user) => {
+    try {
+      dbOps.addUser(user);
+    } catch (error) {
+      console.error('Error adding user: ', error);
+    }
+  }
+
   const handleRestore = async (item) => {
     try {
       console.log("Restoring item:", item);
@@ -239,53 +271,58 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       {/* Router */}
-      <Routes>
-        <Route
-          element={
-            <MemoizedLayout handleAddItem={handleAddItem} />
-          }
-        >
-          <Route path="/" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />
-          <Route
-            path="/dashboard"
-            element={
-              <DashboardPage handleNewData={handleNewData} setFileName={setFileName} />
-            }
-          />
-          <Route
-            path="/new-items"
-            element={
-              <NewItemsPage
-                items={newItems}
-                handleExpirationDateChange={handleExpirationDateChange}
-                handleExpired={handleExpired}
+      {showOnboarding ? (
+        <OnboardingForm showOnboarding={showOnboarding} setShowOnboarding={setShowOnboarding} handleAddUser={handleAddUser} />
+      ) :
+        (
+          <Routes>
+            <Route
+              element={
+                <MemoizedLayout handleAddItem={handleAddItem} />
+              }
+            >
+              <Route path="/" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <DashboardPage handleNewData={handleNewData} setFileName={setFileName} />
+                }
               />
-            }
-          />
-          <Route
-            path="/expiring-items"
-            element={
-              <ExpiringItemsPage
-                getExpirationDetails={getExpirationDetails}
-                items={itemsWithExpiration}
-                handleExpirationDateChange={handleExpirationDateChange}
-                handleExpired={handleExpired}
+              <Route
+                path="/new-items"
+                element={
+                  <NewItemsPage
+                    items={newItems}
+                    handleExpirationDateChange={handleExpirationDateChange}
+                    handleExpired={handleExpired}
+                  />
+                }
               />
-            }
-          />
-          <Route
-            path="/expired-items"
-            element={
-              <ExpiredItemsPage
-                items={expiredItems}
-                handleRestore={handleRestore}
-                handleOnDeleteItem={handleOnDeleteItem}
+              <Route
+                path="/expiring-items"
+                element={
+                  <ExpiringItemsPage
+                    getExpirationDetails={getExpirationDetails}
+                    items={itemsWithExpiration}
+                    handleExpirationDateChange={handleExpirationDateChange}
+                    handleExpired={handleExpired}
+                  />
+                }
               />
-            }
-          />
-        </Route>
+              <Route
+                path="/expired-items"
+                element={
+                  <ExpiredItemsPage
+                    items={expiredItems}
+                    handleRestore={handleRestore}
+                    handleOnDeleteItem={handleOnDeleteItem}
+                  />
+                }
+              />
+            </Route>
 
-      </Routes>
+          </Routes>
+        )}
     </ThemeProvider>
   );
 }

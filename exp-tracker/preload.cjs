@@ -4,6 +4,18 @@ console.log('Preload script is running');
 
 contextBridge.exposeInMainWorld('electron', {
     dbOps: {
+        isFirstLaunch: () => {
+            console.log('isFirstLaunch called');
+            return ipcRenderer.invoke('db:isFirstLaunch');
+        },
+        isOnboardingComplete: () => {
+            console.log('isOnboardingComplete called');
+            return ipcRenderer.invoke('db:isOnboardingComplete');
+        },
+        addUser: (user) => {
+            console.log('addUser called');
+            return ipcRenderer.invoke('db:addUser', user);
+        },
         getAllItems: () => {
             console.log('getAllItems called');
             return ipcRenderer.invoke('db:getAllItems');
