@@ -113,7 +113,7 @@ function setupDailyCheck() {
     // check for expired items
     const checkExpiredItems = async () => {
         try {
-            const expiredItems = await dbOps.moveExpiredItems();
+            const expiredItems = dbOps.moveExpiredItems();
 
             if (expiredItems.length > 0) {
                 // Show expired items notification
@@ -168,8 +168,10 @@ function setupPreemptiveExpirationCheck(numDays) {
                     body: `${soonExpiringItems.length} items expiring in ${numDays} days!`,
                 }).show();
 
+                const emails = dbOps.getNotificationEmails();
+
                 // send email notification
-                await sendEmail(expiredItems, numDays, soonExpiringItems);
+                await sendEmail(expiredItems, numDays, soonExpiringItems, emails);
                 console.log(`${soonExpiringItems.length} items expiring soon! Notifications sent!`);
 
             } else {

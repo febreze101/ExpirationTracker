@@ -73,6 +73,7 @@ const initDb = () => {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
             email TEXT UNIQUE,
+            gets_notification INTEGER NOT NULL CHECK(gets_notification IN (0, 1)) DEFAULT 1,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

@@ -48,6 +48,12 @@ const dbOperations = {
         insertUserAndEmails();
     },
 
+    // get emails
+    getNotificationEmails: () => {
+        const emails = db.prepare("SELECT email FROM emails WHERE user_id = 1").all();
+        return emails.map(email => email.email);
+    },
+
     // check onboarding complete
     isOnboardingComplete: () => {
         const user = db.prepare("SELECT onboarding_completed FROM users WHERE id = 1").get();
