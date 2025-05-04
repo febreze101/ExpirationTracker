@@ -55,6 +55,31 @@ const initDb = () => {
         )  
     `)
 
+    // Create a users table
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY CHECK(id = 1),
+            workspace_name TEXT UNIQUE,
+            reminder_frequency TEXT NOT NULL CHECK(reminder_frequency IN ('daily', 'weekly', 'bi-weekly')) DEFAULT 'daily',
+            onboarding_completed INTEGER NOT NULL CHECK(onboarding_completed IN (0, 1)) DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `)
+
+    // create emails table
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS emails (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            email TEXT UNIQUE,
+            gets_notification INTEGER NOT NULL CHECK(gets_notification IN (0, 1)) DEFAULT 1,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    `)
+
     // Create trigger to update the updated_at timestamp
     db.exec(`
         CREATE TRIGGER IF NOT EXISTS update_timestamp

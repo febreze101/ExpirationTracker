@@ -48,7 +48,7 @@ const isSameDay = (date1, date2) => {
 let lastEmailSentDate = loadLastEmailSentDate();
 
 // function to send email
-export const sendEmail = async (expiredItems, numDays, expiringSoon) => {
+export const sendEmail = async (expiredItems, numDays, expiringSoon, emails) => {
     const today = new Date();
 
     try {
@@ -72,7 +72,7 @@ export const sendEmail = async (expiredItems, numDays, expiringSoon) => {
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: process.env.EMAIL_RECIPIENT,
+            to: emails,
             subject: `Spoilage Alert!`,
             html: `
                 ${expiredItems.length > 0 ?

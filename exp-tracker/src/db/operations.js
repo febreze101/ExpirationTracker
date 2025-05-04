@@ -2,6 +2,64 @@ import db from './database.js';
 import { format, startOfDay } from 'date-fns';
 
 const dbOperations = {
+    // Check if is First launch
+    isFirstLaunch: () => {
+        try {
+            const { count } = db.prepare(`SELECT COUNT(*) AS count FROM users`).get();
+            return count === 0;
+        } catch (error) {
+            console.error('Error checking first launch: ', error)
+            return true;
+        }
+    },
+
+    // add user
+    addUser: (user) => {
+        const workspace_name = user.workspace_name;
+        const reminder_frequency = user.reminder_frequency ?? 'daily';
+        const onboarding_completed = user.onboardingComplete ?? 0;
+        const emails = user.emails ?? [];
+
+        const insertUserAndEmails = db.transaction(() => {
+            const insertUserStmt = db.prepare(`
+                INSERT INTO users (id, workspace_name, reminder_frequency, onboarding_completed)
+                VALUES (1, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    workspace_name = excluded.workspace_name,
+                    reminder_frequency = excluded.reminder_frequency,
+                    onboarding_completed = excluded.onboarding_completed,
+                    updated_at = CURRENT_TIMESTAMP
+            `);
+
+            // insert user and get userId
+            const result = insertUserStmt.run(workspace_name, reminder_frequency, onboarding_completed);
+            const userId = result.lastInsertRowid;
+
+            const insertEmailStmt = db.prepare(`
+                INSERT INTO emails (user_id, email)
+                VALUES (?, ?)
+            `);
+
+            for (const email of emails) {
+                insertEmailStmt.run(userId, email);
+            }
+        });
+
+        insertUserAndEmails();
+    },
+
+    // get emails
+    getNotificationEmails: () => {
+        const emails = db.prepare("SELECT email FROM emails WHERE user_id = 1").all();
+        return emails.map(email => email.email);
+    },
+
+    // check onboarding complete
+    isOnboardingComplete: () => {
+        const user = db.prepare("SELECT onboarding_completed FROM users WHERE id = 1").get();
+        return user?.onboarding_completed === 1;
+    },
+
     // Add multiple items to inventory
     addItems: (items) => {
         const insert = db.prepare(`

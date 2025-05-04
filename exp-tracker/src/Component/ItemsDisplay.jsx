@@ -7,7 +7,7 @@ export default function ItemsDisplay(props) {
     const [searchQuery, setSearchQuery] = useState("");
 
     const [currentItemDetails, setCurrentItemDetails] = useState('')
-    const [daysDiff, setDaysDiff] = useState([]);
+    // const [daysDiff, setDaysDiff] = useState([]);
 
 
     const today = new Date();
@@ -43,28 +43,28 @@ export default function ItemsDisplay(props) {
         }
     }, [props.getExpirationDetails]);
 
-    const calcDaysDiff = useCallback(async (item) => {
-        if (!props.getExpirationDetails) {
-            console.warn("getExpirationDetails function is not provided.");
-            return;
-        }
+    // const calcDaysDiff = useCallback(async (item) => {
+    //     if (!props.getExpirationDetails) {
+    //         console.warn("getExpirationDetails function is not provided.");
+    //         return;
+    //     }
 
-        const itemId = item["Item Name"] || item["item_name"] || "Unknown Item";
+    //     const itemId = item["Item Name"] || item["item_name"] || "Unknown Item";
 
-        try {
-            const currDetails = await props.getExpirationDetails(item);
-            const upcomingExp = new Date(currDetails.earliest_expiration);
-            const diffTime = upcomingExp - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    //     try {
+    //         const currDetails = await props.getExpirationDetails(item);
+    //         const upcomingExp = new Date(currDetails.earliest_expiration);
+    //         const diffTime = upcomingExp - today;
+    //         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            setDaysDiff(prev => ({
-                ...prev,
-                [itemId]: diffDays,
-            }));
-        } catch (error) {
-            console.error("Error fetching item details: ", error);
-        }
-    }, [props.getExpirationDetails]);
+    //         setDaysDiff(prev => ({
+    //             ...prev,
+    //             [itemId]: diffDays,
+    //         }));
+    //     } catch (error) {
+    //         console.error("Error fetching item details: ", error);
+    //     }
+    // }, [props.getExpirationDetails]);
 
 
     const filteredItems = props.items.filter(item =>
@@ -75,8 +75,13 @@ export default function ItemsDisplay(props) {
 
     useEffect(() => {
         // Trigger fetching of expiration details for all items initially
-        filteredItems.forEach(item => {
+        // filteredItems.forEach(item => {
+        //     handleGetExpirationDetails(item);
+        // });
+
+        props.items.forEach(item => {
             handleGetExpirationDetails(item);
+            // calcDaysDiff(item);
         });
     }, []);
 
@@ -172,10 +177,10 @@ export default function ItemsDisplay(props) {
 
                                 return (
                                     <props.ItemComponent
-                                        key={`${itemId}-${index}`}
+                                        key={itemId}
                                         title={itemId}
                                         expirationDates={itemDetails?.dates || []}
-                                        daysDiff={daysDiff[itemId] || 0}
+                                        // daysDiff={daysDiff[itemId] || 0}
                                         numDatesSet={item.num_dates_set}
                                         daysUntilNextExpiration={item.days_until_next_expiration}
                                         itemDetails={itemDetails}
