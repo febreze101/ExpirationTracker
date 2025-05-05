@@ -17,6 +17,8 @@ let mainWindow;
 let tray;
 let isQuiting = false;
 
+const gotTheLock = app.requestSingleInstanceLock();
+
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -32,12 +34,12 @@ function createWindow() {
 
     if (isDev) {
         mainWindow.loadURL('http://localhost:5173')
+        mainWindow.webContents.openDevTools();
     } else {
         mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
     }
 
     mainWindow.maximize();
-    mainWindow.webContents.openDevTools();
 
     // Prevent window from being garbage collected
     mainWindow.on('close', (event) => {
@@ -351,23 +353,34 @@ function setupIpcHandlers() {
 
 }
 
-app.whenReady().then(() => {
-    createWindow();
-    createTray();
-    setupIpcHandlers();
-    setupDailyCheck();
-    setupPreemptiveExpirationCheck(30);
+if (!gotTheLock) {
+    app.quit();
+} else {
+    app.on('second-instance', () => {
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) mainWindow.restore();
+            mainWindow.focus();
+        }
+    });
+
+    app.whenReady().then(() => {
+        createWindow();
+        createTray();
+        setupIpcHandlers();
+        setupDailyCheck();
+        setupPreemptiveExpirationCheck(30);
+    })
+
+    app.on('window-all-closed', (event) => {
+        if (process.platform !== 'darwin') {
+            event.preventDefault();
+        }
+    });
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
-});
-
-app.on('window-all-closed', (event) => {
-    if (process.platform !== 'darwin') {
-        event.preventDefault();
-    }
-});
+};
 
 app.on('before-quit', () => {
     isQuiting = true;

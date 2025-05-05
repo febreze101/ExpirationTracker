@@ -7,6 +7,8 @@ const SERVICE = 'inexperiencedExpert-mail';
 const EMAIL_KEY = 'email';
 const PASSWORD_KEY = 'password';
 
+var refEmail;
+
 // Create transporter
 async function createTransporter() {
     const email = await keytar.getPassword(SERVICE, EMAIL_KEY);
@@ -15,6 +17,8 @@ async function createTransporter() {
     if (!email || !password) {
         throw new Error('SMTP credentials not found in keytar');
     }
+
+    refEmail = email;
 
     return nodemailer.createTransport({
         host: 'smtp.zoho.com',
@@ -76,42 +80,43 @@ export const sendEmail = async (expiredItems, numDays, expiringSoon, emails) => 
             </tr>
         `).join('') : '';
 
-        const mailOptions = {
-            from: email,
-            to: emails,
-            subject: `Spoilage Alert!`,
-            html: `
-                ${expiredItems.length > 0 ?
-                    `<h2>Remove Immediately</h2>
-                    <table border="1" style="border-collapse: collapse;">
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Expiration Date</th>
-                        </tr>
-                        ${itemTable}
-                    </table>`
-                    : ''
-                }
-
-                ${expiredItems.length > 0 ? `
-                    <hr class="solid"></hr>
-                ` : ''}
-                
-                ${expiringSoon.length > 0 ?
-                    `<h2>Items expiring in the next ${numDays} days!</h2>
-                    <table border="1" style="border-collapse: collapse;">
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Expiration Date</th>
-                        </tr>
-                        ${ExpiringItemsTable}
-                    </table>`
-                    : ''}
-            `
-        }
 
         if (!lastEmailSentDate || !isSameDay(new Date(lastEmailSentDate), today)) {
-            const transporter = createTransporter();
+            const transporter = await createTransporter();
+
+            const mailOptions = {
+                from: refEmail,
+                to: emails,
+                subject: `Spoilage Alert!`,
+                html: `
+                    ${expiredItems.length > 0 ?
+                        `<h2>Remove Immediately</h2>
+                        <table border="1" style="border-collapse: collapse;">
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Expiration Date</th>
+                            </tr>
+                            ${itemTable}
+                        </table>`
+                        : ''
+                    }
+    
+                    ${expiredItems.length > 0 ? `
+                        <hr class="solid"></hr>
+                    ` : ''}
+                    
+                    ${expiringSoon.length > 0 ?
+                        `<h2>Items expiring in the next ${numDays} days!</h2>
+                        <table border="1" style="border-collapse: collapse;">
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Expiration Date</th>
+                            </tr>
+                            ${ExpiringItemsTable}
+                        </table>`
+                        : ''}
+                `
+            }
 
             const info = await transporter.sendMail(mailOptions);
             console.log(`Email sent for items expiring in ${numDays}:`, info.response);

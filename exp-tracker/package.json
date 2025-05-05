@@ -22,7 +22,7 @@
     }
   },
   "scripts": {
-    "build": "vite build && electron-builder",
+    "build": "npx vite build && electron-builder",
     "rebuild": "electron-rebuild -f -w better-sqlite3",
     "postinstall": "electron-builder install-app-deps && node src/utils/storeCredentials.js",
     "lint": "eslint .",
