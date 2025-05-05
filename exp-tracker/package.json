@@ -19,7 +19,8 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "febreze101"
+        "owner": "febreze101",
+        "repo": "ExpirationTracker"
       }
     ],
     "productName": "Spoilage Tracker",

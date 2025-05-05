@@ -10,7 +10,8 @@ import dbOps from './src/db/operations.js';
 import schedule from 'node-schedule';
 import { sendEmail, } from './src/utils/emailService.js';
 import isDev from 'electron-is-dev';
-import { autoUpdater } from 'electron-updater';
+import pkg from 'electron-updater'
+const { autoUpdater } = pkg;
 
 const clockIcon = path.join(__dirname, './src/assets/clock.png');
 

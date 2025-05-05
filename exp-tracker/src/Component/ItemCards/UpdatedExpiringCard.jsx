@@ -145,7 +145,7 @@ export default function UpdatedExpiringCard({
                         height="100vh"
                     >
 
-                        <ExpirationDetails title={title} handleCancel={handleCancel} itemDetails={itemDetails} expirationDates={expirationDates} />
+                        <ExpirationDetails title={title} handleCancel={handleCancel} itemDetails={itemDetails} expirationDates={expirationDates} onDateChange={onDateChange} />
                     </Box>
                 </Fade>
             </Modal>

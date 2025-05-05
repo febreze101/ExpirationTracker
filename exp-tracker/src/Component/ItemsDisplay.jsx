@@ -43,30 +43,6 @@ export default function ItemsDisplay(props) {
         }
     }, [props.getExpirationDetails]);
 
-    // const calcDaysDiff = useCallback(async (item) => {
-    //     if (!props.getExpirationDetails) {
-    //         console.warn("getExpirationDetails function is not provided.");
-    //         return;
-    //     }
-
-    //     const itemId = item["Item Name"] || item["item_name"] || "Unknown Item";
-
-    //     try {
-    //         const currDetails = await props.getExpirationDetails(item);
-    //         const upcomingExp = new Date(currDetails.earliest_expiration);
-    //         const diffTime = upcomingExp - today;
-    //         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    //         setDaysDiff(prev => ({
-    //             ...prev,
-    //             [itemId]: diffDays,
-    //         }));
-    //     } catch (error) {
-    //         console.error("Error fetching item details: ", error);
-    //     }
-    // }, [props.getExpirationDetails]);
-
-
     const filteredItems = props.items.filter(item =>
         item['Item Name']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item['item_Name']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -74,14 +50,8 @@ export default function ItemsDisplay(props) {
     );
 
     useEffect(() => {
-        // Trigger fetching of expiration details for all items initially
-        // filteredItems.forEach(item => {
-        //     handleGetExpirationDetails(item);
-        // });
-
         props.items.forEach(item => {
             handleGetExpirationDetails(item);
-            // calcDaysDiff(item);
         });
     }, []);
 
@@ -173,8 +143,6 @@ export default function ItemsDisplay(props) {
                             {filteredItems.map((item, index) => {
                                 const itemId = item["Item Name"] || item["item_name"] || "Unknown Item";
                                 const itemDetails = currentItemDetails[itemId] || null;
-
-
                                 return (
                                     <props.ItemComponent
                                         key={itemId}
