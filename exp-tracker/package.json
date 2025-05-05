@@ -7,6 +7,14 @@
   "type": "module",
   "main": "main.js",
   "build": {
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "preload.cjs",
+      "src/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
     "appId": "com.inexperiencedexpert.spoilagetracker",
     "productName": "Spoilage Tracker",
     "win": {
@@ -14,7 +22,7 @@
     }
   },
   "scripts": {
-    "build": "electron-builder",
+    "build": "vite build && electron-builder",
     "rebuild": "electron-rebuild -f -w better-sqlite3",
     "postinstall": "electron-builder install-app-deps && node src/utils/storeCredentials.js",
     "lint": "eslint .",
@@ -32,6 +40,7 @@
     "better-sqlite3": "^11.8.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "electron-is-dev": "^3.0.1",
     "framer-motion": "^12.6.2",
     "keytar": "^7.9.0",
     "node-schedule": "^2.1.1",

@@ -9,6 +9,8 @@ import { app, BrowserWindow, ipcMain, Notification, Tray, Menu } from 'electron'
 import dbOps from './src/db/operations.js';
 import schedule from 'node-schedule';
 import { sendEmail, } from './src/utils/emailService.js';
+import isDev from 'electron-is-dev';
+
 const clockIcon = path.join(__dirname, './src/assets/clock.png');
 
 let mainWindow;
@@ -28,9 +30,13 @@ function createWindow() {
         }
     });
 
-    mainWindow.loadURL("http://localhost:5173/");
-    mainWindow.maximize();
+    if (isDev) {
+        mainWindow.loadURL('http://localhost:5173')
+    } else {
+        mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
+    }
 
+    mainWindow.maximize();
     mainWindow.webContents.openDevTools();
 
     // Prevent window from being garbage collected
