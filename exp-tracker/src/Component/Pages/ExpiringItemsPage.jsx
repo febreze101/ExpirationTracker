@@ -14,18 +14,6 @@ export default function ExpiringItemsPage(props) {
     }
     return (
         <>
-            {/* <ItemsAccordion
-                // expanded={props.expanded}
-                chipColor="warning"
-                panel="panel2"
-                handleChange={handleChange}
-                title="Expiring Soon"
-                searchLabel="Search Items Expiring Soon"
-                items={props.items}
-                ItemComponent={ItemCardwithExpirationSet}
-                handleExpirationDateChange={props.handleExpirationDateChange}
-                handleExpired={props.handleExpired}
-            /> */}
 
             <ItemsDisplay
                 pageTitle={'Expiring Items'}

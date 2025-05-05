@@ -124,14 +124,17 @@ function App() {
 
       console.log(`Expired result: ${ret}`)
 
-      await dbOps.moveExpiredItems();
+      // await dbOps.moveExpiredItems();
 
       // Reload inventory data
       await loadInventoryData();
       await getExpiredItems();
 
 
-      await dbOps.moveExpiredItems(item);
+      const expired = await dbOps.moveExpiredItems(item);
+      if (expired.length > 0) {
+        dbOps.deleteItem(item);
+      }
     } catch (error) {
       console.error("Error updating expiration date: ", error);
 
