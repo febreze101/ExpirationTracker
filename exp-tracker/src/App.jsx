@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import DashboardPage from "./Component/Pages/DashbaordPage";
 import NewItemsPage from "./Component/Pages/NewItemsPage";
 import ExpiringItemsPage from "./Component/Pages/ExpiringItemsPage";
@@ -85,6 +85,9 @@ function App() {
   const [newItems, setNewItems] = useState([]);
   const [expiredItems, setExpiredItems] = useState([]);
   const [showOnboarding, setShowOnboarding] = useState(localStorage.getItem('hasCompletedOnboarding') !== "true");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("info");
+  const [alertOpen, setAlertOpen] = useState(false);
   const MemoizedLayout = React.memo(Layout);
 
   useEffect(() => {
@@ -180,7 +183,7 @@ function App() {
     } catch (error) {
       console.error("Error loading inventory: ", error);
     }
-  });
+  }, []);
 
   const getExpirationDetails = async (item) => {
     const details = await dbOps.getExpirationDetails(item)
@@ -273,11 +276,10 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      {/* Router */}
-      {showOnboarding ? (
-        <OnboardingForm showOnboarding={showOnboarding} setShowOnboarding={setShowOnboarding} handleAddUser={handleAddUser} />
-      ) :
-        (
+      <HashRouter>
+        {showOnboarding ? (
+          <OnboardingForm showOnboarding={showOnboarding} setShowOnboarding={setShowOnboarding} handleAddUser={handleAddUser} />
+        ) : (
           <Routes>
             <Route
               element={
@@ -301,7 +303,7 @@ function App() {
                   />
                 }
               />
-              <Route
+              <Route 
                 path="/expiring-items"
                 element={
                   <ExpiringItemsPage
@@ -323,9 +325,9 @@ function App() {
                 }
               />
             </Route>
-
           </Routes>
         )}
+      </HashRouter>
     </ThemeProvider>
   );
 }

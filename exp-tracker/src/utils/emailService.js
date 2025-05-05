@@ -1,25 +1,31 @@
-import dotenv from 'dotenv';
+import keytar from 'keytar';
+
 import nodemailer from 'nodemailer';
 import fs from 'fs';
 
-dotenv.config();
-console.log('Environment variables loaded:', {
-    EMAIL_USER: process.env.EMAIL_USER ? 'Set' : 'Not set',
-    EMAIL_PASS: process.env.EMAIL_PASS ? 'Set' : 'Not set'
-});
-
-if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !process.env.EMAIL_RECIPIENT) {
-    throw new Error('Email credentials are not set.');
-}
+const SERVICE = 'inexperiencedExpert-mail';
+const EMAIL_KEY = 'email';
+const PASSWORD_KEY = 'password';
 
 // Create transporter
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+async function createTransporter() {
+    const email = await keytar.getPassword(SERVICE, EMAIL_KEY);
+    const password = await keytar.getPassword(SERVICE, PASSWORD_KEY);
+
+    if (!email || !password) {
+        throw new Error('SMTP credentials not found in keytar');
     }
-});
+
+    return nodemailer.createTransport({
+        host: 'smtp.zoho.com',
+        port: 465,
+        secure: true,
+        auth: {
+            user: email,
+            pass: password
+        }
+    });
+}
 
 // Function to load the last email sent date from a file
 const loadLastEmailSentDate = () => {
@@ -71,7 +77,7 @@ export const sendEmail = async (expiredItems, numDays, expiringSoon, emails) => 
         `).join('') : '';
 
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: email,
             to: emails,
             subject: `Spoilage Alert!`,
             html: `
@@ -105,6 +111,8 @@ export const sendEmail = async (expiredItems, numDays, expiringSoon, emails) => 
         }
 
         if (!lastEmailSentDate || !isSameDay(new Date(lastEmailSentDate), today)) {
+            const transporter = createTransporter();
+
             const info = await transporter.sendMail(mailOptions);
             console.log(`Email sent for items expiring in ${numDays}:`, info.response);
 
