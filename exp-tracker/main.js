@@ -10,6 +10,7 @@ import dbOps from './src/db/operations.js';
 import schedule from 'node-schedule';
 import { sendEmail, } from './src/utils/emailService.js';
 import isDev from 'electron-is-dev';
+import { autoUpdater } from 'electron-updater';
 
 const clockIcon = path.join(__dirname, './src/assets/clock.png');
 
@@ -40,6 +41,17 @@ function createWindow() {
     }
 
     mainWindow.maximize();
+
+    // Auto-updater
+    autoUpdater.checkForUpdatesAndNotify();
+
+    autoUpdater.on('update-available', () => {
+        console.log('Update available.')
+    })
+
+    autoUpdater.on('update-downloaded', () => {
+        console.log('Updated downloaded. Will install on quit.')
+    })
 
     // Prevent window from being garbage collected
     mainWindow.on('close', (event) => {

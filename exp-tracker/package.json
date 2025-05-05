@@ -1,7 +1,7 @@
 {
   "name": "exp-tracker",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.9.1",
   "description": "Tracks expiration dates of perishables",
   "author": "Inexperienced Expert",
   "type": "module",
@@ -16,6 +16,12 @@
       "package.json"
     ],
     "appId": "com.inexperiencedexpert.spoilagetracker",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "febreze101"
+      }
+    ],
     "productName": "Spoilage Tracker",
     "win": {
       "target": "nsis"
@@ -24,6 +30,7 @@
   "scripts": {
     "build": "npx vite build && electron-builder",
     "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "release": "electron-builder",
     "postinstall": "electron-builder install-app-deps && node src/utils/storeCredentials.js",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -41,6 +48,7 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "electron-is-dev": "^3.0.1",
+    "electron-updater": "^6.6.2",
     "framer-motion": "^12.6.2",
     "keytar": "^7.9.0",
     "node-schedule": "^2.1.1",
