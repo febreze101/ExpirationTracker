@@ -11,6 +11,7 @@ import ExpiringItemsPage from "./Component/Pages/ExpiringItemsPage";
 import ExpiredItemsPage from "./Component/Pages/ExpiredItemsPage";
 import Layout from "./Component/Layout";
 import OnboardingForm from "./Component/Onboarding/OnboardingForm";
+import { useAlert } from "./context/AlertContext";
 
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
@@ -85,10 +86,9 @@ function App() {
   const [newItems, setNewItems] = useState([]);
   const [expiredItems, setExpiredItems] = useState([]);
   const [showOnboarding, setShowOnboarding] = useState(localStorage.getItem('hasCompletedOnboarding') !== "true");
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertSeverity, setAlertSeverity] = useState("info");
-  const [alertOpen, setAlertOpen] = useState(false);
   const MemoizedLayout = React.memo(Layout);
+
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     // console.log('showOnboarding', showOnboarding)
@@ -127,17 +127,15 @@ function App() {
 
       console.log(`Expired result: ${ret}`)
 
-      // await dbOps.moveExpiredItems();
-
       // Reload inventory data
       await loadInventoryData();
       await getExpiredItems();
 
 
-      const expired = await dbOps.moveExpiredItems(item);
-      if (expired.length > 0) {
-        dbOps.deleteItem(item);
-      }
+      // const expired = await dbOps.moveExpiredItems(item);
+      // if (expired.length > 0) {
+      //   dbOps.deleteItem(item);
+      // }
     } catch (error) {
       console.error("Error updating expiration date: ", error);
 
@@ -147,9 +145,21 @@ function App() {
   // move expired items to expired_inventory table
   const moveExpiredItems = async () => {
     try {
+      const expired = await dbOps.moveExpiredItems();
+
+      if (expired.length > 0) {
+        const message = `${expired.length} item(s) moved to expired inventory.`
+
+        showAlert(message, 'success')
+      }
+
       await loadInventoryData();
+      await getExpiredItems();
     } catch (error) {
-      console.error("Error moving expired items: ", error);
+      console.error("Error moving expired items:", error);
+      const message = "An error occurred while moving expired items.";
+
+      showAlert(message, 'error')
     }
   };
 
@@ -216,9 +226,10 @@ function App() {
       const formattedDates = expirationDates.map(dateStr => {
         const dateToCheck = new Date(dateStr);
         if (dateToCheck <= today) {
-          setAlertMessage("Expiration date cannot be in the past");
-          setAlertSeverity("error");
-          setAlertOpen(true);
+          // show alert
+          const message = "Expiration date cannot be in the past";
+          showAlert(message, 'error')
+
           throw new Error('Invalid date: ' + dateStr)
         }
 
@@ -274,7 +285,7 @@ function App() {
     }
   }
 
-  return (
+  return (<>
     <ThemeProvider theme={theme}>
       <HashRouter>
         {showOnboarding ? (
@@ -303,7 +314,7 @@ function App() {
                   />
                 }
               />
-              <Route 
+              <Route
                 path="/expiring-items"
                 element={
                   <ExpiringItemsPage
@@ -329,6 +340,8 @@ function App() {
         )}
       </HashRouter>
     </ThemeProvider>
+
+  </>
   );
 }
 

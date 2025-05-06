@@ -12,6 +12,10 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('isOnboardingComplete called');
             return ipcRenderer.invoke('db:isOnboardingComplete');
         },
+        checkReminderFrequency: () => {
+            console.log('checkReminderFrequency called');
+            return ipcRenderer.invoke('db:checkReminderFrequency');
+        },
         addUser: (user) => {
             console.log('addUser called');
             return ipcRenderer.invoke('db:addUser', user);

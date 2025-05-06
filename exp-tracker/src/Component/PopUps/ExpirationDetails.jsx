@@ -6,11 +6,13 @@ import ButtonDatePicker from "../PickerWithButtonField";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { setDate } from "date-fns";
+import { useAlert } from "../../context/AlertContext";
 
 export default function ExpirationDetails({ title, expirationDates = [], handleCancel, onDateChange, }) {
     const theme = useTheme();
     const [pickerDate, setPickerDate] = useState(dayjs());
 
+    const { showAlert } = useAlert();
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);

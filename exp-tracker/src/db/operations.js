@@ -54,6 +54,11 @@ const dbOperations = {
         return emails.map(email => email.email);
     },
 
+    checkReminderFrequency: async () => {
+        const frequency = db.prepare('SELECT reminder_frequency FROM users WHERE id = 1').get();
+        return frequency;
+    },
+
     // check onboarding complete
     isOnboardingComplete: () => {
         const user = db.prepare("SELECT onboarding_completed FROM users WHERE id = 1").get();
@@ -285,63 +290,124 @@ const dbOperations = {
     },
 
     // Move expired items to expired_inventory table
-    moveExpiredItems: (item = null) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+    // moveExpiredItems: (item = null) => {
+    //     const today = new Date();
+    //     today.setHours(0, 0, 0, 0);
 
-        console.log('Today:', today.toISOString());
+    //     console.log('Today:', today.toISOString());
 
-        // get expired items
-        const expiredItems = db.prepare(`
-            SELECT i.id, i.item_name, b.expiration_date, b.quantity, b.id AS batch_id
-            FROM batches b
-            JOIN inventory i ON i.id = b.inventory_id 
-            WHERE date(b.expiration_date) <= date(?)
-        `).all(today.toISOString());
+    //     // get expired items
+    //     const expiredItems = db.prepare(`
+    //         SELECT i.id, i.item_name, b.expiration_date, b.quantity, b.id AS batch_id
+    //         FROM batches b
+    //         JOIN inventory i ON i.id = b.inventory_id 
+    //         WHERE date(b.expiration_date) <= date(?)
+    //     `).all(today.toISOString());
 
-        console.log('Expired items:', expiredItems);
+    //     console.log('Expired items:', expiredItems);
 
-        if (expiredItems.length > 0) {
-            // Copy expired items to expired_inventory table
+    //     if (expiredItems.length > 0) {
+    //         // Copy expired items to expired_inventory table
+    //         const insertExpired = db.prepare(`
+    //             INSERT INTO expired_inventory (item_name, expiration_date)
+    //             VALUES (?, ?)
+    //             ON CONFLICT(item_name) DO NOTHING
+    //         `);
+
+    //         // Delete expired items from inventory table
+    //         const deleteBatch = db.prepare(`DELETE FROM batches WHERE inventory_id = ?`);
+
+    //         // Execute the statements
+    //         db.transaction(() => {
+    //             for (const item of expiredItems) {
+    //                 const formattedDate = item.expiration_date
+    //                 // insert expired item into expired_inventory table
+    //                 insertExpired.run(item.item_name, formattedDate);
+
+    //                 // delete the batch from batches
+    //                 deleteBatch.run(item.id);
+
+    //                 // Update the days_until_next_expiration for this item
+    //                 const updateExpirationDays = db.prepare(`
+    //                     UPDATE inventory 
+    //                     SET days_until_next_expiration = (
+    //                         SELECT CAST(CEIL(MIN(JULIANDAY(expiration_date) - JULIANDAY(DATE('now')))) AS INTEGER)
+    //                         FROM batches 
+    //                         WHERE inventory_id = ?
+    //                         AND DATE(expiration_date) >= DATE('now')
+    //                     )
+    //                     WHERE id = ?
+    //                 `);
+    //                 updateExpirationDays.run(item.id, item.id);
+    //             }
+    //         })();
+
+    //         console.log(`Moved ${expiredItems.length} expired items`);
+    //         return expiredItems;
+    //     }
+    //     return [];
+
+    // },
+
+    moveExpiredItems: () => {
+        const moveExpired = db.transaction(() => {
+            const today = format(startOfDay(new Date()), 'yyyy-MM-dd HH:mm:ss');
+
+            // Get expired batches and join inventory to get item names
+            const expiredItems = db.prepare(`
+                    SELECT 
+                        b.id as batch_id,
+                        i.id as iventory_id,
+                        i.item_name,
+                        b.expiration_date,
+                        b.quantity
+                    FROM batches b
+                    JOIN inventory i ON b.inventory_id = i.id
+                    WHERE b.expiration_date < ?
+            `).all(today);
+
+            if (expiredItems.length === 0) {
+                return [];
+            }
+
             const insertExpired = db.prepare(`
                 INSERT INTO expired_inventory (item_name, expiration_date)
-                VALUES (?, ?)
-                ON CONFLICT(item_name) DO NOTHING
+                VALUES (? ,?)    
             `);
 
-            // Delete expired items from inventory table
-            const deleteBatch = db.prepare(`DELETE FROM batches WHERE inventory_id = ?`);
+            const deleteBatch = db.prepare(`
+                DELETE FROM batches WHERE id = ?
+            `);
 
-            // Execute the statements
-            db.transaction(() => {
-                for (const item of expiredItems) {
-                    const formattedDate = item.expiration_date
-                    // insert expired item into expired_inventory table
-                    insertExpired.run(item.item_name, formattedDate);
+            for (const item of expiredItems) {
+                insertExpired.run(item.item_name, item.expirataion_date);
+                deleteBatch.run(item.batch_id);
+            }
 
-                    // delete the batch from batches
-                    deleteBatch.run(item.id);
+            const updateExpirationDays = db.prepare(`
+                UPDATE inventory
+                SET days_until_next_expiration = (
+                    SELECT CAST(CEIL(MIN(JULIANDAY(expiration_date) - JULIANDAY(DATE('now')))) AS INTEGER)
+                    FROM batches 
+                    WHERE inventory_id = ?
+                    AND DATE(expiration_date) >= DATE('now')
+                )
+                WHERE id = ?
+            `);
 
-                    // Update the days_until_next_expiration for this item
-                    const updateExpirationDays = db.prepare(`
-                        UPDATE inventory 
-                        SET days_until_next_expiration = (
-                            SELECT CAST(CEIL(MIN(JULIANDAY(expiration_date) - JULIANDAY(DATE('now')))) AS INTEGER)
-                            FROM batches 
-                            WHERE inventory_id = ?
-                            AND DATE(expiration_date) >= DATE('now')
-                        )
-                        WHERE id = ?
-                    `);
-                    updateExpirationDays.run(item.id, item.id);
-                }
-            })();
+            for (const item of expiredItems) {
+                updateExpirationDays.run(item.inventory_id, item.inventory_id)
+            }
 
-            console.log(`Moved ${expiredItems.length} expired items`);
             return expiredItems;
-        }
-        return [];
+        });
 
+        try {
+            return moveExpired();
+        } catch (error) {
+            console.error('Error moving expired items:', error);
+            return [];
+        }
     },
 
     // Set item as expired
