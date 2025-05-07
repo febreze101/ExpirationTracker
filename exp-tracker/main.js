@@ -8,12 +8,18 @@ const __dirname = path.dirname(__filename);
 import { app, BrowserWindow, ipcMain, Notification, Tray, Menu } from 'electron';
 import dbOps from './src/db/operations.js';
 import schedule from 'node-schedule';
-import { sendEmail, } from './src/utils/emailService.js';
+import { sendNotificationEmail, } from './src/utils/emailService.js';
+import isDev from 'electron-is-dev';
+import pkg from 'electron-updater'
+const { autoUpdater } = pkg;
+
 const clockIcon = path.join(__dirname, './src/assets/clock.png');
 
 let mainWindow;
 let tray;
 let isQuiting = false;
+
+const gotTheLock = app.requestSingleInstanceLock();
 
 
 function createWindow() {
@@ -28,10 +34,25 @@ function createWindow() {
         }
     });
 
-    mainWindow.loadURL("http://localhost:5173/");
+    if (isDev) {
+        mainWindow.loadURL('http://localhost:5173')
+        mainWindow.webContents.openDevTools();
+    } else {
+        mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
+    }
+
     mainWindow.maximize();
 
-    mainWindow.webContents.openDevTools();
+    // Auto-updater
+    autoUpdater.checkForUpdatesAndNotify();
+
+    autoUpdater.on('update-available', () => {
+        console.log('Update available.')
+    })
+
+    autoUpdater.on('update-downloaded', () => {
+        console.log('Updated downloaded. Will install on quit.')
+    })
 
     // Prevent window from being garbage collected
     mainWindow.on('close', (event) => {
@@ -68,7 +89,7 @@ function createTray() {
                     if (expiredItems.length >= 0) {
                         new Notification({
                             title: 'Expired Items Found',
-                            body: `${expiredItems.length} items have expired.`,
+                            body: `${expiredItems.length} items expired.`,
                         }).show();
                     }
                 } catch (error) {
@@ -107,86 +128,167 @@ function createTray() {
 }
 
 // Schedule a job to move expired items every day at 12:00 AM
-function setupDailyCheck() {
-    // console.log('Initial table state:');
-    // dbOps.checkTables();
-    // check for expired items
-    const checkExpiredItems = async () => {
+// function setupDailyCheck() {
+//     // console.log('Initial table state:');
+//     // dbOps.checkTables();
+//     // check for expired items
+//     const checkExpiredItems = async () => {
+//         try {
+//             const expiredItems = dbOps.moveExpiredItems();
+
+//             if (expiredItems.length > 0) {
+//                 // Show expired items notification
+//                 new Notification({
+//                     title: 'Spoilage Alert',
+//                     body: `${expiredItems.length} items have expired!`,
+//                 }).show();
+
+//                 await sendExpirationEmail(expiredItems);
+//                 console.log(`${expiredItems.length} expired items moved and notification sent`);
+
+//             } else {
+//                 console.log('No expired items found');
+//             }
+//         } catch (error) {
+//             console.error('Error moving expired items: ', error);
+//         }
+//     }
+
+//     checkExpiredItems();
+
+//     // schedule daily check
+//     schedule.scheduleJob('0 0 * * *', checkExpiredItems)
+// }
+
+// // set up weekly chcek
+
+// function setupPreemptiveExpirationCheck(numDays) {
+//     console.log('Checking for items expiring in %d days', numDays);
+
+//     // function to check for items expiring soon
+//     const checkExpiringSoon = async () => {
+//         try {
+//             const expiredItems = await dbOps.moveExpiredItems();
+//             const soonExpiringItems = await dbOps.getItemsExpiringSoon(numDays);
+
+//             if (expiredItems.length > 0) {
+//                 // Show expired items notification
+//                 new Notification({
+//                     title: 'Spoilage Alert',
+//                     body: `${expiredItems.length} items have expired!`,
+//                 }).show();
+//             } else {
+//                 console.log('No expired items found');
+//             }
+
+
+//             if (soonExpiringItems.length > 0) {
+//                 console.log(soonExpiringItems)
+
+//                 // send desktop notification
+//                 new Notification({
+//                     title: 'Spoilage Alert',
+//                     body: `${soonExpiringItems.length} items expiring in ${numDays} days!`,
+//                 }).show();
+
+//                 const emails = dbOps.getNotificationEmails();
+
+//                 // send email notification
+//                 await sendNotificationEmail(expiredItems, numDays, soonExpiringItems, emails);
+//                 console.log(`${soonExpiringItems.length} items expiring soon! Notifications sent!`);
+
+//             } else {
+//                 console.log('No items will spoil in %d days', numDays);
+//             }
+//         } catch (error) {
+//             console.error('Error finding items that will expire within the next %d days:', numDays, error)
+//         }
+//     };
+
+//     // initial check
+//     checkExpiringSoon();
+
+//     // schedule daily check
+//     schedule.scheduleJob('0 0 * * *', () => checkExpiringSoon());
+// }
+
+function setupExpirationNotification(numDays = 30) {
+    const today = new Date();
+
+    const checkAndNotify = async () => {
         try {
-            const expiredItems = dbOps.moveExpiredItems();
-
-            if (expiredItems.length > 0) {
-                // Show expired items notification
-                new Notification({
-                    title: 'Spoilage Alert',
-                    body: `${expiredItems.length} items have expired!`,
-                }).show();
-
-                await sendExpirationEmail(expiredItems);
-                console.log(`${expiredItems.length} expired items moved and notification sent`);
-
-            } else {
-                console.log('No expired items found');
-            }
-        } catch (error) {
-            console.error('Error moving expired items: ', error);
-        }
-    }
-
-    checkExpiredItems();
-
-    // schedule daily check
-    schedule.scheduleJob('0 0 * * *', checkExpiredItems)
-}
-
-function setupPreemptiveExpirationCheck(numDays) {
-    console.log('Checking for items expiring in %d days', numDays);
-
-    // function to check for items expiring soon
-    const checkExpiringSoon = async () => {
-        try {
+            // Move expired items
             const expiredItems = await dbOps.moveExpiredItems();
             const soonExpiringItems = await dbOps.getItemsExpiringSoon(numDays);
+            const emails = await dbOps.getNotificationEmails();
 
+            // Notify for expired items
             if (expiredItems.length > 0) {
-                // Show expired items notification
                 new Notification({
                     title: 'Spoilage Alert',
-                    body: `${expiredItems.length} items have expired!`,
+                    body: `${expiredItems.length} items expired!`,
                 }).show();
-            } else {
-                console.log('No expired items found');
             }
 
-
+            // Notify for soon expiring items
             if (soonExpiringItems.length > 0) {
-                console.log(soonExpiringItems)
-
-                // send desktop notification
                 new Notification({
                     title: 'Spoilage Alert',
                     body: `${soonExpiringItems.length} items expiring in ${numDays} days!`,
                 }).show();
-
-                const emails = dbOps.getNotificationEmails();
-
-                // send email notification
-                await sendEmail(expiredItems, numDays, soonExpiringItems, emails);
-                console.log(`${soonExpiringItems.length} items expiring soon! Notifications sent!`);
-
-            } else {
-                console.log('No items will spoil in %d days', numDays);
             }
+
+            // Send email if needed
+            if (expiredItems.length > 0 || soonExpiringItems.length > 0) {
+                const didSend = await sendNotificationEmail(
+                    expiredItems,
+                    numDays,
+                    soonExpiringItems,
+                    emails
+                );
+
+                if (didSend) {
+                    console.log('Expiration email sent successfully');
+                }
+            } else {
+                console.log('No items to notify about');
+            }
+
         } catch (error) {
-            console.error('Error finding items that will expire within the next %d days:', numDays, error)
+            console.error('Error in expiration check:', error);
         }
     };
 
-    // initial check
-    checkExpiringSoon();
+    const setupSchedule = async () => {
+        try {
+            const frequency = await dbOps.checkReminderFrequency();
 
-    // schedule daily check
-    schedule.scheduleJob('0 0 * * *', () => checkExpiringSoon());
+            let cronExp;
+            switch (frequency.reminder_frequency) {
+                case 'daily':
+                    cronExp = '0 9 * * *'; // every day at 9 AM
+                    break;
+                case 'weekly':
+                    cronExp = '0 9 * * 1'; // every Monday at 9 AM
+                    break;
+                case 'bi-weekly':
+                    cronExp = '0 9 1,15 * *'; // 1st and 15th at 9 AM
+                    break;
+                default:
+                    console.warn('Unknown frequency. Defaulting to daily.');
+                    cronExp = '0 9 * * *';
+            }
+
+            schedule.scheduleJob(cronExp, checkAndNotify);
+            console.log(`Scheduled expiration check with frequency '${frequency}', cron: ${cronExp}`);
+        } catch (error) {
+            console.error('Error setting up expiration notification schedule:', error);
+        }
+    };
+
+    // Initial check on startup
+    checkAndNotify();
+    setupSchedule();
 }
 
 // Set up IPC handlers
@@ -209,6 +311,15 @@ function setupIpcHandlers() {
             throw error;
         }
     });
+
+    ipcMain.handle('db:checkReminderFrequency', async () => {
+        try {
+            return await dbOps.checkReminderFrequency();
+        } catch (error) {
+            console.error('Error checking reminder frequency', error);
+            throw error;
+        }
+    })
 
     ipcMain.handle('db:addUser', async (_, user) => {
         try {
@@ -345,23 +456,33 @@ function setupIpcHandlers() {
 
 }
 
-app.whenReady().then(() => {
-    createWindow();
-    createTray();
-    setupIpcHandlers();
-    setupDailyCheck();
-    setupPreemptiveExpirationCheck(30);
+if (!gotTheLock) {
+    app.quit();
+} else {
+    app.on('second-instance', () => {
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) mainWindow.restore();
+            mainWindow.focus();
+        }
+    });
+
+    app.whenReady().then(() => {
+        createWindow();
+        createTray();
+        setupIpcHandlers();
+        setupExpirationNotification(30);
+    })
+
+    app.on('window-all-closed', (event) => {
+        if (process.platform !== 'darwin') {
+            event.preventDefault();
+        }
+    });
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
-});
-
-app.on('window-all-closed', (event) => {
-    if (process.platform !== 'darwin') {
-        event.preventDefault();
-    }
-});
+};
 
 app.on('before-quit', () => {
     isQuiting = true;

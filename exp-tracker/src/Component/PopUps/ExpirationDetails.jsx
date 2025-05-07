@@ -5,30 +5,40 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import ButtonDatePicker from "../PickerWithButtonField";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { setDate } from "date-fns";
+import { useAlert } from "../../context/AlertContext";
 
 export default function ExpirationDetails({ title, expirationDates = [], handleCancel, onDateChange, }) {
     const theme = useTheme();
+    const [pickerDate, setPickerDate] = useState(dayjs());
 
+    const { showAlert } = useAlert();
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`;
     };
 
-    const [dates, setDates] = useState(() => expirationDates.map(date => formatDate(date)));
+    const [originalDates] = useState(() => expirationDates.map(date => formatDate(date)));
+    const [newDates, setNewDates] = useState([]);
 
 
     const handleDateChange = (newDate) => {
         if (newDate && newDate.isValid()) {
             const formattedDate = newDate.format('MM/DD/YYYY')
-            const updatedDates = [...dates, formattedDate]
 
-            setDates(updatedDates);
+            if (![...originalDates, ...newDates].includes(formattedDate)) {
+                setNewDates([...newDates, formattedDate]);
+            }
         }
     };
 
+    useEffect(() => {
+        console.log(newDates)
+    }, [newDates])
+
     const handleAddDates = () => {
-        onDateChange(dates);
+        onDateChange(newDates);
     }
 
     return (
@@ -93,37 +103,48 @@ export default function ExpirationDetails({ title, expirationDates = [], handleC
                             boxSizing: 'border-box'
                         }}
                     >
-                        {dates.length > 0 ?
-                            (dates.map((date, index) => (
-                                <Chip
-                                    key={index}
-                                    borderRadius={0}
-                                    // width={120}
-                                    label={date}
-                                    color={theme.palette.grey.main}
-                                    onDelete={() => console.log('deleted.')}
-                                    sx={{
-                                        height: 32,
-                                        backgroundColor: theme.palette.grey.main,
-                                        color: 'white',
-                                        borderRadius: '4px',
-                                        paddingX: 1.5,
-                                        '& .MuiChip-deleteIcon': {
+                        {[...originalDates, ...newDates].length > 0 ? (
+                            [...originalDates, ...newDates].map((date, index) => {
+                                const isOriginal = originalDates.includes(date);
+                                return (
+                                    <Chip
+                                        key={index}
+                                        label={date}
+                                        onDelete={
+                                            isOriginal
+                                                ? undefined
+                                                : () => {
+                                                    setNewDates(newDates.filter(d => d !== date));
+                                                }
+                                        }
+                                        sx={{
+                                            height: 32,
+                                            backgroundColor: theme.palette.grey.main,
                                             color: 'white',
-                                            '&:hover': {
-                                                color: 'red'
-                                            }
-                                        },
-                                    }}
-                                />
-                            ))) : <Typography color="black">Pick a date to start tracking!</Typography>
-                        }
+                                            borderRadius: '4px',
+                                            paddingX: 1.5,
+                                            '& .MuiChip-deleteIcon': {
+                                                color: 'white',
+                                                '&:hover': {
+                                                    color: 'red'
+                                                }
+                                            },
+                                        }}
+                                    />
+                                );
+                            })
+                        ) : (
+                            <Typography color="black">Pick a date to start tracking!</Typography>
+                        )}
                     </Box>
                     <Stack gap={'16px'} pt={1.5}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <ButtonDatePicker
-                                value={dayjs(new Date())}
-                                onChange={handleDateChange} />
+                                value={pickerDate}
+                                onChange={(newDate) => {
+                                    setPickerDate(newDate);
+                                    handleDateChange(newDate)
+                                }} />
                         </LocalizationProvider>
                         <Box display={"flex"} justifyContent={"space-between"} gap={"12px"}>
                             <CustomWideButton

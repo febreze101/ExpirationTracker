@@ -120,7 +120,7 @@ export default function Layout(props) {
                             <Typography variant="body1">Expired Items</Typography>
                         </NavLink>
                         <CircleButton color={'forest'} onClick={handleShowAddItemForm} icon={<AddIcon />} />
-                        <CircleButton color={'washiPaper'} onClick={() => console.log('notification opened')} icon={<NotificationsOutlinedIcon color="black" />} />
+                        {/* <CircleButton color={'washiPaper'} onClick={() => console.log('notification opened')} icon={<NotificationsOutlinedIcon color="black" />} /> */}
                     </Box>
                 </Box>
 

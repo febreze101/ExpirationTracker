@@ -4,13 +4,14 @@ import {
   ThemeProvider,
 } from "@mui/material";
 
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import DashboardPage from "./Component/Pages/DashbaordPage";
 import NewItemsPage from "./Component/Pages/NewItemsPage";
 import ExpiringItemsPage from "./Component/Pages/ExpiringItemsPage";
 import ExpiredItemsPage from "./Component/Pages/ExpiredItemsPage";
 import Layout from "./Component/Layout";
 import OnboardingForm from "./Component/Onboarding/OnboardingForm";
+import { useAlert } from "./context/AlertContext";
 
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
@@ -87,6 +88,8 @@ function App() {
   const [showOnboarding, setShowOnboarding] = useState(localStorage.getItem('hasCompletedOnboarding') !== "true");
   const MemoizedLayout = React.memo(Layout);
 
+  const { showAlert } = useAlert();
+
   useEffect(() => {
     // console.log('showOnboarding', showOnboarding)
     const determineOnboardingStatus = async () => {
@@ -124,17 +127,15 @@ function App() {
 
       console.log(`Expired result: ${ret}`)
 
-      // await dbOps.moveExpiredItems();
-
       // Reload inventory data
       await loadInventoryData();
       await getExpiredItems();
 
 
-      const expired = await dbOps.moveExpiredItems(item);
-      if (expired.length > 0) {
-        dbOps.deleteItem(item);
-      }
+      // const expired = await dbOps.moveExpiredItems(item);
+      // if (expired.length > 0) {
+      //   dbOps.deleteItem(item);
+      // }
     } catch (error) {
       console.error("Error updating expiration date: ", error);
 
@@ -144,9 +145,21 @@ function App() {
   // move expired items to expired_inventory table
   const moveExpiredItems = async () => {
     try {
+      const expired = await dbOps.moveExpiredItems();
+
+      if (expired.length > 0) {
+        const message = `${expired.length} item(s) moved to expired inventory.`
+
+        showAlert(message, 'success')
+      }
+
       await loadInventoryData();
+      await getExpiredItems();
     } catch (error) {
-      console.error("Error moving expired items: ", error);
+      console.error("Error moving expired items:", error);
+      const message = "An error occurred while moving expired items.";
+
+      showAlert(message, 'error')
     }
   };
 
@@ -180,7 +193,7 @@ function App() {
     } catch (error) {
       console.error("Error loading inventory: ", error);
     }
-  });
+  }, []);
 
   const getExpirationDetails = async (item) => {
     const details = await dbOps.getExpirationDetails(item)
@@ -191,11 +204,21 @@ function App() {
   // handle new data from csv
   const handleNewData = async (data) => {
     try {
-      await dbOps.addItems(data);
-      await loadInventoryData();
-      setFileName(fileName);
+      const result = await dbOps.addItems(data);
+      if (result) {
+        await loadInventoryData();
+        setFileName(fileName);
+
+        const message = `File successfully imported!`
+        showAlert(message, 'success')
+      } else {
+        const message = `Failed to import inventory. Try again!`
+        showAlert(message, 'error')
+      }
     } catch (error) {
       console.error("Error adding items: ", error);
+      const message = `Failed to import file.`
+      showAlert(message, 'error')
     }
   };
 
@@ -213,9 +236,10 @@ function App() {
       const formattedDates = expirationDates.map(dateStr => {
         const dateToCheck = new Date(dateStr);
         if (dateToCheck <= today) {
-          setAlertMessage("Expiration date cannot be in the past");
-          setAlertSeverity("error");
-          setAlertOpen(true);
+          // show alert
+          const message = "Expiration date cannot be in the past";
+          showAlert(message, 'error')
+
           throw new Error('Invalid date: ' + dateStr)
         }
 
@@ -225,11 +249,16 @@ function App() {
       // update the expiration date in the database
       await dbOps.updateExpirationDate(itemName, formattedDates);
 
+      const message = `Successfully added new expiration dates for ${itemName}!`
+      showAlert(message, 'success')
+
       // reload the inventory data
       await loadInventoryData();
       await getExpiredItems();
     } catch (error) {
       console.error("Error updating expiration date: ", error);
+      const message = `Failed to add new dates. Try again!`
+      showAlert(message, 'error')
     }
   };
 
@@ -250,34 +279,49 @@ function App() {
   const handleRestore = async (item) => {
     try {
       console.log("Restoring item:", item);
-      await dbOps.restoreExpiredItem(item["item_name"]);
-      await loadInventoryData();
-      await getExpiredItems();
+      const result = await dbOps.restoreExpiredItem(item["item_name"]);
+      if (result) {
+        await loadInventoryData();
+        await getExpiredItems();
+
+        const message = `Successfully restored ${item.item_name}!`
+        showAlert(message, 'success')
+      } else {
+        const message = `Failed to restore ${item.item_name}!`
+        showAlert(message, 'error')
+      }
     } catch (error) {
       console.error("Error restoring expired item: ", error);
+
+      const message = `An error occured while trying to restore ${item.item_name}!`
+      showAlert(message, 'error')
     }
   };
 
   const handleOnDeleteItem = async (item) => {
     try {
-      dbOps.deleteItem(item);
+      const result = await dbOps.deleteItem(item);
       console.log("finished deleting Item: ", item);
 
       // reload expired items
       await getExpiredItems();
 
+      const message = `Successfully deleted ${item.item_name} from the expired inventory!`
+      showAlert(message, 'success')
+
     } catch (error) {
       console.error("Error deleting item: ", item);
+      const message = `Failed to delete ${item.item_name}. Try again!`
+      showAlert(message, 'error')
     }
   }
 
-  return (
+  return (<>
     <ThemeProvider theme={theme}>
-      {/* Router */}
-      {showOnboarding ? (
-        <OnboardingForm showOnboarding={showOnboarding} setShowOnboarding={setShowOnboarding} handleAddUser={handleAddUser} />
-      ) :
-        (
+      <HashRouter>
+        {showOnboarding ? (
+          <OnboardingForm showOnboarding={showOnboarding} setShowOnboarding={setShowOnboarding} handleAddUser={handleAddUser} />
+        ) : (
           <Routes>
             <Route
               element={
@@ -323,10 +367,12 @@ function App() {
                 }
               />
             </Route>
-
           </Routes>
         )}
+      </HashRouter>
     </ThemeProvider>
+
+  </>
   );
 }
 
