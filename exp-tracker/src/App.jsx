@@ -204,11 +204,21 @@ function App() {
   // handle new data from csv
   const handleNewData = async (data) => {
     try {
-      await dbOps.addItems(data);
-      await loadInventoryData();
-      setFileName(fileName);
+      const result = await dbOps.addItems(data);
+      if (result) {
+        await loadInventoryData();
+        setFileName(fileName);
+
+        const message = `File successfully imported!`
+        showAlert(message, 'success')
+      } else {
+        const message = `Failed to import inventory. Try again!`
+        showAlert(message, 'error')
+      }
     } catch (error) {
       console.error("Error adding items: ", error);
+      const message = `Failed to import file.`
+      showAlert(message, 'error')
     }
   };
 
@@ -239,11 +249,16 @@ function App() {
       // update the expiration date in the database
       await dbOps.updateExpirationDate(itemName, formattedDates);
 
+      const message = `Successfully added new expiration dates for ${itemName}!`
+      showAlert(message, 'success')
+
       // reload the inventory data
       await loadInventoryData();
       await getExpiredItems();
     } catch (error) {
       console.error("Error updating expiration date: ", error);
+      const message = `Failed to add new dates. Try again!`
+      showAlert(message, 'error')
     }
   };
 
@@ -264,24 +279,40 @@ function App() {
   const handleRestore = async (item) => {
     try {
       console.log("Restoring item:", item);
-      await dbOps.restoreExpiredItem(item["item_name"]);
-      await loadInventoryData();
-      await getExpiredItems();
+      const result = await dbOps.restoreExpiredItem(item["item_name"]);
+      if (result) {
+        await loadInventoryData();
+        await getExpiredItems();
+
+        const message = `Successfully restored ${item.item_name}!`
+        showAlert(message, 'success')
+      } else {
+        const message = `Failed to restore ${item.item_name}!`
+        showAlert(message, 'error')
+      }
     } catch (error) {
       console.error("Error restoring expired item: ", error);
+
+      const message = `An error occured while trying to restore ${item.item_name}!`
+      showAlert(message, 'error')
     }
   };
 
   const handleOnDeleteItem = async (item) => {
     try {
-      dbOps.deleteItem(item);
+      const result = await dbOps.deleteItem(item);
       console.log("finished deleting Item: ", item);
 
       // reload expired items
       await getExpiredItems();
 
+      const message = `Successfully deleted ${item.item_name} from the expired inventory!`
+      showAlert(message, 'success')
+
     } catch (error) {
       console.error("Error deleting item: ", item);
+      const message = `Failed to delete ${item.item_name}. Try again!`
+      showAlert(message, 'error')
     }
   }
 

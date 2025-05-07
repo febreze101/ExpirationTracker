@@ -1,7 +1,7 @@
 {
   "name": "exp-tracker",
   "private": true,
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "Tracks expiration dates of perishables",
   "author": "Inexperienced Expert",
   "type": "module",

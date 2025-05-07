@@ -89,7 +89,7 @@ function createTray() {
                     if (expiredItems.length >= 0) {
                         new Notification({
                             title: 'Expired Items Found',
-                            body: `${expiredItems.length} items have expired.`,
+                            body: `${expiredItems.length} items expired.`,
                         }).show();
                     }
                 } catch (error) {
@@ -226,7 +226,7 @@ function setupExpirationNotification(numDays = 30) {
             if (expiredItems.length > 0) {
                 new Notification({
                     title: 'Spoilage Alert',
-                    body: `${expiredItems.length} items have expired!`,
+                    body: `${expiredItems.length} items expired!`,
                 }).show();
             }
 

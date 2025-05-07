@@ -21,7 +21,7 @@ const initDb = () => {
     db.exec(`
         CREATE TABLE IF NOT EXISTS inventory (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            item_name TEXT NOT NULL,
+            item_name TEXT UNIQUE NOT NULL,
             date_set INTEGER NOT NULL CHECK(date_set IN (0, 1)) DEFAULT 0,
             num_dates_set INTEGER DEFAULT 0,
             days_until_next_expiration INTEGER DEFAULT NULL,
@@ -34,7 +34,7 @@ const initDb = () => {
     db.exec(`
         CREATE TABLE IF NOT EXISTS expired_inventory (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            item_name TEXT UNIQUE NOT NULL,
+            item_name TEXT NOT NULL,
             expiration_date DATETIME,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP

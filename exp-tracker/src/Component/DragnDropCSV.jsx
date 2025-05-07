@@ -47,6 +47,8 @@ const DragAndDropCSV = ({ handleNewData, setFileName }) => {
           parseExcel(selectedFile, handleNewData, setError);
         } else {
           setError("Please drop a valid CSV or Excel file");
+          const message = 'Please drop a valid CSV or Excel file';
+          showAlert(message, 'error');
         }
       }
     }
@@ -57,22 +59,35 @@ const DragAndDropCSV = ({ handleNewData, setFileName }) => {
   }, [selectedFile])
 
   const handleDragUpload = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const file = e.dataTransfer.files[0];
-    console.log(file);
+    try {
+      e.preventDefault();
+      e.stopPropagation();
+      const file = e.dataTransfer.files[0];
+      console.log(file);
+      setSelectedFile(file);
+      handleFileUpload();
 
-    setSelectedFile(file);
 
-    handleFileUpload();
+    } catch (error) {
+      const message = 'Error uploading file.'
+      console.error('Error uplodaing the file.', error)
+      showAlert(message, 'error');
+    }
   }
 
   const handleButtonUpload = (e) => {
-    const file = e.target.files[0];
-    console.log(file);
+    try {
+      const file = e.target.files[0];
+      console.log(file);
 
-    setSelectedFile(file);
-    handleFileUpload();
+      setSelectedFile(file);
+      handleFileUpload();
+
+    } catch (error) {
+      const message = 'Error uploading file.'
+      console.error('Error uplodaing the file.', error)
+      showAlert(message, 'error');
+    }
   }
 
   // On drag over

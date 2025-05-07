@@ -363,7 +363,7 @@ const dbOperations = {
                         b.quantity
                     FROM batches b
                     JOIN inventory i ON b.inventory_id = i.id
-                    WHERE b.expiration_date < ?
+                    WHERE b.expiration_date <= ?
             `).all(today);
 
             if (expiredItems.length === 0) {
@@ -379,9 +379,18 @@ const dbOperations = {
                 DELETE FROM batches WHERE id = ?
             `);
 
+            const deleteFromInventory = db.prepare(`
+                DELETE FROM inventory 
+                WHERE num_dates_set = 1
+                AND NOT EXISTS (
+                    SELECT 1 FROM batches WHERE batches.inventory_id = inventory.id
+                )
+            `);
+
             for (const item of expiredItems) {
                 insertExpired.run(item.item_name, item.expirataion_date);
                 deleteBatch.run(item.batch_id);
+                deleteFromInventory.run()
             }
 
             const updateExpirationDays = db.prepare(`
@@ -395,8 +404,17 @@ const dbOperations = {
                 WHERE id = ?
             `);
 
+            const updateNumDatesSet = db.prepare(`
+                UPDATE inventory
+                SET num_dates_set = (
+                    SELECT COUNT(*) FROM batches WHERE inventory_id = inventory.id
+                )
+                WHERE id = ?;    
+            `)
+
             for (const item of expiredItems) {
                 updateExpirationDays.run(item.inventory_id, item.inventory_id)
+                updateNumDatesSet.run(item.inventory_id)
             }
 
             return expiredItems;
@@ -458,9 +476,10 @@ const dbOperations = {
                 insertStmt.run(item['item_name']);
                 deleteStmt.run(itemName);
             })();
+            return true;
         } catch (error) {
             console.error("Error restoring expired item: ", error);
-            throw error;
+            return false;
         }
     },
 

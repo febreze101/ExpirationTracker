@@ -103,22 +103,20 @@ export default function ExpirationDetails({ title, expirationDates = [], handleC
                             boxSizing: 'border-box'
                         }}
                     >
-                        {originalDates.length > 0 ?
-                            ([...originalDates, ...newDates].map((date, index) => {
+                        {[...originalDates, ...newDates].length > 0 ? (
+                            [...originalDates, ...newDates].map((date, index) => {
                                 const isOriginal = originalDates.includes(date);
                                 return (
                                     <Chip
                                         key={index}
-                                        borderRadius={0}
-                                        // width={120}
                                         label={date}
-                                        color={theme.palette.grey.main}
                                         onDelete={
                                             isOriginal
                                                 ? undefined
                                                 : () => {
                                                     setNewDates(newDates.filter(d => d !== date));
-                                                }}
+                                                }
+                                        }
                                         sx={{
                                             height: 32,
                                             backgroundColor: theme.palette.grey.main,
@@ -133,10 +131,11 @@ export default function ExpirationDetails({ title, expirationDates = [], handleC
                                             },
                                         }}
                                     />
-                                )
-                            }
-                            )) : <Typography color="black">Pick a date to start tracking!</Typography>
-                        }
+                                );
+                            })
+                        ) : (
+                            <Typography color="black">Pick a date to start tracking!</Typography>
+                        )}
                     </Box>
                     <Stack gap={'16px'} pt={1.5}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
