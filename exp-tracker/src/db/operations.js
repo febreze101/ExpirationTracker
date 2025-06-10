@@ -70,6 +70,7 @@ const dbOperations = {
         const insert = db.prepare(`
             INSERT INTO inventory (item_name, date_set)
             VALUES (@itemName, @dateSet)    
+            ON CONFLICT(item_name) DO NOTHING
         `);
 
         const insertMany = db.transaction((items) => {

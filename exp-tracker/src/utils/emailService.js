@@ -12,12 +12,14 @@ var refEmail;
 
 // Create transporter
 async function createTransporter() {
-    const email = await keytar.getPassword(SERVICE, EMAIL_KEY);
-    const password = await keytar.getPassword(SERVICE, PASSWORD_KEY);
+    // const email = await keytar.getPassword(SERVICE, EMAIL_KEY);
+    // const password = await keytar.getPassword(SERVICE, PASSWORD_KEY);
+    const email = 'spoilagetracker@inexperiencedexpert.com';
+    const password = 'd6yln@Yp';
 
-    if (!email || !password) {
-        throw new Error('SMTP credentials not found in keytar');
-    }
+    // if (!email || !password) {
+    //     throw new Error('SMTP credentials not found in keytar');
+    // }
 
     refEmail = email;
 

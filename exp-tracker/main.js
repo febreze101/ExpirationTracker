@@ -27,6 +27,7 @@ function createWindow() {
         width: 1440,
         height: 1024,
         fullscreenable: true,
+        title: 'Spoilage Tracker',
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
