@@ -45,6 +45,7 @@
     "@mui/icons-material": "^6.4.3",
     "@mui/material": "^6.4.1",
     "@mui/x-date-pickers": "^7.28.2",
+    "@supabase/supabase-js": "^2.50.0",
     "better-sqlite3": "^11.8.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
