@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate, BrowserRouter as Router } from 'react-router-dom';
 import DashboardPage from "./Component/Pages/DashbaordPage";
 import NewItemsPage from "./Component/Pages/NewItemsPage";
 import ExpiringItemsPage from "./Component/Pages/ExpiringItemsPage";
@@ -12,6 +12,14 @@ import ExpiredItemsPage from "./Component/Pages/ExpiredItemsPage";
 import Layout from "./Component/Layout";
 import OnboardingForm from "./Component/Onboarding/OnboardingForm";
 import { useAlert } from "./context/AlertContext";
+import Login from "./Component/auth/Login";
+import SignUp from "./Component/auth/SignUp";
+import { supabase } from "./supabaseClient";
+import { sub } from "date-fns";
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
+import LandingPage from "./Component/Pages/LandingPage";
+import ProtectedRoute from "./Component/ProtectedRoute";
 
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
@@ -89,6 +97,36 @@ function App() {
   const MemoizedLayout = React.memo(Layout);
 
   const { showAlert } = useAlert();
+
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session);
+        console.log("Current session:", session);
+        // if (session) {
+        //   // User is logged in, load inventory data
+        //   loadInventoryData();
+        // } else {
+        //   // User is not logged in, redirect to login page
+        //   window.location.href = '/login';
+        // }
+      })
+
+      // Listen for auth state changes
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        setSession(session);
+        console.log("Auth state changed:", event, session);
+      })
+
+      return () => subscription.unsubscribe();
+    }
+
+    checkSession();
+
+  }, [])
+
 
   useEffect(() => {
     // console.log('showOnboarding', showOnboarding)
@@ -318,35 +356,49 @@ function App() {
 
   return (<>
     <ThemeProvider theme={theme}>
-      <HashRouter>
-        {showOnboarding ? (
-          <OnboardingForm showOnboarding={showOnboarding} setShowOnboarding={setShowOnboarding} handleAddUser={handleAddUser} />
-        ) : (
-          <Routes>
-            <Route
-              element={
-                <MemoizedLayout handleAddItem={handleAddItem} />
-              }
-            >
-              <Route path="/" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <DashboardPage handleNewData={handleNewData} setFileName={setFileName} />
-                }
+      <Router>
+        <Routes>
+          {/* public routes */}
+          <Route path="/" element={<LandingPage />} />
+
+          {/* auth route */}
+
+          <Route path="/auth" element={
+            !session
+              ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
+              : <Navigate to="/dashboard" replace />
+          } />
+
+
+          {/* protected routes */}
+          {showOnboarding && (
+            <Route path="/onboarding" element={
+              <OnboardingForm
+                showOnboarding={showOnboarding}
+                setShowOnboarding={setShowOnboarding}
+                handleAddUser={handleAddUser}
               />
-              <Route
-                path="/new-items"
+            }
+            />
+          )}
+
+          {!showOnboarding && (
+            console.log("Showing protected routes") ||
+            <Route element={
+              <ProtectedRoute session={session}>
+                <MemoizedLayout handleAddItem={handleAddItem} />
+              </ProtectedRoute>
+            } >
+              <Route path="/dashboard" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />
+              <Route path="/new-items"
                 element={
                   <NewItemsPage
                     items={newItems}
                     handleExpirationDateChange={handleExpirationDateChange}
                     handleExpired={handleExpired}
                   />
-                }
-              />
-              <Route
-                path="/expiring-items"
+                } />
+              <Route path="/expiring-items"
                 element={
                   <ExpiringItemsPage
                     getExpirationDetails={getExpirationDetails}
@@ -354,22 +406,22 @@ function App() {
                     handleExpirationDateChange={handleExpirationDateChange}
                     handleExpired={handleExpired}
                   />
-                }
-              />
-              <Route
-                path="/expired-items"
+                } />
+              <Route path="/expired-items"
                 element={
                   <ExpiredItemsPage
                     items={expiredItems}
                     handleRestore={handleRestore}
                     handleOnDeleteItem={handleOnDeleteItem}
                   />
-                }
-              />
+                } />
             </Route>
-          </Routes>
-        )}
-      </HashRouter>
+          )}
+
+
+          {/* onboarding routes */}
+        </Routes>
+      </Router>
     </ThemeProvider>
 
   </>
