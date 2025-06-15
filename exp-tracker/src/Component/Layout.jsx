@@ -7,6 +7,7 @@ import CircleButton from "./CustomButtons/CircleButton"
 import AddIcon from '@mui/icons-material/Add';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import UpdatedNewItemForm from "./PopUps/UpdatedNewItemForm";
+import OnboardingForm from "./Onboarding/OnboardingForm";
 
 const theme = createTheme({
     typography: {
@@ -71,84 +72,93 @@ export default function Layout(props) {
     }
 
     return (
-        <ThemeProvider theme={theme}>
-            <Box display={'flex'} flexDirection={'column'} height={'98vh'} p={2} sx={{ boxSizing: 'border-box', overflow: 'hidden' }}>
-                <Box display={"flex"} flexDirection={'row'} flexGrow={0} alignItems={'center'} justifyContent={'space-between'} mb={2} >
-                    {/* header */}
-                    <Typography variant="h1" color={theme.palette.washiPaper.main} >Campfield Spoilage Tracker</Typography>
+        <>
+            {props.showOnboarding && (
+                <OnboardingForm
+                    showOnboarding={props.showOnboarding}
+                    setShowOnboarding={props.setShowOnboarding}
+                    handleAddUser={props.handleAddUser}
+                />
+            )}
+            <ThemeProvider theme={theme}>
+                <Box display={'flex'} flexDirection={'column'} height={'98vh'} p={2} sx={{ boxSizing: 'border-box', overflow: 'hidden' }}>
+                    <Box display={"flex"} flexDirection={'row'} flexGrow={0} alignItems={'center'} justifyContent={'space-between'} mb={2} >
+                        {/* header */}
+                        <Typography variant="h1" color={theme.palette.washiPaper.main} >Campfield Spoilage Tracker</Typography>
 
-                    {/* links */}
-                    <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
-                        <NavLink
-                            to="/dashboard"
-                            style={({ isActive }) => ({
-                                color: theme.palette.washiPaper.main,
-                                fontWeight: isActive ? 'bold' : 'normal',
-                                textDecoration: isActive ? 'underline' : 'none'
-                            })}
-                        >
-                            <Typography color={theme.palette.washiPaper.main} variant="body1">Dashboard</Typography>
-                        </NavLink>
-                        <NavLink
-                            to="/new-items"
-                            style={({ isActive }) => ({
-                                color: theme.palette.washiPaper.main,
-                                fontWeight: isActive ? 'bold' : 'normal',
-                                textDecoration: isActive ? 'underline' : 'none'
-                            })}
-                        >
-                            <Typography color={theme.palette.washiPaper.main} variant="body1">New Items</Typography>
-                        </NavLink>
-                        <NavLink
-                            to="/expiring-items"
-                            style={({ isActive }) => ({
-                                color: theme.palette.washiPaper.main,
-                                fontWeight: isActive ? 'bold' : 'normal',
-                                textDecoration: isActive ? 'underline' : 'none'
-                            })}
-                        >
-                            <Typography variant="body1">Expiring Items</Typography>
-                        </NavLink>
-                        <NavLink
-                            to="/expired-items"
-                            style={({ isActive }) => ({
-                                color: theme.palette.washiPaper.main,
-                                fontWeight: isActive ? 'bold' : 'normal',
-                                textDecoration: isActive ? 'underline' : 'none'
-                            })}
-                        >
-                            <Typography variant="body1">Expired Items</Typography>
-                        </NavLink>
-                        <CircleButton color={'forest'} onClick={handleShowAddItemForm} icon={<AddIcon />} />
-                        {/* <CircleButton color={'washiPaper'} onClick={() => console.log('notification opened')} icon={<NotificationsOutlinedIcon color="black" />} /> */}
+                        {/* links */}
+                        <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
+                            <NavLink
+                                to="/dashboard"
+                                style={({ isActive }) => ({
+                                    color: theme.palette.washiPaper.main,
+                                    fontWeight: isActive ? 'bold' : 'normal',
+                                    textDecoration: isActive ? 'underline' : 'none'
+                                })}
+                            >
+                                <Typography color={theme.palette.washiPaper.main} variant="body1">Dashboard</Typography>
+                            </NavLink>
+                            <NavLink
+                                to="new-items"
+                                style={({ isActive }) => ({
+                                    color: theme.palette.washiPaper.main,
+                                    fontWeight: isActive ? 'bold' : 'normal',
+                                    textDecoration: isActive ? 'underline' : 'none'
+                                })}
+                            >
+                                <Typography color={theme.palette.washiPaper.main} variant="body1">New Items</Typography>
+                            </NavLink>
+                            <NavLink
+                                to="expiring-items"
+                                style={({ isActive }) => ({
+                                    color: theme.palette.washiPaper.main,
+                                    fontWeight: isActive ? 'bold' : 'normal',
+                                    textDecoration: isActive ? 'underline' : 'none'
+                                })}
+                            >
+                                <Typography variant="body1">Expiring Items</Typography>
+                            </NavLink>
+                            <NavLink
+                                to="expired-items"
+                                style={({ isActive }) => ({
+                                    color: theme.palette.washiPaper.main,
+                                    fontWeight: isActive ? 'bold' : 'normal',
+                                    textDecoration: isActive ? 'underline' : 'none'
+                                })}
+                            >
+                                <Typography variant="body1">Expired Items</Typography>
+                            </NavLink>
+                            <CircleButton color={'forest'} onClick={handleShowAddItemForm} icon={<AddIcon />} />
+                            {/* <CircleButton color={'washiPaper'} onClick={() => console.log('notification opened')} icon={<NotificationsOutlinedIcon color="black" />} /> */}
+                        </Box>
+                    </Box>
+
+                    {/* Main Content Area */}
+                    <Box flexGrow={1}>
+                        <Outlet />
                     </Box>
                 </Box>
 
-                {/* Main Content Area */}
-                <Box flexGrow={1}>
-                    <Outlet />
-                </Box>
-            </Box>
+                <Modal
+                    open={showAddItemForm}
+                    onClose={handleCancelNewItem}
+                    keepMounted
+                >
+                    <Fade in={showAddItemForm} timeout={500}>
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            height="100vh"
+                        >
+                            <UpdatedNewItemForm handleCancelNewItem={handleCancelNewItem} handleAddItem={props.handleAddItem} />
 
-            <Modal
-                open={showAddItemForm}
-                onClose={handleCancelNewItem}
-                keepMounted
-            >
-                <Fade in={showAddItemForm} timeout={500}>
-                    <Box
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        height="100vh"
-                    >
-                        <UpdatedNewItemForm handleCancelNewItem={handleCancelNewItem} handleAddItem={props.handleAddItem} />
+                        </Box>
 
-                    </Box>
-
-                </Fade>
-            </Modal>
-        </ThemeProvider>
+                    </Fade>
+                </Modal>
+            </ThemeProvider>
+        </>
     )
 
 

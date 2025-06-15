@@ -14,9 +14,6 @@ export default function LandingPage() {
             <Typography variant="h1">Welcome to the Expense Tracker</Typography>
             <Typography variant="body">Track your expenses easily and efficiently.</Typography>
             <Stack gap={2} >
-                <Link to="/dashboard" className="btn btn-primary">
-                    Go to Dashboard
-                </Link>
                 <Button variant="contained" color="primary" onClick={handleLogin}>
                     Login
                 </Button>

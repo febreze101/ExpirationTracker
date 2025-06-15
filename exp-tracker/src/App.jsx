@@ -359,65 +359,68 @@ function App() {
       <Router>
         <Routes>
           {/* public routes */}
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
 
           {/* auth route */}
-
           <Route path="/auth" element={
             !session
               ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
-              : <Navigate to="/dashboard" replace />
+              : (<Navigate to="/dashboard" replace />)
           } />
 
 
           {/* protected routes */}
-          {showOnboarding && (
-            <Route path="/onboarding" element={
-              <OnboardingForm
-                showOnboarding={showOnboarding}
-                setShowOnboarding={setShowOnboarding}
-                handleAddUser={handleAddUser}
-              />
-            }
-            />
-          )}
-
-          {!showOnboarding && (
-            console.log("Showing protected routes") ||
-            <Route element={
+          <Route
+            path="/dashboard"
+            element={
               <ProtectedRoute session={session}>
-                <MemoizedLayout handleAddItem={handleAddItem} />
+                <MemoizedLayout
+                  andleAddItem={handleAddItem}
+                  showOnboarding={showOnboarding}
+                  setShowOnboarding={setShowOnboarding}
+                  handleAddUser={handleAddUser}
+                />
               </ProtectedRoute>
-            } >
-              <Route path="/dashboard" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />
-              <Route path="/new-items"
-                element={
-                  <NewItemsPage
-                    items={newItems}
-                    handleExpirationDateChange={handleExpirationDateChange}
-                    handleExpired={handleExpired}
-                  />
-                } />
-              <Route path="/expiring-items"
-                element={
-                  <ExpiringItemsPage
-                    getExpirationDetails={getExpirationDetails}
-                    items={itemsWithExpiration}
-                    handleExpirationDateChange={handleExpirationDateChange}
-                    handleExpired={handleExpired}
-                  />
-                } />
-              <Route path="/expired-items"
-                element={
-                  <ExpiredItemsPage
-                    items={expiredItems}
-                    handleRestore={handleRestore}
-                    handleOnDeleteItem={handleOnDeleteItem}
-                  />
-                } />
-            </Route>
-          )}
-
+            }
+          >
+            {/* nested routes */}
+            <Route
+              index
+              element={
+                <DashboardPage
+                  handleNewData={handleNewData}
+                  setFileName={setFileName} />
+              }
+            />
+            <Route path="new-items"
+              element={
+                <NewItemsPage
+                  items={newItems}
+                  handleExpirationDateChange={handleExpirationDateChange}
+                  handleExpired={handleExpired}
+                />
+              }
+            />
+            <Route path="expiring-items"
+              element={
+                <ExpiringItemsPage
+                  getExpirationDetails={getExpirationDetails}
+                  items={itemsWithExpiration}
+                  handleExpirationDateChange={handleExpirationDateChange}
+                  handleExpired={handleExpired}
+                />
+              }
+            />
+            <Route path="expired-items"
+              element={
+                <ExpiredItemsPage
+                  items={expiredItems}
+                  handleRestore={handleRestore}
+                  handleOnDeleteItem={handleOnDeleteItem}
+                />
+              }
+            />
+          </Route>
 
           {/* onboarding routes */}
         </Routes>
