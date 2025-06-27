@@ -256,9 +256,13 @@ function setupIpcHandlers() {
         }
     });
 
-    ipcMain.handle('db:handleTableData', (tableName, data) => {
+    let tablesCleared = false;
+    ipcMain.handle('db:handleTableData', (event, tableName, data) => {
         try {
-            dbOps.clearAllTablesForImport();
+            if (!tablesCleared) {
+                dbOps.clearAllTablesForImport();
+                tablesCleared = true;
+            }
             switch (tableName) {
                 case "inventory":
                     dbOps.importInventory(data);
