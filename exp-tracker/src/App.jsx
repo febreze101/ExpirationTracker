@@ -290,8 +290,9 @@ function App() {
       try {
         await importDbFromZip(
           file,
-          handleNewData,
-          dbOps.handleTableData,
+          async (tableName, data) => {
+            await dbOps.handleTableData(tableName, data);
+          },
           (errMsg) => showAlert(errMsg, "error")
         );
 
