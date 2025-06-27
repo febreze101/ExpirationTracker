@@ -293,6 +293,7 @@ const dbOperations = {
         }
     },
     importInventory(items) {
+        console.log('Importing inventory items:', items);
         const insert = db.prepare(`
         INSERT INTO inventory (
             id,
@@ -320,6 +321,7 @@ const dbOperations = {
     `);
 
         const insertMany = db.transaction((items) => {
+            console.log('Inserting items into inventory:', items);
             for (const item of items) {
                 insert.run({
                     id: item.id,
@@ -336,6 +338,7 @@ const dbOperations = {
     },
 
     importExpiredInventory(items) {
+        console.log('Importing expired inventory items:', items);
         const insert = db.prepare(`
         INSERT INTO expired_inventory (
             id,
