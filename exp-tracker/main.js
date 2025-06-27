@@ -1,11 +1,15 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import Papa from 'papaparse';
+
+import JSZip from 'jszip';
+import db from './src/db/database.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import { app, BrowserWindow, ipcMain, Notification, Tray, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, Notification, Tray, Menu, dialog } from 'electron';
 import dbOps from './src/db/operations.js';
 import schedule from 'node-schedule';
 import { sendNotificationEmail, } from './src/utils/emailService.js';
@@ -20,7 +24,6 @@ let tray;
 let isQuiting = false;
 
 const gotTheLock = app.requestSingleInstanceLock();
-
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -127,90 +130,6 @@ function createTray() {
     })
 }
 
-// Schedule a job to move expired items every day at 12:00 AM
-// function setupDailyCheck() {
-//     // console.log('Initial table state:');
-//     // dbOps.checkTables();
-//     // check for expired items
-//     const checkExpiredItems = async () => {
-//         try {
-//             const expiredItems = dbOps.moveExpiredItems();
-
-//             if (expiredItems.length > 0) {
-//                 // Show expired items notification
-//                 new Notification({
-//                     title: 'Spoilage Alert',
-//                     body: `${expiredItems.length} items have expired!`,
-//                 }).show();
-
-//                 await sendExpirationEmail(expiredItems);
-//                 console.log(`${expiredItems.length} expired items moved and notification sent`);
-
-//             } else {
-//                 console.log('No expired items found');
-//             }
-//         } catch (error) {
-//             console.error('Error moving expired items: ', error);
-//         }
-//     }
-
-//     checkExpiredItems();
-
-//     // schedule daily check
-//     schedule.scheduleJob('0 0 * * *', checkExpiredItems)
-// }
-
-// // set up weekly chcek
-
-// function setupPreemptiveExpirationCheck(numDays) {
-//     console.log('Checking for items expiring in %d days', numDays);
-
-//     // function to check for items expiring soon
-//     const checkExpiringSoon = async () => {
-//         try {
-//             const expiredItems = await dbOps.moveExpiredItems();
-//             const soonExpiringItems = await dbOps.getItemsExpiringSoon(numDays);
-
-//             if (expiredItems.length > 0) {
-//                 // Show expired items notification
-//                 new Notification({
-//                     title: 'Spoilage Alert',
-//                     body: `${expiredItems.length} items have expired!`,
-//                 }).show();
-//             } else {
-//                 console.log('No expired items found');
-//             }
-
-
-//             if (soonExpiringItems.length > 0) {
-//                 console.log(soonExpiringItems)
-
-//                 // send desktop notification
-//                 new Notification({
-//                     title: 'Spoilage Alert',
-//                     body: `${soonExpiringItems.length} items expiring in ${numDays} days!`,
-//                 }).show();
-
-//                 const emails = dbOps.getNotificationEmails();
-
-//                 // send email notification
-//                 await sendNotificationEmail(expiredItems, numDays, soonExpiringItems, emails);
-//                 console.log(`${soonExpiringItems.length} items expiring soon! Notifications sent!`);
-
-//             } else {
-//                 console.log('No items will spoil in %d days', numDays);
-//             }
-//         } catch (error) {
-//             console.error('Error finding items that will expire within the next %d days:', numDays, error)
-//         }
-//     };
-
-//     // initial check
-//     checkExpiringSoon();
-
-//     // schedule daily check
-//     schedule.scheduleJob('0 0 * * *', () => checkExpiringSoon());
-// }
 
 function setupExpirationNotification(numDays = 30) {
     const today = new Date();
@@ -302,6 +221,72 @@ function setupIpcHandlers() {
             throw error;
         }
     });
+
+    ipcMain.handle('db:exportDbZip', async () => {
+        try {
+            const tables = ['inventory', 'batches', 'expired_inventory'];
+            const zip = new JSZip();
+
+            for (const table of tables) {
+                const rows = db.prepare(`SELECT * FROM ${table}`).all();
+                if (rows.length > 0) {
+                    const csv = Papa.unparse(rows);
+                    zip.file(`${table}.csv`, csv);
+                }
+            }
+
+            const content = await zip.generateAsync({ type: 'nodebuffer' });
+
+            const { filePath } = await dialog.showSaveDialog({
+                title: 'Export Inventory',
+                defaultPath: 'inventory_export.zip',
+                filters: [{ name: 'Zip Files', extensions: ['zip'] }]
+            });
+
+            if (filePath) {
+                fs.writeFileSync(filePath, content);
+                console.log(`Inventory exported to ${filePath}`);
+                return filePath;
+            } else {
+                return null; // User cancelled the save dialog
+            }
+        } catch (error) {
+            console.error('Error exporting inventory', error)
+            throw error;
+        }
+    });
+
+    let tablesCleared = false;
+    ipcMain.handle('db:handleTableData', (event, tableName, data) => {
+        try {
+            if (!tablesCleared) {
+                dbOps.clearAllTablesForImport();
+                tablesCleared = true;
+            }
+            switch (tableName) {
+                case "inventory":
+                    console.log('inventory tableName: ', tableName);
+                    console.log('data: ', data);
+                    dbOps.importInventory(data);
+                    break;
+                case "batches":
+                    console.log('batches tableName: ', tableName);
+                    console.log('data: ', data);
+                    dbOps.importBatches(data);
+                    break;
+                case "expired_inventory":
+                    console.log('expired tableName: ', tableName);
+                    console.log('data: ', data);
+                    dbOps.importExpiredInventory(data);
+                    break;
+                default:
+                    console.warn("Unknown table:", tableName);
+            }
+        } catch (error) {
+            console.error('Error importing inventory', error)
+            throw error;
+        }
+    })
 
     ipcMain.handle('db:isFirstLaunch', () => {
         try {
