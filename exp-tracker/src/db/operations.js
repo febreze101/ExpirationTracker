@@ -361,6 +361,7 @@ const dbOperations = {
     },
 
     importBatches(batches) {
+        const getInventoryId = db.prepare('SELECT id FROM inventory WHERE item_name = ?');
         const insert = db.prepare(`
         INSERT INTO batches (
             inventory_id,
@@ -379,8 +380,16 @@ const dbOperations = {
 
         const insertMany = db.transaction((batches) => {
             for (const batch of batches) {
+                // If your CSV has item_name, use it to look up the new inventory_id
+                let inventory_id = batch.inventory_id;
+                if (batch.item_name) {
+                    const row = getInventoryId.get(batch.item_name);
+                    inventory_id = row ? row.id : null;
+                }
+                if (!inventory_id) continue; // skip if not found
+
                 insert.run({
-                    inventory_id: batch.inventory_id ?? null,
+                    inventory_id,
                     expiration_date: batch.expiration_date ?? null,
                     quantity: batch.quantity ?? 1,
                     created_at: batch.created_at ?? toSqliteDateString(new Date()),
