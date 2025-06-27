@@ -9,7 +9,7 @@ import OnboardingNotificationFrequency from './OnboardingNotificationFrequency'
 import OnboardingDone from './OnboardingDone'
 
 
-export default function OnboardingForm({ showOnboarding, setShowOnboarding, handleAddUser }) {
+export default function OnboardingForm({ showOnboarding, setShowOnboarding, handleAddUser, createNewWorkspace, joinWorkspace }) {
     // const [showOnboarding, setShowOnboarding] = useState(localStorage.getItem('hasCompletedOnboarding') !== "true")
     const [step, setStep] = useState(0)
     const [formData, setFormData] = useState({
@@ -43,6 +43,14 @@ export default function OnboardingForm({ showOnboarding, setShowOnboarding, hand
         } catch (error) {
             console.error('Failed to add user', error);
         }
+
+        // // create new workspace
+        if (formData.workspace_name && formData.workspace_name.trim() !== "") {
+            console.log("Creating new workspace with name:", formData.workspace_name);
+            createNewWorkspace(formData.workspace_name);
+        } else {
+            console.error("Workspace name is required to create a new workspace.");
+        }
     }
 
     const handleNext = () => {
@@ -63,6 +71,7 @@ export default function OnboardingForm({ showOnboarding, setShowOnboarding, hand
             setData={setFormData}
             handleNext={handleNext}
             handleBack={handleBack}
+            createNewWorkspace={createNewWorkspace}
         />,
         <OnboardingNotificationSetup
             data={formData}

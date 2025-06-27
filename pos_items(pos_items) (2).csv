@@ -1,0 +1,657 @@
+ID,Item Name,GL Code,Catalog,Category,Menus,Stock,Cost,Price
+207771,Jones Lemon Lime Soda,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,8,1.49,2.99
+207772,Jones Berry Lemonade Soda,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,16,1.49,2.99
+207775,The Better Bar Chocolate,Sale of Goods,Food & Beverage,Food: Snacks,,21,2.53,4.99
+207776,The Better Bar,Sale of Goods,Food & Beverage,Food: Snacks,,18,2.53,4.99
+207779,Maple Hot Chocolate,Sale of Goods,Food & Beverage,Food: Snacks,,0,8.54,8.99
+207780,Pimienta Gorda Hot Choc.,Sale of Goods,Food & Beverage,Food: Snacks,,1,8.54,14.99
+207781,Premium Hot Chocolate,Sale of Goods,Food & Beverage,Food: Snacks,,5,8.54,14.99
+207800,Pocket Chocolate Viet Coffee Almond,Sale of Goods,Food & Beverage,Food: Snacks,,7,3.59,7.99
+207801,Pocket Latte Hazelnut Chocolate,Sale of Goods,Food & Beverage,Food: Snacks,,1,1.29,2.99
+207802,Pocket Chocolate Mango Yuzu Almonds,Sale of Goods,Food & Beverage,Food: Snacks,,0,1.49,3.49
+207803,Pocket Chocolate Matcha Almonds,Sale of Goods,Food & Beverage,Food: Snacks,,0,1.49,3.49
+207804,Portland Mustard,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,3.98,7.99
+207805,Portland BBQ Sauce,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,-1,4.99,5
+207806,Portland Ketchup,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,9,3.81,7.99
+207807,Oregon Growers Blackberry Honey,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,1,8.74,14.99
+207808,Oregon Growers Marionberry Syrup,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,6,6.54,14.99
+207844,Oregon Growers Blueberry Fruit Spre,Sale of Goods,Food & Beverage,Food: Breakfast Meals & Ingredients,,0,5.54,7.99
+207845,Oregon Growers Peach Fruit Spread,Sale of Goods,Food & Beverage,Food: Breakfast Meals & Ingredients,,1,5.45,7.99
+207847,Japanese Barbecue Sauce Hot and Spi,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,6.94,13.99
+207848,Japanese Barbecue Sauce Gluten-Free,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,2,6.94,13.99
+207850,Japanese Barbecue Sauce Yuzu,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,7,6.94,13.99
+207851,Japanese Barbecue Sauce the Origina,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,1,6.94,13.99
+207853,Japanese Barbecue Sauce Miso,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,8,6.94,13
+207854,Hudson Valley Marshmallows CO Choc.,Sale of Goods,Food & Beverage,Food: Snacks,,8,4.11,7.99
+207855,Hudson Valley Marshmallows Co. Salt,Sale of Goods,Food & Beverage,Food: Snacks,,10,4.11,7.99
+207856,Hudson Valley Marshmallow Co. Van.,Sale of Goods,Food & Beverage,Food: Snacks,,20,4.11,7.99
+207857,Hudson Valley Marshmallow CO.  Fren,Sale of Goods,Food & Beverage,Food: Snacks,,16,4.11,7.99
+207858,Hudson Valley Marshmallow CO.  Stra,Sale of Goods,Food & Beverage,Food: Snacks,,17,4.11,7.99
+207859,HV Choc Chip Graham,Sale of Goods,Food & Beverage,Food: Snacks,,36,5.76,9.99
+207860,HV Choc Graham,Sale of Goods,Food & Beverage,Food: Snacks,,12,5.61,9.99
+207861,HV Cinnamon Graham Crackers,Sale of Goods,Food & Beverage,Food: Snacks,,23,5.61,9.99
+207863,Raaka Green Tea Crunch,Sale of Goods,Food & Beverage,Food: Snacks,,0,4.35,7.99
+207864,Raaka Bananas Foster,Sale of Goods,Food & Beverage,Food: Snacks,,2,3.95,7.99
+207865,Raaka Maple & Nibs,Sale of Goods,Food & Beverage,Food: Snacks,,0,4.35,7.99
+207866,Raaka Bourbon Cask Aged,Sale of Goods,Food & Beverage,Food: Snacks,,0,4.35,7.99
+207884,Pastabilities Pasta+Cheese (Space),Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,4.63,4.99
+207885,Pastabilities Pasta + Cheese (Dinos,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,4,4.63,9.49
+207886,Pastabilities Pasta + Cheese (Sea C,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,4.63,9.49
+207887,Pastabilities In the Woods Pasta,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,7,4.63,9.49
+207888,Pastabilities Let's go Crabbin' Pas,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,4.63,9.49
+207901,Jacobsen Salt Co. Black Pepper Salt,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,30,3.65,5.99
+207902,Jacobsen Salt Co. Lemon Zest Salt,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,50,3.65,5.99
+207903,Jacobsen Salt Co. Pure Sea Salt,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,15,3.65,5.99
+207904,Jacobsen Salt Co. Furikake,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,4,6.55,12.99
+207905,Jacobsen Co. Seafood,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,3,4.75,9.99
+207912,Chico Rice Brown,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,5,5.82,8.99
+207913,Chico Rice Blonde,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,2,5.82,8.99
+207915,New Creations Soda Peches,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,27,1.93,3.99
+207916,New Creations Soda Hopfin,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,19,1.93,3.99
+207917,New Creations Soda Root 42,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,29,1.93,3.99
+207918,Boba Royal Assam,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,11,1.86,3.99
+207919,Boba Milk Tea Brown Sugar,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,11,1.63,3.99
+207920,Boba Oat Milk Brown Sugar,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,16,1.86,3.99
+207921,Boba Milk Tea Classic,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,15,1.86,3.99
+207928,Yuzu Ketchup,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,5.41,9.99
+207930,Yuzu Sweet Chili,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,2,5.41,9.99
+207931,Yuzu Fruit Spread,Sale of Goods,Food & Beverage,Food: Breakfast Meals & Ingredients,,0,4.63,6.99
+207932,Apothecary Campfire Chocolate Bar,Sale of Goods,Food & Beverage,Food: Snacks,,13,7.35,9.99
+207933,Yuzu Anko Fruit Spead,Sale of Goods,Food & Beverage,Food: Breakfast Meals & Ingredients,,0,4.98,4.99
+207934,Apothecary Maple Crunch Chocolate B,Sale of Goods,Food & Beverage,Food: Snacks,,0,7.35,9.99
+207935,Apothecary Birch Brown Butter,Sale of Goods,Food & Beverage,Food: Snacks,,0,7.35,9.99
+207936,Apple Butter Fruit Spead,Sale of Goods,Food & Beverage,Food: Breakfast Meals & Ingredients,,4,5.15,7.49
+207937,Apothecary Forest Chocolate Bar,Sale of Goods,Food & Beverage,Food: Snacks,,1,7.35,9.99
+207938,Suehiro Sashimi Soy Sauce,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,8.02,14.99
+207939,Tsubi White Miso Soup,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,-1,10.92,21.99
+207940,Tsubi Red Miso Soup,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,10.92,21.99
+207941,Tsubi Yellow Miso Soup,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,2,10.92,21.99
+207945,Momofuku Chili,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,4,9.57,10
+207948,Momofuku  Spicy Soy,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,12,9.57,15.99
+207949,Momofuku Soy & Scallion,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,6,9.57,15.99
+207950,Momofuku Chili Crunch,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,6,10.52,15.99
+207951,Momofuku Tamari,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,-2,8.73,15.99
+207952,Raaka Crispy Rice,Sale of Goods,Food & Beverage,Food: Snacks,,0,5.13,7.99
+207954,Hi-Chew Watermelon,Sale of Goods,Food & Beverage,Food: Snacks,,2,1,2.99
+207955,Ramune Lychee Drink,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,-1,2.9,5.99
+207956,Hi-Chew Acai,Sale of Goods,Food & Beverage,Food: Snacks,,0,1.6,2.99
+207957,Hi-Chew Apple,Sale of Goods,Food & Beverage,Food: Snacks,,5,1.6,2.99
+207958,Hi-Chew Kiwi,Sale of Goods,Food & Beverage,Food: Snacks,,1,1.6,2.99
+207959,Hi-Chew Strawberry,Sale of Goods,Food & Beverage,Food: Snacks,,0,1.6,2.99
+207960,Hi-Chew Banana,Sale of Goods,Food & Beverage,Food: Snacks,,13,1.6,2.99
+207961,Pocky Chocolate,Sale of Goods,Food & Beverage,Food: Snacks,,20,2.19,4.49
+207962,Pocky Banana,Sale of Goods,Food & Beverage,Food: Snacks,,25,2.19,4.49
+207963,Pocky Strawberry,Sale of Goods,Food & Beverage,Food: Snacks,,0,2.19,4.49
+207977,New Creations Soda Banana Split,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,23,1.93,3.99
+208819,New Creations soda Strawberry Hab,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,24,1.93,3.99
+208861,Chunky Mild Sauce MNMLST,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,5,4.92,9.99
+208862,Mayo MNMLST,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,1,4.5,8.99
+209078,California Crisps Orange Chocolate,Sale of Goods,Food & Beverage,Food: Snacks,,1,1.99,2.5
+209080,California Crisps Blood Orange,Sale of Goods,Food & Beverage,Food: Snacks,,-2,1.99,2.5
+209126,Japanese Pantry Yamatsu Tsujita 7,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,8.96,14.99
+209130,Acqua Panna Tuscany,Sale of Goods,Food & Beverage,Beverage: Water (inc ICE),,12,1.66,3.49
+209131,Topo-Chico,Sale of Goods,Food & Beverage,Beverage: Water (inc ICE),,29,1.5,2.99
+211574,Single Momofuku Noodles,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,-13,1.19,2.49
+211810,Alec Meyer Lemon Cookie,Sale of Goods,Food & Beverage,Food: Snacks,,7,4.75,9.99
+211811,Alec Sea Salt Carmel,Sale of Goods,Food & Beverage,Food: Snacks,,3,4.75,9.99
+211812,Alec Matcha Chocolate Chip,Sale of Goods,Food & Beverage,Food: Snacks,,0,4.75,9.99
+211814,Alec Honey Blueberry Lavender,Sale of Goods,Food & Beverage,Food: Snacks,,6,4.75,9.99
+211815,Alec Palms Springs Banana Choc. Dat,Sale of Goods,Food & Beverage,Food: Snacks,,7,4.75,9.99
+211816,Alec Peanut Butter Fudge Honeycomb,Sale of Goods,Food & Beverage,Food: Snacks,,0,4.75,9.99
+211818,Alec Strawberry Crumble,Sale of Goods,Food & Beverage,Food: Snacks,,6,4.75,9.99
+211819,Alec Maple Cardamom Candied Pecan,Sale of Goods,Food & Beverage,Food: Snacks,,5,4.75,9.99
+211820,Alec Tahitian Vanilla Bean,Sale of Goods,Food & Beverage,Food: Snacks,,0,4.75,9.99
+211821,Alec Mint Chocolate Chip,Sale of Goods,Food & Beverage,Food: Snacks,,0,4.75,9.99
+212063,Wasabi,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,8,3.45,6.99
+212065,Black Sesame ToFu,Sale of Goods,Food & Beverage,Food: Snacks,,9,2.5,4.99
+212066,Organic Ponzu Sauce,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,3,6,6
+212212,CB Nuts ORG Peanut Butter,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,6.26,12.49
+212214,CB Nuts Sea Salt Peanut Butter,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,24,4.59,9.79
+212494,Wood's Maple Crack,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,9.85,9.99
+212495,Wood's Maple Cubes,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,3.75,3.99
+212497,Wood's Vermont Maple Syrup 8 oz.,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,6,4.85,9.99
+212502,Wood's Apple Pie Maple Syrup,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,8,8.85,14.99
+212566,Meito Cookies Blue,Sale of Goods,Food & Beverage,Food: Snacks,,18,2.04,3.79
+212567,Meito Cookies Red,Sale of Goods,Food & Beverage,Food: Snacks,,0,2.04,3.79
+212568,Botan Rice Candy,Sale of Goods,Food & Beverage,Food: Snacks,,13,1.66,3.29
+212569,Ramune Strawberry,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,9,3.09,5.99
+212572,HM Ginger Kombucha,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,-3,2.2,4.49
+212573,HM Peach Kombucha,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,6,2.2,4.49
+212574,HM Honeydew Kombucha,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,17,2.2,4.49
+212575,HM Huckleberry Kombucha,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,3,2.2,4.49
+212576,Mela Zen BTL,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,22,2.44,4.79
+212577,Spuma BTL,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,8,2.44,4.79
+212578,Agrumata BTL,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,6,2.51,4.79
+212579,Rambler Lemon,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,16,1.56,2.99
+212580,Rambler Satsuma,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,0,1.56,2.99
+213364,Garlic Fresno,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,13,8.05,15.99
+213365,Smokey Ghost,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,8.05,15.99
+213366,Rum Honey Habanero,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,11,8.05,15.99
+213367,Mcconnells Sweet Caramel Brownie,Sale of Goods,Food & Beverage,Food: Snacks,,2,9.9,14.99
+213370,Mcconnells Eureka Lemon & Marionber,Sale of Goods,Food & Beverage,Food: Snacks,,0,9.9,14.99
+213371,Mcconnells S'mores,Sale of Goods,Food & Beverage,Food: Snacks,,3,9.9,14.99
+213372,Mcconnells Choc. Caramel Cookie,Sale of Goods,Food & Beverage,Food: Snacks,,5,9.9,14.99
+213374,DF Mcconnells Cookies & Cream,Sale of Goods,Food & Beverage,Food: Snacks,,0,9.9,14.99
+213376,DF Coffee Cookie,Sale of Goods,Food & Beverage,Food: Snacks,,0,9.9,14.99
+213609,Crannie Finishing Sauce,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,3,6,11.99
+213610,Crannie Chipotle Finishing Sauce,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,6,11.99
+213611,Willabay Breading Mix,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,4.99,8.99
+213612,Seafood & Poultry Seasoning Blend,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,1,4,7.99
+213613,Curry Blend Seasoning,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,1,4,7.99
+213866,Poke Wasabi Ahi,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,6,7.49,14.99
+213873,Poke Spicy Ahi,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,7.49,14.99
+213929,Cookies & Cream Cone,Sale of Goods,Food & Beverage,Food: Snacks,,20,2.42,3.99
+213930,Reese's IC Stick,Sale of Goods,Food & Beverage,Food: Snacks,,40,1.62,3.49
+213931,Good Humor strawberry shortcake,Sale of Goods,Food & Beverage,Food: Snacks,,24,1.62,3.49
+213932,Good Humor king cone,Sale of Goods,Food & Beverage,Food: Snacks,,2,2.42,3.99
+213933,Giant Van. Sandwich,Sale of Goods,Food & Beverage,Food: Snacks,,16,1.24,3.49
+213934,Good humor cookies and crea bar,Sale of Goods,Food & Beverage,Food: Snacks,,-3,1.62,3.49
+213936,LM Coconut Ice Cream,Sale of Goods,Food & Beverage,Food: Snacks,,0,1.24,3.49
+213937,LM Strawberry Ice Cream,Sale of Goods,Food & Beverage,Food: Snacks,,0,1.27,3.49
+213939,Ruby Jewel Lemon Lavender IC,Sale of Goods,Food & Beverage,Food: Snacks,,16,3.09,4.99
+213940,Ruby Jewel Oatmeal Butterscotch IC,Sale of Goods,Food & Beverage,Food: Snacks,,22,3.09,4.99
+213941,Ruby Jewel The Classic,Sale of Goods,Food & Beverage,Food: Snacks,,0,3.09,4.99
+213942,Ruby Jewel Campfire N' S'mores IC,Sale of Goods,Food & Beverage,Food: Snacks,,18,3.09,4.99
+213943,Ruby Jewel Chocolate Mint IC,Sale of Goods,Food & Beverage,Food: Snacks,,18,3.09,4.99
+213946,Honey Bar,Sale of Goods,Food & Beverage,Food: Snacks,,0,5,9
+213947,Honey Bar Jr.,Sale of Goods,Food & Beverage,Food: Snacks,,4,1.5,2.5
+213948,Lil' Mint,Sale of Goods,Food & Beverage,Food: Snacks,,3,1.5,2.5
+214296,Mocha Biscotti,Sale of Goods,Food & Beverage,Food: Snacks,,9,1.65,3.49
+214299,ORG Choc Chip Biscotti,Sale of Goods,Food & Beverage,Food: Snacks,,1,1.65,3.49
+214301,Choc Salted Caramel Biscotti,Sale of Goods,Food & Beverage,Food: Snacks,,10,1.65,3.49
+214302,Almond Roka Biscotti,Sale of Goods,Food & Beverage,Food: Snacks,,0,1.65,3.49
+214629,Olipop Trop. Pnch,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,0,1.86,3.99
+214630,Olipop Banana Cream,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,34,1.86,3.99
+214631,Olipop  Crisp Apple,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,16,1.86,3.99
+214659,Cheese & Spring Onion Lng Potato Ch,Sale of Goods,Food & Beverage,Food: Snacks,,42,2.09,4.29
+224812,Fig & Orange Spread,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,5,2.95,7.99
+224814,Cherry Chocolate Jam,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,7,3.45,8.99
+224815,Whiskey Mustard,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,5.65,11.29
+224816,Apple Caramel Jam,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,5,3.45,8.99
+224818,Peanut & Sea Salt Umchu,Sale of Goods,Food & Beverage,Food: Snacks,,7,1.74,3
+224819,PB & J Umchu,Sale of Goods,Food & Beverage,Food: Snacks,,-2,1.74,3
+224820,Cinnamon Pecan Umchu,Sale of Goods,Food & Beverage,Food: Snacks,,14,1.74,2.5
+224821,Peanut Umchu,Sale of Goods,Food & Beverage,Food: Snacks,,5,1.74,2.5
+224911,TRE-FIN Albacore Tuna Pack 6oz,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,32,7.25,12.99
+224921,TRE-FIN Wild Albacore Tuna lion,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,10.2,14.58
+224923,TRE-FIN Wild Albacore Tuna lion,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,11.21,16.02
+224924,TRE-FIN Wild Albacore Tuna lion,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,10.08,14.4
+224925,TRE-FIN Wild Albacore Tuna lion,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,10.96,15.66
+224928,TRE-FIN Coho Fish,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,6.72,9.6
+224929,TRE-FIN Coho Fish,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,10.5,15
+224931,TRE-FIN Coho Fish,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,6.44,9.2
+224932,TRE-FIN Coho Fish,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,11.34,16.2
+225102,Tomato Basil WI,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,4.47,7.99
+225103,Buffalo Wing WI,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,4.47,7.99
+225104,Garlic & Dill WI,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,-6,4.47,7.99
+225105,Cajun WI,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,4.47,7.99
+225106,Hot Pepper WI,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,4.47,7.99
+225107,Bloody Mary WI,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,4.47,9.99
+225109,Ranch WI,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,4.47,8.99
+225111,Classic WI,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,-5,4.47,7.99
+225113,Jamaican Jerk WI,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,4.47,7.99
+225114,Cheddar Cheese Brothers,Sale of Goods,Food & Beverage,Food: Snacks,,1,0.99,1.99
+225116,Onion & Chive Cheese Spread,Food & Beverage,Food & Beverage,Food: Snacks,,0,4.47,8.99
+225117,Cranberry Walnut Cheese Spread,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,4.47,8.99
+225118,Beer Cheddar Cheese Spread,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,4.47,8.99
+225292,Huckleberry White Chocolate Biscott,Sale of Goods,Food & Beverage,Food: Snacks,,8,1.65,3.49
+225294,It's My Birthday Biscotti,Sale of Goods,Food & Beverage,Food: Snacks,,0,1.65,3.49
+225305,Olipop Watermelon Lime,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,35,1.86,3.99
+225306,Olipop Cherry Cola,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,6,1.86,3.99
+225314,Topo-Chico Twist & Lime,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,18,1.5,2.99
+228885,Lovely Bunch Apple Juice,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,62,3.06,5.99
+228886,Lovely Bunch Sparkling Apple Juice,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,14,3.06,5.99
+228888,Tara Strawberry Juice,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,0,2.14,4.99
+228890,Tara Peach Juice,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,3,2.14,4.99
+228892,Tara Dragon Fuit Juice,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,30,2.14,4.99
+228894,Tara Passionfruit Juice,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,0,2.14,4.99
+228985,Ota Tofu,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,2.27,3.99
+228998,Chobani Yogurt 4oz,Sale of Goods,Food & Beverage,Food: Breakfast Meals & Ingredients,,0,8,1.59
+228999,Chobani Mixed Berry 5.3oz,Sale of Goods,Food & Beverage,Food: Breakfast Meals & Ingredients,,3,1.69,2.99
+229005,Chobani Raspberry 5.3oz,Sale of Goods,Food & Beverage,Food: Breakfast Meals & Ingredients,,4,1.69,2.99
+229027,Chocolate Milk Qt 2%,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,6,6,3.79
+229080,HM Dragon Fruit Kombucha,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,7,2.2,4.49
+229081,HM Lavender White Kombucha,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,-3,2.2,4.49
+229195,Nicos BBQ Korean Seaweed Snack,Sale of Goods,Food & Beverage,Food: Snacks,,-12,0.33,0.5
+230649,Rambler Blackberry,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,9,1.56,2.99
+230877,Riffs VooDoo Child Spicy Hot Sauce,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,8,4.25,5.99
+231108,Wood's Maple Sprinkles,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,1,9.85,19.99
+231109,Wood's Maple Candy Leaves,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,6,2,3.99
+231493,Riffs Sweet Child O' Mine BBQ Sauce,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,0,4.25,6.99
+231497,Riffs Bacon Raspberry Chipotle,Sale of Goods,Food & Beverage,Food: Snacks,,29,1.43,2.79
+231501,Riffs Bacon Habanero Heat,Sale of Goods,Food & Beverage,Food: Snacks,,10,1.43,2.79
+231505,Riffs Red Curry Bacon,Sale of Goods,Food & Beverage,Food: Snacks,,6,1.43,2.79
+231508,Riffs Sweet & Spicy Bacon,Sale of Goods,Food & Beverage,Food: Snacks,,44,1.43,2.79
+231511,Riffs Sweet Bacon,Sale of Goods,Food & Beverage,Food: Snacks,,33,1.43,2.79
+231934,Painted Hills Beef Patties 6ct,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,9,11.78,19.99
+231935,Applegate Organic Beef Hot Dog 10oz,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,5.69,11.99
+232891,Wild Bills Strawberry Cream,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,0,1.91,3.99
+232893,Wild Bills Sarsaparilla,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,4,1.91,3.99
+232894,Wild Bills Mojito Soda,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,2,1.91,3.99
+232896,Wild Bills Ginger Ale,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,2,1.91,3.99
+232915,Oil and Vinegar Pistachio Nougat,Sale of Goods,Food & Beverage,Food: Snacks,,23,3.85,8.49
+232918,Oil and Vinegar Limoncello Nougat,Sale of Goods,Food & Beverage,Food: Snacks,,27,3.85,8.49
+232934,Oil and Vinegar Fine Fish Rub,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,2,4.65,7.99
+232938,Oil and Vinegar Smoky BBQ mix,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,1,5.4,8.99
+232941,Oil and Vinegar Bruschetta Original,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,3,5.95,9.99
+232944,Oil and Vinegar Truffle Honey,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,6,5.95,13.99
+233493,Cormier's Gold Double Garlic,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,4,4.25,4.99
+233494,Cormier's Gold Orange Burst,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,7,4.25,4.99
+233495,Cormier's Gold Garlic And Ginger,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,1,4.25,4.99
+233531,California Crisp Pineapple Ruby,Sale of Goods,Food & Beverage,Food: Snacks,,2,1.99,2.5
+234360,Ramune Yuzu Drink,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,7,2.9,5.99
+235169,SAP! Sparkling Birch Water,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,5,1.98,3.99
+235170,SAP! Sparkling Maple water,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,4,1.98,3.99
+235171,SAP! Maple Soda,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,2,2.07,3.99
+235172,SAP! Tangerine Birch Water with Cha,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,5,1.9,3.99
+235247,G & W Maple Sugar and Spice,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,28,4.5,9.99
+235248,G & W Maple Herb Seasoning,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,14,4.5,9.99
+235249,G & W Maple BBQ Rub,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,11,4.5,9.99
+235383,Casamara Club Sera,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,0,2.97,4.5
+235385,Casamara Club Onda,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,7,2.97,4.5
+236086,Oil and Vinegar Raspberry Nougat,Sale of Goods,Food & Beverage,Food: Snacks,,54,3.15,8.49
+236156,Lup Sparkling Hop Water,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,14,1.75,3.99
+236377,Rain water,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,97,1.26,2.99
+241370,Potter's Crackers Classic White,Sale of Goods,Food & Beverage,Food: Snacks,,13,4.18,7.49
+241371,Potter's Crackers Applewood Smoked,Sale of Goods,Food & Beverage,Food: Snacks,,17,4.18,7.49
+241373,Potter's Crackers Caramelized Onion,Sale of Goods,Food & Beverage,Food: Snacks,,19,4.18,7.49
+241375,TomBumble Smooth,Sale of Goods,Food & Beverage,Food: Snacks,,27,1.67,3.99
+241377,EZRA CASH,Sale of Goods,Food & Beverage,Food: Snacks,,0,2.75,5.5
+241379,HAZEL JONES,Sale of Goods,Food & Beverage,Food: Snacks,,8,2.75,5.5
+241848,V’s Chocolate Banana Muffin,Sale of Goods,Cafe,Food: Deserts,,0,2,4
+242256,Tom Bumble Nutty,Sale of Goods,Food & Beverage,Food: Snacks,,7,1.54,3.99
+242343,LM Mango Ice Cream,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.27,3.49
+243722,DF coffee cookie crumble McConnells,Sale of Goods,Food & Beverage,Food: Snacks,,0,9.9,14.99
+243733,Magnum Double Caramel Bar,Sale of Goods,Food & Beverage,Food: Snacks,,0,2.25,3.99
+243996,Daoher Shaken Tea Strawberry Jasmin,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,14,1.42,2.99
+244008,Califia Oat Milk Barista Blends,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,-3,3.63,6.99
+244011,Trefin coho salmon,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,6,9
+244012,Trefin coho salmon,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,12.18,17.4
+244013,Trefin coho salmon,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,6.72,9.6
+244014,Trefin coho salmon,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,12.04,17.2
+244015,Trefin coho salmon,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,5.6,8
+244016,Trefin coho salmon,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,10.78,15.4
+244017,Gelato Festival Coffee Cookie Crumb,Sale of Goods,Food & Beverage,Food: Snacks,,5,5,9.99
+244018,Gelato Festival Cookie Butter,Sale of Goods,Food & Beverage,Food: Snacks,,6,5,9.99
+244019,Gelato Festival Honey Pecan,Food & Beverage,Food & Beverage,Food: Snacks,,3,5,9.99
+244271,Maui Lemonade,Food & Beverage,Food & Beverage,Beverage: Beer,,12,1.28,2.99
+244272,Maui Hibiscus Lime,Sale of Goods,Food & Beverage,Beverage: Beer,,14,1.28,2.99
+244345,Daoher Alovated Tropical Fantasy,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,9,1.42,2.99
+244346,Daoher Shaken Tea Passionfruit Gree,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,14,1.42,2.99
+244349,Boba Milk Tea Matcha,Sale of Goods,Food & Beverage,Beverage: Coffee & Tea,,21,1.63,3.99
+244350,Creme Brulee Boba,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,22,1.79,3.99
+244351,Daoher Alovated Pink Thunder,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,0,1.42,2.99
+244352,Daoher Shaken Tea Lychee Oolong Tea,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,12,1.42,2.99
+244739,Momofuku sweet & spicy,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,10,9.57,15.99
+244740,Amaz pineapple passion,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,0,2.49,4.99
+244741,Amaz Orange Blizzard,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,4,2.49,4.99
+244742,New creations soda krumkake,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,15,1.93,3.99
+244743,New creations soda hopscotch,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,27,1.93,3.99
+244818,Amaz Acai Blueberry,Sale of Goods,Food & Beverage,Beverage: Coffee & Tea,,13,2.49,4.99
+245038,Chobani Strawberry,Food & Beverage,Food & Beverage,Food: Snacks,,5,1.69,2.99
+245039,Chobani Peach,Food & Beverage,Food & Beverage,Food: Snacks,,5,1.66,2.99
+245199,La Chips Millesime Truffle,Food & Beverage,Food & Beverage,Food: Snacks,,0,4.02,6.99
+245521,CB Nuts 14oz kettle roasted peanuts,Sale of Goods,Food & Beverage,Food: Snacks,,7,5,9.99
+245522,CB Nuts Dog Peanut Butter,Food & Beverage,Food & Beverage,Food: Snacks,,1,,12
+245524,SAP! Ginger Lemongrass,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,0,1.9,3.99
+245679,Cheese Brothers honey sriracha goud,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,14,3.97,7.99
+245683,Cheese Brothers Ale Gouda,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,7.5,15
+245690,Cheese Brother bliss campfire chees,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,5.47,10.99
+245849,Poe&Co Sweet Potato Quinoa,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,12,7,14
+245850,Poe&Co Coconut Chickpea Stew,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,13,7,14
+245851,Poe&Co Black Garlic Ramen,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,-1,7,14
+246136,Cafe POS Onigiri sampler,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,-47,4.5,12
+246187,Tara Coconut Water,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,28,1.71,4.99
+246297,Coconut & Cocoa Nibs Umchu,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.74,2.5
+246298,Coconut Honey & Nuts Umchu,Food & Beverage,Food & Beverage,Food: Snacks,,1,1.74,2.5
+246394,TRE-FIN Smoked Sablefish,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,-4,6,12
+246466,Olipop Cherry Vanilla,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,0,1.86,3.99
+246472,Cloudy lane midnight cloud,Food & Beverage,Food & Beverage,Food: Snacks,,15,2.8,5.99
+246562,Pocket’s lavender vanilla,Food & Beverage,Food & Beverage,Food: Snacks,,6,1.29,2.99
+246568,Sweet Lounge Fizzy Fruity Bears,Sale of Goods,Food & Beverage,Food: Snacks,,14,1.9,4
+246569,Sweet Lounge Blue Raspberry Bottles,Food & Beverage,Food & Beverage,Food: Snacks,,10,1.9,4
+246570,Sweet lounge Strawberry Hearts,Food & Beverage,Food & Beverage,Food: Snacks,,17,1.9,4
+246572,Sweet Lounge Tropical Pineapples,Sale of Goods,Food & Beverage,Food: Snacks,,7,1.9,4
+246574,Sweet Lounge Watermelon Slices,Food & Beverage,Food & Beverage,Food: Snacks,,5,1.9,4
+246581,Olipop Doctor Goodwin,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,17,1.86,3.99
+246785,Ruby Jewel Strawberry,Food & Beverage,Food & Beverage,Food: Snacks,,5,3.09,4.99
+246786,Ruby Jewel Salted Caramel,Sale of Goods,Food & Beverage,Food: Snacks,,1,3.09,4.99
+246787,Helados Mexico Churro,Food & Beverage,Food & Beverage,Food: Snacks,,23,1.27,3.49
+246788,Snow Cone,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.3,3.49
+246980,Koji Miso Paste,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,3.82,8
+246981,Sesame Tofu,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,10,2.32,4.99
+246984,Dry Candied Iyokan Peel,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,7,2.29,4.5
+246993,Super Coarse Ground Soba Noodles,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,6,3.6,7.99
+246995,Mirin Type,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,4,4.29,8.99
+247398,Elixir Garlic Jalapeno hot sauce,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,20,8.05,15.99
+247426,Sweet Lounge Vegan pineapple,Food & Beverage,Food & Beverage,Food: Snacks,,18,2.57,5.5
+247427,Sweet Lounge Vegan Watermelon,Food & Beverage,Food & Beverage,Food: Snacks,,18,2.57,5.5
+247428,Sweet Lounge Vegan Fruity Bear,Food & Beverage,Food & Beverage,Food: Snacks,,11,1.87,4
+247429,Sweet Lounge Vegan Cola Bottles,Sale of Goods,Food & Beverage,Food: Snacks,,10,1.87,4
+247456,Great Notion Blueberry Muffin,Food & Beverage,Food & Beverage,Beverage: Beer,,24,5.4,7.99
+247463,Cheese Brothers Jalapeno Pepper Che,Food & Beverage,Food & Beverage,Food: Snacks,,1,4.47,8.99
+247529,Marquis Lemon Lavender,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,17,1.7,4
+247530,Marquis citrus yuzu,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,21,1.7,4
+247531,Marquis lychee peach,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,16,1.7,4
+247532,Marquis pineapple passion,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,18,1.7,4
+247533,Marquis super berry,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,15,1.7,4
+247534,Marquis Mango GINGER,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,19,1.7,4
+247588,Tyrrell's Truffle & Sea Salt,Food & Beverage,Food & Beverage,Food: Snacks,,0,4.09,9.99
+248260,GFB cookie dough bites,Food & Beverage,Food & Beverage,Food: Snacks,,4,3.14,6.99
+248261,GFB cranberry snack bar,Food & Beverage,Food & Beverage,Food: Snacks,,5,1.35,2.99
+248263,GFB maple and raisin oatmeal,Sale of Goods,Food & Beverage,Food: Breakfast Meals & Ingredients,,22,1.61,3.99
+248264,GFB fruit nuts seeds oatmeal,Sale of Goods,Food & Beverage,Food: Breakfast Meals & Ingredients,,18,1.61,3.99
+248265,GFB apple cinnamon oatmeal,Sale of Goods,Food & Beverage,Food: Breakfast Meals & Ingredients,,20,1.61,3.99
+248266,cheese brothers green onion cheddar,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,3.97,7.99
+248296,Nowhere Ridgeline,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,20,3.89,7.99
+248298,Millstream Grape Soda,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,17,0.98,1.99
+248300,Millstream Black Cherry Soda,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,13,0.98,1.99
+248301,Millstream Blueberry Lemonade Soda,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,7,0.98,1.99
+248302,Millstream Orange Cream Soda,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,6,0.98,1.99
+248303,Millstream Sarsaparilla Soda,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,0,0.98,1.99
+248305,Apothecary Blackberry Chaga Crisp,Food & Beverage,Food & Beverage,Food: Snacks,,0,7,9.99
+248306,Apothecary Cranberry Crisp,Food & Beverage,Food & Beverage,Food: Snacks,,0,7,9.99
+248307,Apothecary Mountain Morning,Sale of Goods,Food & Beverage,Food: Snacks,,0,7,9.99
+248308,Apothecary Woodsmans Provisions,Food & Beverage,Food & Beverage,Food: Snacks,,4,7,9.99
+248309,Apothecary Sunrise On The Summit,Food & Beverage,Food & Beverage,Food: Snacks,,2,7,9.99
+249596,Oil and Vinegar black truffle oil,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,5,7.5,15
+249647,Puchao Grape,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.49,2.99
+249648,Puchao Cola,Food & Beverage,Food & Beverage,Food: Snacks,,10,1.49,2.99
+249649,Puchao Mango,Food & Beverage,Food & Beverage,Food: Snacks,,19,1.49,2.99
+249650,Ramune Grape Soda,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,13,3.09,5.99
+249651,Jacobsen Co. Ramen Seasoning,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,6,4.5,9.99
+249685,Pocky Strawberry 1.41 oz,Food & Beverage,Food & Beverage,Food: Snacks,,28,1.54,2.99
+249854,Oil and Vinegar pepperoncini oil,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,7,5.25,11
+249855,Oil and Vinegar Tuscan herb EVOO,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,8,5.25,11
+249856,Kewpie Mayonnaise,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,0,,5
+249889,Brets Chevre chips,Food & Beverage,Food & Beverage,Food: Snacks,,1,2.72,6.99
+249931,Pocky Chocolate (from variety pack),Sale of Goods,Food & Beverage,Food: Snacks,,0,1.79,4.49
+249932,Pocky Nutty Almond,Food & Beverage,Food & Beverage,Food: Snacks,,7,1.79,4.49
+249933,Pocky Cookies and Cream,Food & Beverage,Food & Beverage,Food: Snacks,,-1,1.79,4.49
+249934,Pocky Milky Matcha,Sale of Goods,Food & Beverage,Food: Snacks,,-1,1.79,4.49
+249952,Helados Mexico Bolis Con Crema,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.27,2.5
+249953,Rosati Mangoneada,Food & Beverage,Food & Beverage,Food: Snacks,,12,1.09,1.99
+249954,La Michoacana Mango Chamoy Chilito,Food & Beverage,Food & Beverage,Food: Snacks,,18,2.69,5.49
+250212,Raaka Classic Hot Chocolate,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,2,6.95,14
+250215,Hudson Valley marshmallow pumpkin s,Food & Beverage,Food & Beverage,Food: Snacks,,0,4.11,7.99
+250286,Portlandia Cocktail Sauce,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,10,4.3,9.99
+250295,Rogue Beef Jerky Maple and Brown Su,Food & Beverage,Food & Beverage,Food: Snacks,,22,5,10
+250296,Rogue Beef Jerky Hickory,Food & Beverage,Food & Beverage,Food: Snacks,,7,5,10
+250297,Rogue Beef Jerky Cherry Chipotle,Food & Beverage,Food & Beverage,Food: Snacks,,21,5,10
+250298,Rogue Beef Jerky Bonfire Bourbon,Sale of Goods,Food & Beverage,Food: Snacks,,18,5,10
+250301,Steeped Decaf coffee,Food & Beverage,Cafe,Beverage: Coffee & Tea (hot drinks),,46,1.1,4
+250311,Califia Oat milk 32 oz,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,0,3.69,6.99
+250317,Leisure Hydration Tropical Mango,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,23,2.5,4.99
+250344,Pockets Chocolates matcha almonds,Food & Beverage,Food & Beverage,Food: Snacks,,1,3.59,7.99
+250345,Honey Crisp Apple Pear Cider,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,2,5.55,10
+250347,Cheese Brothers Mango Habenero Goud,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,5,3.97,7.99
+250349,Pockets Mocha Almonds,Food & Beverage,Food & Beverage,Food: Snacks,,15,1.59,3.49
+250350,Pockets Black Sesame Almonds,Food & Beverage,Food & Beverage,Food: Snacks,,0,3.59,7.99
+250351,Coffee Chocolate cream and sugar,Food & Beverage,Food & Beverage,Food: Snacks,,19,1.29,2.99
+250353,Pockets mango yuzu 3.53oz,Food & Beverage,Food & Beverage,Food: Snacks,,6,3.59,7.99
+250356,CBS nuts creamunchy PB Blue,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,6,6.26,12.49
+250357,CB’s nuts 14oz jalepeno,Food & Beverage,Food & Beverage,Food: Snacks,,5,5,9.99
+250359,Lovely Bunch Yuzu Apple Juice,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,6,3.06,5.99
+250385,Pumpkin Spice Biscotti,Sale of Goods,Food & Beverage,Food: Snacks,,15,1.65,3.49
+250386,Eggnog White Choc Biscotti,Food & Beverage,Food & Beverage,Food: Snacks,,13,1.65,3.49
+250408,Mulberry Matcha,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,1,9.48,14.99
+250409,Japanese Ginger Tea,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,2,5.25,10.99
+250410,Fermented Miso Paste,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,5,3.79,8
+250411,Dry Candied Kawachi Bankan,Food & Beverage,Food & Beverage,Food: Snacks,,0,2.29,4.5
+250412,Dry Candied Yuzu Peel,Sale of Goods,Food & Beverage,Food: Snacks,,4,2.29,4.5
+250413,Dry Candied Amanatsu Peel,Food & Beverage,Food & Beverage,Food: Snacks,,7,2.29,4.5
+250466,Leisure Hydration Wild Blueberry,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,17,2.5,5
+250751,Leisure hydration lemonade,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,42,2.5,4.99
+250752,Rusty’s Chips Black Pepper,Sale of Goods,Food & Beverage,Food: Snacks,,25,2.29,3.99
+250753,Rusty’s Chips Sea Salt,Sale of Goods,Food & Beverage,Food: Snacks,,37,2.29,3.99
+250947,Sweet Lounge Chocpops Salted Carame,Food & Beverage,Food & Beverage,Food: Snacks,,9,1.85,4
+250948,Sweet Lounge Cappuccino Creams,Food & Beverage,Food & Beverage,Food: Snacks,,6,3.99,7.99
+250949,Sweet Lounge Strawberry Creams,Food & Beverage,Food & Beverage,Food: Snacks,,31,3.99,7.99
+251002,Churro Cookie Sandwich,Food & Beverage,Food & Beverage,Food: Snacks,,7,2.56,4.99
+251032,Goat Eats Sweet Potato Chips,Food & Beverage,Food & Beverage,Food: Snacks,,9,2.25,4.99
+251033,Savoursmiths Truffle and Rosemary C,Food & Beverage,Food & Beverage,Food: Snacks,,0,2.57,5.99
+251034,Desert salt and vinegar chips,Food & Beverage,Food & Beverage,Food: Snacks,,2,2.57,5.99
+251035,Savoursmith Desert Salt,Food & Beverage,Food & Beverage,Food: Snacks,,4,2.57,5.99
+251036,Bubbly and serano chilli chips,Food & Beverage,Food & Beverage,Food: Snacks,,0,2.57,5.99
+251075,Potter’s Crackers Herbes de Provenc,Food & Beverage,Food & Beverage,Food: Snacks,,18,,7.49
+251118,Savoursmith Italian Cheese and Wine,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.17,2.99
+251119,Savoursmith Vegan Waygu Beef and Ho,Food & Beverage,Food & Beverage,Food: Snacks,,0,2.57,5.99
+251241,Raaka Apple Crisp,Food & Beverage,Food & Beverage,Food: Snacks,,8,3.99,7.99
+251242,Raaka Strawberry & Cream,Food & Beverage,Food & Beverage,Food: Snacks,,6,3.99,7.99
+251243,Raaka Cookies & Cream,Food & Beverage,Food & Beverage,Food: Snacks,,3,3.99,7.99
+251244,GFB Chocolate Peanut Butter Bar,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.45,2.99
+251245,Lotus Foods Forbidden Rice,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,5,4.58,8.99
+251246,Lotus Foods Tricolor Blend Rice,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,4,4.42,8.99
+251247,Lotus Foods Jasmine Rice,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,2,6.58,12.99
+251248,Lotus Foods Garlicky Veggie Ramen,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,3.09,5.99
+251249,Lotus Foods Red Miso,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,3.09,5.99
+251322,Strawberry Puchao,Food & Beverage,Food & Beverage,Food: Snacks,,5,0.98,2.99
+251362,DGD Totally Nuts,Food & Beverage,Food & Beverage,Food: Snacks,,6,4.5,7.49
+251363,Fields of Green,Food & Beverage,Food & Beverage,Beverage: Beer,,2,3.14,4.99
+251364,Ridgeback Red Red Ale,Food & Beverage,Food & Beverage,Beverage: Beer,,13,2.6,4.99
+251365,Jammy Pale Ale,Sale of Goods,Food & Beverage,Beverage: Beer,,23,2.98,4.99
+251370,Whole Fruit Strawberry Pop,Sale of Goods,Food & Beverage,Food: Snacks,,5,0.75,1.99
+251371,Whole Fruit Grape Pop,Sale of Goods,Food & Beverage,Food: Snacks,,4,0.75,1.99
+251372,Whole Fruit Cherry Pop,Sale of Goods,Food & Beverage,Food: Snacks,,4,0.75,1.99
+251373,Barq's Root Beer Pop,Sale of Goods,Food & Beverage,Food: Snacks,,-7,0.75,1.99
+251426,Ruby Jewel Pumpkin Ginger,Sale of Goods,Food & Beverage,Food: Snacks,,13,3.09,4.99
+251459,Nantucket Crisps Hot Honey,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.5,3
+251460,Nantucket Crisps Sweet Onion,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.5,3
+251523,TRE-FIN Albacore Tuna Loin .99lb,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,14.35,17.82
+251524,TRE-FIN Albacore Tuna Loin .76lb,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,11.02,13.68
+251525,TRE-FIN Albacore Tuna Loin .59lb,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,8.55,10.62
+251526,TRE-FIN Albacore Tuna Loin .93lb,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,13.48,16.74
+251539,Raaka Winter Citrus,Food & Beverage,Food & Beverage,Food: Snacks,,7,4.4,7.99
+251540,Raaka Candy Cane,Food & Beverage,Food & Beverage,Food: Snacks,,11,3.59,7.99
+251563,Wild Bills Apple Pie Soda,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,31,1.91,3.99
+251564,Wild Bills Orange Cream,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,16,1.91,3.99
+251578,Wild Bills Pumpkin Spice,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,32,1.91,3.99
+251580,Torres Foie Gras,Food & Beverage,Food & Beverage,Food: Snacks,,0,3.13,5.99
+251581,Torres Pickle Chip,Sale of Goods,Food & Beverage,Food: Snacks,,0,3.13,5.99
+251675,Olipop Ridge Rush,Sale of Goods,Food & Beverage,Food: Snacks,,30,1.86,3.99
+251683,Huxley strawberry sequoia,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,18,2.1,4.99
+251684,Huxley mango mesa,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,6,2.18,4.99
+251715,Bearded Brothers Lemon Cashew,Food & Beverage,Food & Beverage,Food: Snacks,,6,1.73,3.49
+251716,Bearded Brothers Raspberry Lemon,Sale of Goods,Food & Beverage,Food: Snacks,,7,1.73,3.49
+251717,Bearded Brothers Almond Butter Choc,Food & Beverage,Food & Beverage,Food: Snacks,,2,1.73,3.49
+251718,Bearded Brothers Almond Butter Vani,Food & Beverage,Food & Beverage,Food: Snacks,,4,1.73,3.49
+251719,Yo! Bar Mango Shuffle,Food & Beverage,Food & Beverage,Food: Snacks,,21,0.68,1.5
+251720,Yo! Bar Strawberry Stride,Food & Beverage,Food & Beverage,Food: Snacks,,0,0.68,1.5
+251733,Magic Spoon Chocolate Peanut Butter,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.8,3.99
+251734,Magic Spoon Blueberry Muffin,Food & Beverage,Food & Beverage,Food: Snacks,,7,1.8,3.99
+251735,Magic Spoon Marshmallow,Sale of Goods,Food & Beverage,Food: Snacks,,0,1.8,3.99
+251736,Oil and Vinegar Garlic Olive Oil,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,5,5.25,11
+251800,Cheese Brothers Port Wine Spread,Food & Beverage,Food & Beverage,Food: Snacks,,1,4.47,8.99
+251801,Cheese Brothers Swiss Almond,Food & Beverage,Food & Beverage,Food: Snacks,,0,4.47,8.99
+251802,Cheese Brothers Jalapeno Bake,Food & Beverage,Food & Beverage,Food: Snacks,,2,5.47,10.99
+251803,Cheese Brothers Garlic Bake,Food & Beverage,Food & Beverage,Food: Snacks,,0,5.47,10.99
+251804,Cheese Brothers Bacon Bake,Sale of Goods,Food & Beverage,Food: Snacks,,3,5.47,10.99
+251816,Bardo Let It Linger,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,2,7.5,15
+251847,Paradigm Vodka Sauce,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,12,5.75,11.99
+251848,Paradigm Marinara Sauce,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,12,5.75,11.99
+251849,Paradigm Classic BBQ,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,6,4.25,8.99
+251850,Paradigm Microbrew BBQ SAUCE,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,6,4.25,8.99
+251877,Spiced apple cider,Sale of Goods,Cafe,Beverage: Coffee & Tea (hot drinks),,24,0.35,2.99
+251883,Seedless Raspberry Jam,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,0,3.5,7
+251895,Yuzu flavored oil,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,7,4.4,9
+251897,Yame matcha honey,Food & Beverage,Food & Beverage,Food: Breakfast Meals & Ingredients,,6,6.8,14
+251898,Kishimen udon noodles,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,2,3.28,6.99
+251904,Pumpkin konjac noodles,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,3,1.73,5
+251923,Puchao Ramune flavor,Food & Beverage,Food & Beverage,Food: Snacks,,3,1.49,2.99
+251931,Acqua Panna Water,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,-8,3.06,5.99
+251932,Cremerie Classique Butter,Food & Beverage,Food & Beverage,Food: Breakfast Meals & Ingredients,,32,4.61,7.99
+251942,Pfriem American Lager,Sale of Goods,Food & Beverage,Beverage: Beer,,13,2.37,3.99
+251965,Alpenrose Egg Nog,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,19,4.64,5.99
+251987,Yuzu + Roasted Green Tea,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,0,4.8,9.99
+251988,Mentsuyu Noodle Base,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,0,5.4,10.99
+252011,Nantucket Stuffing chips,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.4,3
+252015,Nantucket cocktail sauce chips,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.5,3
+252065,Pure Maple Cream,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,10,9.91,18.99
+252066,Tea Lover’s Bicotti Pack,Food & Beverage,Food & Beverage,Food: Snacks,,3,8,16
+252067,Chocolate Lover’s Biscotti Pack,Food & Beverage,Food & Beverage,Food: Snacks,,4,8,14
+252068,Coffee Lover’s Biscotti Pack,Food & Beverage,Food & Beverage,Food: Snacks,,4,8,14
+252069,Holiday Favorites Biscotti Pack,Food & Beverage,Food & Beverage,Food: Snacks,,0,8,14
+252070,Wine Lover’s Bicotti Pack,Food & Beverage,Food & Beverage,Food: Snacks,,4,8,16
+259269,Moo salted Caramel bar,Food & Beverage,Food & Beverage,Food: Snacks,,8,0.87,1.49
+259270,Moo Peanut Butter Bar,Food & Beverage,Food & Beverage,Food: Snacks,,11,0.87,1.49
+259271,Moo Solid Milk Chocolate,Food & Beverage,Food & Beverage,Food: Snacks,,29,0.87,1.49
+259272,Moo Rice Crispy Bar,Food & Beverage,Food & Beverage,Food: Snacks,,15,0.87,1.49
+259273,Moo Honey Caramel Bar,Food & Beverage,Food & Beverage,Food: Snacks,,28,0.66,1.49
+259274,Moo Graham Cracker bar,Food & Beverage,Food & Beverage,Food: Snacks,,5,0.66,1.49
+259275,Moo Creamy Milk Chocolate,Food & Beverage,Food & Beverage,Food: Snacks,,15,0.87,1.49
+259286,Sted egg nog bar,Food & Beverage,Food & Beverage,Food: Snacks,,12,3.49,6
+259287,Zuberfizz Ginger Ale,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,88,1.38,2.99
+259288,Zuberfizz Orange Cream Soda,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,93,1.38,2.99
+259289,Zuberfizz Key Lime Cream Soda,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,77,1.38,2.99
+259290,Zuberfizz Vanilla Cream Soda,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,95,1.38,2.99
+259291,Zuberfizz Strawberry Rhubarb soda,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,91,1.38,2.99
+259292,Zuberfizz Grape Soda,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,98,1.38,2.99
+259293,Zuberfizz Creamy Root Beer,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,83,1.38,2.99
+259294,Zuberfizz Cola,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,62,1.38,2.99
+259295,Sted Maple Toffee,Sale of Goods,Food & Beverage,Food: Snacks,,1,5,10
+259296,Sted Caramel Crack,Food & Beverage,Food & Beverage,Food: Snacks,,1,1.25,2.5
+259297,Sted Bobber Bar,Food & Beverage,Food & Beverage,Food: Snacks,,4,3.6,6
+259298,Sted Honey Lavender,Food & Beverage,Food & Beverage,Food: Snacks,,5,1.25,2.5
+259299,Sted Mint Mocha,Food & Beverage,Food & Beverage,Food: Snacks,,4,1.25,2.5
+259300,Sted Egg Nog Mini,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.25,2.5
+259301,Sted Almond Maple Brittle,Food & Beverage,Food & Beverage,Food: Snacks,,5,1.25,2.5
+259302,Sted Pecan Orange Spice Mini Bar,Food & Beverage,Food & Beverage,Food: Snacks,,1,1.25,2.5
+259303,Sted Peppermint Candy Cane Bar,Food & Beverage,Food & Beverage,Food: Snacks,,16,3.49,6
+259328,Cranberry cheese bliss bar,Sale of Goods,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,5.47,10.99
+259329,Pocky Cookies and Cream,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,14,0,4.49
+259330,Pocky Matcha,Sale of Goods,Food & Beverage,Food: Other Condiments & Ingredients,,20,0,4.49
+259441,Hakubaku Shoyu Ramen,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,2.14,3.99
+259442,Hakubaku Miso Ramen,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,42,2.14,3.99
+259466,CCC Peppermint Caramel,Food & Beverage,Food & Beverage,Food: Snacks,,17,2.99,5
+259467,CCC Pumpkin Caramel,Sale of Goods,Food & Beverage,Food: Snacks,,8,2.99,5
+259468,CCC Egg Nog Truffle,Food & Beverage,Food & Beverage,Food: Snacks,,20,2.99,7
+259469,CCC Peanut Butter Banana,Food & Beverage,Food & Beverage,Food: Snacks,,7,2.99,7
+259470,CCC Pumpkin Spice Latte,Food & Beverage,Food & Beverage,Food: Snacks,,10,2.99,7
+259471,CCC Maple Caramels,Sale of Goods,Food & Beverage,Food: Snacks,,0,6,10
+259472,CCC Peppermint Bark,Food & Beverage,Food & Beverage,Food: Snacks,,15,2.99,7
+259568,Lotus Gold Zero,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,25,2.49,4.99
+259571,Lotus Green,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,21,2.49,4.99
+259572,Lotus Orange,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,9,2.49,4.99
+259573,Lotus Gold Cane,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,14,2.49,4.99
+259574,Lotus Purple,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,22,2.49,4.99
+259575,Lotus Blue,Sale of Goods,Food & Beverage,Beverage: Other Drinks,,4,2.49,4.99
+259576,Lotus Red,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,2,2.49,4.99
+259577,Lotus Pink,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,18,2.49,4.99
+260536,Alpenrose Whole Milk Quart,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,2,1.31,2.99
+260549,Tara Pineapple Juice,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,60,2,4.99
+260550,Tara Guava Juice,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,30,1.96,4.99
+260712,Jacobsen Tingly Sichuan Salt,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,4,7.9,12
+260713,Jacobsen Sea Salt & Pepper Grinder,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,5,5.8,10
+260732,Sweet Lounge Selection Box,Food & Beverage,Food & Beverage,Food: Snacks,,1,3.95,4.99
+260733,Sweet Lounge Fizzy Gummy Mix,Food & Beverage,Food & Beverage,Food: Snacks,,0,3.95,4.99
+260734,Sweet Lounge Chocpops Creamy Milk,Food & Beverage,Food & Beverage,Food: Snacks,,6,3.06,4
+260735,Sweet Lounge Strawberry Hearts 130G,Food & Beverage,Food & Beverage,Food: Snacks,,37,2.3,5
+260843,Blue Lotus Cane Sugar,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,9,2.49,4.99
+260844,Pink Lotus Cane Sugar,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,13,2.49,4.99
+260854,Wood's Vanilla Syrup,Food & Beverage,Food & Beverage,Food: Breakfast Meals & Ingredients,,1,10,12.99
+260855,Wood's Smoked syrup,Food & Beverage,Food & Beverage,Food: Breakfast Meals & Ingredients,,4,9.5,14.99
+260856,Wood's Blueberry Crush Maple Syrup,Food & Beverage,Food & Beverage,Food: Breakfast Meals & Ingredients,,4,9.5,14.99
+260857,Coco Rolls Original,Food & Beverage,Food & Beverage,Food: Snacks,,6,3,5
+260861,Coco Rolls Salted Caramel,Food & Beverage,Food & Beverage,Food: Snacks,,16,3,5
+260862,Coco Rolls Espresso,Food & Beverage,Food & Beverage,Food: Snacks,,16,3,5
+260863,Mochi Sea Salt Snack Bites,Food & Beverage,Food & Beverage,Food: Snacks,,27,3,5
+260864,Mochi Golden Curry,Food & Beverage,Food & Beverage,Food: Snacks,,34,3,5
+260865,Mochi Tamari Teriyaki,Food & Beverage,Food & Beverage,Food: Snacks,,17,3,5
+260866,Mochi Thai Bird Sriracha Snack Bite,Food & Beverage,Food & Beverage,Food: Snacks,,20,3,5
+260991,TRE-FIN Albacore Tuna Pack 3oz,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,19,3,6
+260993,Brets Summer Truffle Chips,Food & Beverage,Food & Beverage,Food: Snacks,,0,5.29,6.99
+261122,Hand Stretched Ramen,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,1,4.3,7.99
+261123,Gluten Free Ramen Noodles,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,2,2.73,4.99
+261124,Samurai Ramen,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,4,3.45,5.99
+261125,White Miso Paste,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,3,3.19,5.99
+261139,Maple Sugar and Oatmeal Pancake Mix,Food & Beverage,Food & Beverage,Food: Breakfast Meals & Ingredients,,12,3,5
+261141,Maple Buckwheat Pancake Mix,Food & Beverage,Food & Beverage,Food: Breakfast Meals & Ingredients,,11,3,5
+261149,Sangaria Strawberry Milk,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,0,1.99,3.99
+261152,Maple Bacon Jam,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,11,4.5,8.99
+261153,100% Pure Maple Candy,Food & Beverage,Food & Beverage,Food: Snacks,,9,1.52,3
+261154,Salted Caramel Maple Syrup,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,11,7.75,14
+261155,Apple Butter Jam,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,10,4.5,7.99
+261156,Premium Hi-Chew Peach,Food & Beverage,Food & Beverage,Food: Snacks,,0,2.72,4
+261157,Premium Hi-Chew Muscat,Food & Beverage,Food & Beverage,Food: Snacks,,0,2.31,4
+261158,Cantabile Vanilla Flavor Americano,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,6,1.75,4
+261159,Cantabile Sweet Americano,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,8,1.75,4
+261160,Cantabile Green Grape Flavored Ade,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,1,1.75,4
+261161,Cantabile Apple Ade,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,-1,1.75,4
+261162,Melon Ramune,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,-1,1.9,3.99
+261163,Tomomasu Mango Cider,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,1,2.3,3.99
+261164,Tomomasu Watermelon Cider,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,0,2.3,3.99
+261165,Tomomasu Durian Cider,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,10,2.3,3.99
+261166,Taiwan Apple Milk,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,1,2.15,3.99
+261168,Tomomasu Peach Cider,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,0,2.3,3.99
+261220,This is Salad,Food & Beverage,Food & Beverage,Food: Lunch / Dinner Meals & Ingredients,,7,3.5,7
+261301,White Mint Biscotti,Food & Beverage,Food & Beverage,Food: Snacks,,1,1.65,3.49
+261302,Gingerbread Biscotti,Food & Beverage,Food & Beverage,Food: Snacks,,-1,1.65,3.49
+261303,Pumpkin Spice Walnut Biscotti,Food & Beverage,Food & Beverage,Food: Snacks,,2,1.65,3.49
+261327,Apothecary Happy Birthday Bar,Food & Beverage,Food & Beverage,Food: Snacks,,12,9,9.99
+261328,Apothecary Congratulations Bar,Food & Beverage,Food & Beverage,Food: Snacks,,10,9,9.99
+261406,Oregon Seaweed Dulse,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,10,17.99,19.99
+261408,Olipop Strawberry Vanilla,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,15,2.58,3.99
+261437,Coconut Milk Rice Pudding Chocolate,Food & Beverage,Food & Beverage,Food: Snacks,,4,2.7,4.99
+261438,Tapioca Pudding Chocolate,Food & Beverage,Food & Beverage,Food: Snacks,,0,2.7,4.99
+261443,Japanese Umami Ketchup,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,4,4.5,7.99
+261444,GFB Choc and Peanut Butter Balls,Food & Beverage,Food & Beverage,Food: Snacks,,0,1.12,2.99
+261618,This is Salad! Kale,Food & Beverage,Food & Beverage,Food: Snacks,,7,3.5,7
+261632,Elixir Hot Sauce Gift Box,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,4,12.75,20
+261639,Matcha Green Tea,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,0,2.39,4.99
+261644,Base Camp Peak Rings,Food & Beverage,Food & Beverage,Food: Snacks,,0,3.5,7
+261645,Base Camp Pickle Chips,Food & Beverage,Food & Beverage,Food: Snacks,,-6,5.5,9
+261646,Base Camp Freeze Dried Smores,Food & Beverage,Food & Beverage,Food: Snacks,,24,5.5,9
+261657,Moo Dark Chocolate 1.4oz,Food & Beverage,Food & Beverage,Food: Snacks,,32,1.32,2.99
+261658,Moo Peanut Butter Chocolate Bar 1.4,Food & Beverage,Food & Beverage,Food: Snacks,,30,1.72,2.99
+261659,Moo Milk Chocolate Bar 1.4oz,Food & Beverage,Food & Beverage,Food: Snacks,,28,1.72,2.99
+262098,Chum Mango Fruit Bites,Food & Beverage,Food & Beverage,Food: Snacks,,0,0.92,1.99
+262101,Chum Strawberry Fruit Bites,Food & Beverage,Food & Beverage,Food: Snacks,,10,0.92,1.99
+262104,Chum Peach Fruit Bites,Food & Beverage,Food & Beverage,Food: Snacks,,11,0.92,1.99
+262105,Chum Blackberry Fruit bites,Food & Beverage,Food & Beverage,Food: Snacks,,11,0.92,1.99
+262106,Lenka Peanut Butter & Chocolate,Food & Beverage,Food & Beverage,Food: Snacks,,6,1.89,3.99
+262107,Lenka Vanilla Espresso Granola Bar,Food & Beverage,Food & Beverage,Food: Snacks,,8,1.89,3.99
+262108,Lenka Cranberry & Chocolate Granola,Food & Beverage,Food & Beverage,Food: Snacks,,10,1.89,3.99
+262109,Lenka Berry Omega Granola Bar,Food & Beverage,Food & Beverage,Food: Snacks,,17,1.89,3.99
+262327,Chobani Black Cherry 5.3 OZ yogurt,Food & Beverage,Food & Beverage,Food: Breakfast Meals & Ingredients,,5,1.25,2.99
+262328,Chobani Blueberry Yogurt 5.3 OZ,Food & Beverage,Food & Beverage,Food: Breakfast Meals & Ingredients,,5,1.25,2.99
+262402,Mogu Mogu Cotton Candy Drink,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,0,1.27,2.99
+262410,Meito Birthday Fish Cookie,Food & Beverage,Food & Beverage,Food: Snacks,,12,1.41,3.79
+262731,Raspberries 6oz,Food & Beverage,Food & Beverage,Food: Snacks,,1,3.49,5.99
+262732,Horizon Chocolate Milk,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,23,1.29,2.49
+262733,Horizon Lowfat Milk,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,0,1.49,2.49
+263434,Hardbite Sea Salt & Vinegar,Food & Beverage,Food & Beverage,Food: Snacks,,19,1.9,4
+263435,Hardbite Black Truffle Sea Salt Chi,Food & Beverage,Food & Beverage,Food: Snacks,,6,1.9,4
+263436,Hardbite Sea Salt & Pepper Chips,Food & Beverage,Food & Beverage,Food: Snacks,,12,1.9,4
+263437,Hardbite Spicy Dill Pickle,Food & Beverage,Food & Beverage,Food: Snacks,,8,1.9,4
+263438,Hardbite All Dressed Chips,Food & Beverage,Food & Beverage,Food: Snacks,,11,1.9,4
+263440,Hardbite Spicy Dijon Chips,Food & Beverage,Food & Beverage,Food: Snacks,,23,1.9,4
+263442,Hardbite Ketchup Chips,Food & Beverage,Food & Beverage,Food: Snacks,,24,1.9,4
+263444,Hardbite Wild Onion & Yogurt Chips,Food & Beverage,Food & Beverage,Food: Snacks,,27,1.9,4
+263445,Hardbite Smokin BBQ,Food & Beverage,Food & Beverage,Food: Snacks,,16,1.9,4
+263447,Hardbite All Natural Chips,Food & Beverage,Food & Beverage,Food: Snacks,,12,1.9,4
+263448,Hardbite Ghost Pepper Chips,Food & Beverage,Food & Beverage,Food: Snacks,,6,1.9,4
+263489,Base Camp Strawberry Bark,Food & Beverage,Food & Beverage,Food: Snacks,,11,5.5,9
+263510,Hardbite Apple Cider Vinegar Chips,Food & Beverage,Food & Beverage,Food: Snacks,,17,1.9,4
+263598,Columbia River Thundermuck! Coffee,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,26,1.45,2.99
+263599,Columbia River Fishers & Fallers Co,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,29,1.45,2.99
+263600,Columbia River Decaf Coffee Bag,Food & Beverage,Food & Beverage,Beverage: Coffee & Tea,,27,1.45,2.99
+263602,Columbia River Thundermuck Espresso,Food & Beverage,Cafe,Food: Deserts,,40,2.3,4
+263605,Cantabile Peach Iced Tea,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,8,1.75,4
+263606,Cantabile Orange Ade,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,6,1.75,4
+263607,Cantabile Hazelnut Flavor,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,9,1.75,4
+263734,Momofuku Chili Crunch Milk Bar Cook,Food & Beverage,Food & Beverage,Food: Snacks,,10,4.81,9.99
+263960,Sun Tropics Salted caramel banana C,Food & Beverage,Food & Beverage,Food: Snacks,,8,2.8,5.99
+264526,Kuro Goma Latte Sesame,Food & Beverage,Food & Beverage,Food: Snacks,,0,4.43,8.99
+265068,Hardbite Avocado & Lime,Food & Beverage,Food & Beverage,Food: Snacks,,13,1.9,4
+265563,Base Camp Raspberry Cream Puff,Food & Beverage,Food & Beverage,Food: Snacks,,2,5.5,9
+265969,Fresh Strawberries 16 oz,Food & Beverage,Food & Beverage,Food: Snacks,,0,3.79,5.99
+266110,Horizon Whole Milk 8oz,Food & Beverage,Food & Beverage,Beverage: Other Drinks,,24,1.49,2.49
+268314,Lenka Nuts & Berries Granola Bar,Food & Beverage,Food & Beverage,Food: Snacks,,11,1.89,3.99
+268691,Saba Banana Chips Sweet Fire,Food & Beverage,Food & Beverage,Food: Snacks,,10,2.8,5.99
+268693,Saba Banana Chips  Sea Salt,Food & Beverage,Food & Beverage,Food: Snacks,,12,2.8,5.99
+268758,Organic Cooking Sake,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,2,4.29,8.99
+268762,Organic Tonkatsu Sauce,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,1,4.4,8.99
+268763,Yuzu Dessert Noodles,Food & Beverage,Food & Beverage,Food: Snacks,,7,1.95,3.99
+268940,Jacobsen Savory Tumeric,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,6,5.25,9.99
+268941,Jacobsen Black Garlic Salt,Food & Beverage,Food & Beverage,Food: Other Condiments & Ingredients,,30,3.4,5.99
+270877,Moo Dark Chocolate Pretzel,Food & Beverage,Food & Beverage,Food: Snacks,,14,0.66,1.49

@@ -1,5 +1,5 @@
 import Papa from "papaparse";
-import { supabase } from "../supabaseClient";
+import supabase from "../utils/supabaseClient";
 
 const EXPECTED_COLUMNS = [
     'Item Name',
@@ -99,7 +99,7 @@ const getReferenceMap = async (tableName, col) => {
 }
 
 export const uploadToServer = async (cleanedData) => {
-    showAlert("Attempting to upload data to server...");
+    // showAlert("Attempting to upload data to server...");
     if (!cleanedData || cleanedData.length === 0) {
         throw new Error("No data to upload");
     }

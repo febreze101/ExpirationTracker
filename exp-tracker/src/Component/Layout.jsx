@@ -8,6 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import UpdatedNewItemForm from "./PopUps/UpdatedNewItemForm";
 import OnboardingForm from "./Onboarding/OnboardingForm";
+import { useUser } from "./UserProvider";
 
 const theme = createTheme({
     typography: {
@@ -62,6 +63,14 @@ const theme = createTheme({
 export default function Layout(props) {
     const [showAddItemForm, setShowAddItemForm] = useState(false);
 
+    const {
+        user,
+        workspace,
+        loading,
+        createNewWorkspace,
+        joinWorkspace,
+    } = useUser();
+
     const handleShowAddItemForm = useCallback(() => {
         setShowAddItemForm(prev => !prev);
     }, []);
@@ -75,6 +84,8 @@ export default function Layout(props) {
         <>
             {props.showOnboarding && (
                 <OnboardingForm
+                    createNewWorkspace={createNewWorkspace}
+                    joinWorkspace={joinWorkspace}
                     showOnboarding={props.showOnboarding}
                     setShowOnboarding={props.setShowOnboarding}
                     handleAddUser={props.handleAddUser}
@@ -127,6 +138,16 @@ export default function Layout(props) {
                                 })}
                             >
                                 <Typography variant="body1">Expired Items</Typography>
+                            </NavLink>
+                            <NavLink
+                                to="settings"
+                                style={({ isActive }) => ({
+                                    color: theme.palette.washiPaper.main,
+                                    fontWeight: isActive ? 'bold' : 'normal',
+                                    textDecoration: isActive ? 'underline' : 'none'
+                                })}
+                            >
+                                <Typography variant="body1">Settings</Typography>
                             </NavLink>
                             <CircleButton color={'forest'} onClick={handleShowAddItemForm} icon={<AddIcon />} />
                             {/* <CircleButton color={'washiPaper'} onClick={() => console.log('notification opened')} icon={<NotificationsOutlinedIcon color="black" />} /> */}

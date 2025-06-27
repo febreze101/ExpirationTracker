@@ -12,14 +12,15 @@ import ExpiredItemsPage from "./Component/Pages/ExpiredItemsPage";
 import Layout from "./Component/Layout";
 import OnboardingForm from "./Component/Onboarding/OnboardingForm";
 import { useAlert } from "./context/AlertContext";
-import Login from "./Component/auth/Login";
-import SignUp from "./Component/auth/SignUp";
-import { supabase } from "./supabaseClient";
+import supabase from "./utils/supabaseClient";
 import { sub } from "date-fns";
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import LandingPage from "./Component/Pages/LandingPage";
 import ProtectedRoute from "./Component/ProtectedRoute";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { UserProvider } from "./Component/UserProvider";
+import Settings from "./Component/Pages/Settings";
 
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
@@ -99,6 +100,8 @@ function App() {
   const { showAlert } = useAlert();
 
   const [session, setSession] = useState(null);
+
+  const queryClient = new QueryClient();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -307,11 +310,13 @@ function App() {
   };
 
   const handleAddUser = async (user) => {
-    try {
-      dbOps.addUser(user);
-    } catch (error) {
-      console.error('Error adding user: ', error);
-    }
+    console.log("Adding user:", user);
+
+    // try {
+    //   dbOps.addUser(user);
+    // } catch (error) {
+    //   console.error('Error adding user: ', error);
+    // }
   }
 
   const handleRestore = async (item) => {
@@ -355,77 +360,83 @@ function App() {
   }
 
   return (<>
-    <ThemeProvider theme={theme}>
-      <Router>
-        <Routes>
-          {/* public routes */}
-          <Route path="/landing" element={<LandingPage />} />
+    <UserProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <Router>
+            <Routes>
+              {/* public routes */}
+              <Route path="*" element={<LandingPage />} />
+              <Route path="/landing" element={<LandingPage />} />
 
-          {/* auth route */}
-          <Route path="/auth" element={
-            !session
-              ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
-              : (<Navigate to="/dashboard" replace />)
-          } />
+              {/* auth route */}
+              <Route path="/auth" element={
+                !session
+                  ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
+                  : (<Navigate to="/dashboard" replace />)
+              } />
 
 
-          {/* protected routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute session={session}>
-                <MemoizedLayout
-                  andleAddItem={handleAddItem}
-                  showOnboarding={showOnboarding}
-                  setShowOnboarding={setShowOnboarding}
-                  handleAddUser={handleAddUser}
+              {/* protected routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute session={session}>
+                    <MemoizedLayout
+                      andleAddItem={handleAddItem}
+                      showOnboarding={showOnboarding}
+                      setShowOnboarding={setShowOnboarding}
+                      handleAddUser={handleAddUser}
+                    />
+                  </ProtectedRoute>
+                }
+              >
+                {/* nested routes */}
+                <Route
+                  index
+                  element={
+                    <DashboardPage
+                      handleNewData={handleNewData}
+                      setFileName={setFileName} />
+                  }
                 />
-              </ProtectedRoute>
-            }
-          >
-            {/* nested routes */}
-            <Route
-              index
-              element={
-                <DashboardPage
-                  handleNewData={handleNewData}
-                  setFileName={setFileName} />
-              }
-            />
-            <Route path="new-items"
-              element={
-                <NewItemsPage
-                  items={newItems}
-                  handleExpirationDateChange={handleExpirationDateChange}
-                  handleExpired={handleExpired}
+                <Route path="new-items"
+                  element={
+                    <NewItemsPage
+                      items={newItems}
+                      handleExpirationDateChange={handleExpirationDateChange}
+                      handleExpired={handleExpired}
+                    />
+                  }
                 />
-              }
-            />
-            <Route path="expiring-items"
-              element={
-                <ExpiringItemsPage
-                  getExpirationDetails={getExpirationDetails}
-                  items={itemsWithExpiration}
-                  handleExpirationDateChange={handleExpirationDateChange}
-                  handleExpired={handleExpired}
+                <Route path="expiring-items"
+                  element={
+                    <ExpiringItemsPage
+                      getExpirationDetails={getExpirationDetails}
+                      items={itemsWithExpiration}
+                      handleExpirationDateChange={handleExpirationDateChange}
+                      handleExpired={handleExpired}
+                    />
+                  }
                 />
-              }
-            />
-            <Route path="expired-items"
-              element={
-                <ExpiredItemsPage
-                  items={expiredItems}
-                  handleRestore={handleRestore}
-                  handleOnDeleteItem={handleOnDeleteItem}
+                <Route path="expired-items"
+                  element={
+                    <ExpiredItemsPage
+                      items={expiredItems}
+                      handleRestore={handleRestore}
+                      handleOnDeleteItem={handleOnDeleteItem}
+                    />
+                  }
                 />
-              }
-            />
-          </Route>
+                <Route path="settings" element={<Settings />} />
+              </Route>
 
-          {/* onboarding routes */}
-        </Routes>
-      </Router>
-    </ThemeProvider>
+              {/* onboarding routes */}
+            </Routes>
+          </Router>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </UserProvider>
 
   </>
   );

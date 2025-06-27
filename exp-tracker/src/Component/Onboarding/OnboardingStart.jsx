@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 export default function OnboardingStart({
     handleNext,
     formData,
-    setData
+    setData,
 }) {
 
     const {
@@ -120,11 +120,18 @@ export default function OnboardingStart({
                                 </Box>
                             </Stack>
                             <CustomWideButton
+                                sx={{ width: "100%", }}
+                                bgcolor={theme.palette.forest.main}
+                                onClick={handleSubmit(onSubmit)}
+                            >
+                                Create Workspace
+                            </CustomWideButton>
+                            <CustomWideButton
                                 sx={{ mb: '24px', width: "100%", }}
                                 bgcolor={theme.palette.forest.main}
                                 onClick={handleSubmit(onSubmit)}
                             >
-                                Continue Setup
+                                Join a Workspace
                             </CustomWideButton>
 
                         </Box>
