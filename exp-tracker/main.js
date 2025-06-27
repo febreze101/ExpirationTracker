@@ -265,12 +265,18 @@ function setupIpcHandlers() {
             }
             switch (tableName) {
                 case "inventory":
+                    console.log('inventory tableName: ', tableName);
+                    console.log('data: ', data);
                     dbOps.importInventory(data);
                     break;
                 case "batches":
+                    console.log('batches tableName: ', tableName);
+                    console.log('data: ', data);
                     dbOps.importBatches(data);
                     break;
                 case "expired_inventory":
+                    console.log('expired tableName: ', tableName);
+                    console.log('data: ', data);
                     dbOps.importExpiredInventory(data);
                     break;
                 default:
