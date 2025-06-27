@@ -295,6 +295,7 @@ const dbOperations = {
     importInventory(items) {
         const insert = db.prepare(`
         INSERT INTO inventory (
+            id,
             item_name,
             date_set,
             num_dates_set,
@@ -302,6 +303,7 @@ const dbOperations = {
             created_at,
             updated_at
         ) VALUES (
+            @id,
             @item_name,
             1,
             @num_dates_set,
@@ -309,7 +311,8 @@ const dbOperations = {
             @created_at,
             @updated_at
         )
-        ON CONFLICT(item_name) DO UPDATE SET
+        ON CONFLICT(id) DO UPDATE SET
+            item_name=excluded.item_name,
             date_set=1,
             num_dates_set=excluded.num_dates_set,
             days_until_next_expiration=excluded.days_until_next_expiration,
@@ -319,6 +322,7 @@ const dbOperations = {
         const insertMany = db.transaction((items) => {
             for (const item of items) {
                 insert.run({
+                    id: item.id,
                     item_name: item.item_name || item['Item Name'],
                     num_dates_set: item.num_dates_set ?? 0,
                     days_until_next_expiration: item.days_until_next_expiration ?? null,
@@ -334,11 +338,13 @@ const dbOperations = {
     importExpiredInventory(items) {
         const insert = db.prepare(`
         INSERT INTO expired_inventory (
+            id,
             item_name,
             expiration_date,
             created_at,
             updated_at
         ) VALUES (
+            @id,
             @item_name,
             @expiration_date,
             @created_at,
@@ -349,6 +355,7 @@ const dbOperations = {
         const insertMany = db.transaction((items) => {
             for (const item of items) {
                 insert.run({
+                    id: item.id,
                     item_name: item.item_name || item['Item Name'],
                     expiration_date: item.expiration_date ?? null,
                     created_at: item.created_at ?? toSqliteDateString(new Date()),
@@ -360,16 +367,25 @@ const dbOperations = {
         insertMany(items);
     },
 
+    clearAllTablesForImport: () => {
+        db.transaction(() => {
+            db.prepare('DELETE FROM batches').run();
+            db.prepare('DELETE FROM expired_inventory').run();
+            db.prepare('DELETE FROM inventory').run();
+        })();
+    },
+
     importBatches(batches) {
-        const getInventoryId = db.prepare('SELECT id FROM inventory WHERE item_name = ?');
         const insert = db.prepare(`
         INSERT INTO batches (
+            id,
             inventory_id,
             expiration_date,
             quantity,
             created_at,
             updated_at
         ) VALUES (
+            @id,
             @inventory_id,
             @expiration_date,
             @quantity,
@@ -380,16 +396,9 @@ const dbOperations = {
 
         const insertMany = db.transaction((batches) => {
             for (const batch of batches) {
-                // If your CSV has item_name, use it to look up the new inventory_id
-                let inventory_id = batch.inventory_id;
-                if (batch.item_name) {
-                    const row = getInventoryId.get(batch.item_name);
-                    inventory_id = row ? row.id : null;
-                }
-                if (!inventory_id) continue; // skip if not found
-
                 insert.run({
-                    inventory_id,
+                    id: batch.id,
+                    inventory_id: batch.inventory_id,
                     expiration_date: batch.expiration_date ?? null,
                     quantity: batch.quantity ?? 1,
                     created_at: batch.created_at ?? toSqliteDateString(new Date()),

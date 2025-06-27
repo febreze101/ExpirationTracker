@@ -258,6 +258,7 @@ function setupIpcHandlers() {
 
     ipcMain.handle('db:handleTableData', (tableName, data) => {
         try {
+            dbOps.clearAllTablesForImport();
             switch (tableName) {
                 case "inventory":
                     dbOps.importInventory(data);
