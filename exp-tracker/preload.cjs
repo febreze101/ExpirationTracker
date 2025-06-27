@@ -16,8 +16,8 @@ contextBridge.exposeInMainWorld('electron', {
             });
         },
         handleTableData: async (tableName, data) => {
-            console.log('handleTableData called');
-            return ipcRenderer.invoke('db:handleTableData');
+            console.log('handleTableData called', tableName, data);
+            return ipcRenderer.invoke('db:handleTableData', tableName, data);
         },
         isOnboardingComplete: () => {
             console.log('isOnboardingComplete called');
