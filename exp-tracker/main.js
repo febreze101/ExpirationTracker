@@ -1,11 +1,15 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import Papa from 'papaparse';
+
+import JSZip from 'jszip';
+import db from './src/db/database.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import { app, BrowserWindow, ipcMain, Notification, Tray, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, Notification, Tray, Menu, dialog } from 'electron';
 import dbOps from './src/db/operations.js';
 import schedule from 'node-schedule';
 import { sendNotificationEmail, } from './src/utils/emailService.js';
@@ -20,7 +24,6 @@ let tray;
 let isQuiting = false;
 
 const gotTheLock = app.requestSingleInstanceLock();
-
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -212,6 +215,25 @@ function createTray() {
 //     schedule.scheduleJob('0 0 * * *', () => checkExpiringSoon());
 // }
 
+async function exportDbAsZip() {
+    const tables = ['inventory', 'batches', 'expired_inventory', 'users', 'emails'];
+    const zip = new JSZip();
+
+    for (const table of tables) {
+        const query = `SELECT * FROM ${table}`;
+        const rows = db.prepare(query).all();
+
+        if (rows.length > 0) {
+            const csv = Papa.unparse(rows);
+            zip.file(`${table}.csv`, csv);
+        }
+    }
+
+    // Generate the zip file
+    const content = await zip.generateAsync({ type: 'blob' });
+    fs.writeFileSync('inventory_export.zip', content);
+}
+
 function setupExpirationNotification(numDays = 30) {
     const today = new Date();
 
@@ -302,6 +324,41 @@ function setupIpcHandlers() {
             throw error;
         }
     });
+
+    ipcMain.handle('db:exportDbZip', async () => {
+        try {
+            const tables = ['inventory', 'batches', 'expired_inventory', 'users', 'emails'];
+            const zip = new JSZip();
+
+            for (const table of tables) {
+                const rows = db.prepare(`SELECT * FROM ${table}`).all();
+                if (rows.length > 0) {
+                    const csv = Papa.unparse(rows);
+                    zip.file(`${table}.csv`, csv);
+                }
+            }
+
+            const content = await zip.generateAsync({ type: 'nodebuffer' });
+
+            const { filePath } = await dialog.showSaveDialog({
+                title: 'Export Inventory',
+                defaultPath: 'inventory_export.zip',
+                filters: [{ name: 'Zip Files', extensions: ['zip'] }]
+            });
+
+            if (filePath) {
+                fs.writeFileSync(filePath, content);
+                console.log(`Inventory exported to ${filePath}`);
+                return filePath;
+            } else {
+                return null; // User cancelled the save dialog
+            }
+        } catch (error) {
+            console.error('Error exporting inventory', error)
+            throw error;
+        }
+    });
+
 
     ipcMain.handle('db:isFirstLaunch', () => {
         try {

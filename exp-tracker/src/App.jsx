@@ -268,6 +268,11 @@ function App() {
     await loadInventoryData();
   };
 
+  const exportInventory = async () => {
+    console.log("Exporting inventory...");
+    dbOps.exportInventory()
+  }
+
   const handleAddUser = async (user) => {
     try {
       dbOps.addUser(user);
@@ -325,7 +330,7 @@ function App() {
           <Routes>
             <Route
               element={
-                <MemoizedLayout handleAddItem={handleAddItem} />
+                <MemoizedLayout handleAddItem={handleAddItem} exportInventory={exportInventory} />
               }
             >
               <Route path="/" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />

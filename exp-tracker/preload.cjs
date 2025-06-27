@@ -8,6 +8,13 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('isFirstLaunch called');
             return ipcRenderer.invoke('db:isFirstLaunch');
         },
+        exportInventory: async () => {
+            console.log('Export inventory called');
+            return ipcRenderer.invoke('db:exportDbZip').then((exportPath) => {
+                alert(`Inventory exported to: ${exportPath}`);
+                console.log('Inventory exported to:', exportPath);
+            });
+        },
         isOnboardingComplete: () => {
             console.log('isOnboardingComplete called');
             return ipcRenderer.invoke('db:isOnboardingComplete');
