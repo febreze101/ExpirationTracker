@@ -12,6 +12,7 @@ import ExpiredItemsPage from "./Component/Pages/ExpiredItemsPage";
 import Layout from "./Component/Layout";
 import OnboardingForm from "./Component/Onboarding/OnboardingForm";
 import { useAlert } from "./context/AlertContext";
+import { importDbFromZip } from "./utils/importDbFromZip";
 
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
@@ -273,6 +274,42 @@ function App() {
     dbOps.exportInventory()
   }
 
+  const importInventory = async () => {
+    console.log("Importing inventory...");
+
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.zip'
+    input.style.display = 'none'
+
+    input.onchange = async (event) => {
+      const file = event.target.files[0]
+
+      if (!file) return;
+
+      try {
+        await importDbFromZip(
+          file,
+          handleNewData,
+          dbOps.handleTableData,
+          (errMsg) => showAlert(errMsg, "error")
+        );
+
+        showAlert("Database imported successfully!", "success")
+        await loadInventoryData();
+        await getExpiredItems();
+      } catch (error) {
+        showAlert("Failed to import database.", "error");
+        console.error(error);
+      }
+    }
+
+    document.body.appendChild(input);
+    input.click();
+    document.body.removeChild(input);
+    // dbOps.exportInventory()
+  }
+
   const handleAddUser = async (user) => {
     try {
       dbOps.addUser(user);
@@ -330,7 +367,7 @@ function App() {
           <Routes>
             <Route
               element={
-                <MemoizedLayout handleAddItem={handleAddItem} exportInventory={exportInventory} />
+                <MemoizedLayout handleAddItem={handleAddItem} exportInventory={exportInventory} importInventory={importInventory} />
               }
             >
               <Route path="/" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />

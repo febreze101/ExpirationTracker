@@ -25,7 +25,6 @@ const DragAndDropCSV = ({ handleNewData, setFileName }) => {
     // e.preventDefault();
     // e.stopPropagation();
 
-
     // const file = e.dataTransfer.files[0];
     if (selectedFile) {
       console.log(selectedFile.type)

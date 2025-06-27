@@ -1,6 +1,10 @@
 import db from './database.js';
 import { format, startOfDay } from 'date-fns';
 
+function toSqliteDateString(date = new Date()) {
+    return date.toISOString().replace('T', ' ').substring(0, 19);
+}
+
 const dbOperations = {
     // Check if is First launch
     isFirstLaunch: () => {
@@ -288,66 +292,105 @@ const dbOperations = {
             return false
         }
     },
+    importInventory(items) {
+        const insert = db.prepare(`
+        INSERT INTO inventory (
+            item_name,
+            date_set,
+            num_dates_set,
+            days_until_next_expiration,
+            created_at,
+            updated_at
+        ) VALUES (
+            @item_name,
+            1,
+            @num_dates_set,
+            @days_until_next_expiration,
+            @created_at,
+            @updated_at
+        )
+        ON CONFLICT(item_name) DO UPDATE SET
+            date_set=1,
+            num_dates_set=excluded.num_dates_set,
+            days_until_next_expiration=excluded.days_until_next_expiration,
+            updated_at=CURRENT_TIMESTAMP
+    `);
 
-    // Move expired items to expired_inventory table
-    // moveExpiredItems: (item = null) => {
-    //     const today = new Date();
-    //     today.setHours(0, 0, 0, 0);
+        const insertMany = db.transaction((items) => {
+            for (const item of items) {
+                insert.run({
+                    item_name: item.item_name || item['Item Name'],
+                    num_dates_set: item.num_dates_set ?? 0,
+                    days_until_next_expiration: item.days_until_next_expiration ?? null,
+                    created_at: item.created_at ?? toSqliteDateString(new Date()),
+                    updated_at: item.updated_at ?? toSqliteDateString(new Date())
+                });
+            }
+        });
 
-    //     console.log('Today:', today.toISOString());
+        insertMany(items);
+    },
 
-    //     // get expired items
-    //     const expiredItems = db.prepare(`
-    //         SELECT i.id, i.item_name, b.expiration_date, b.quantity, b.id AS batch_id
-    //         FROM batches b
-    //         JOIN inventory i ON i.id = b.inventory_id 
-    //         WHERE date(b.expiration_date) <= date(?)
-    //     `).all(today.toISOString());
+    importExpiredInventory(items) {
+        const insert = db.prepare(`
+        INSERT INTO expired_inventory (
+            item_name,
+            expiration_date,
+            created_at,
+            updated_at
+        ) VALUES (
+            @item_name,
+            @expiration_date,
+            @created_at,
+            @updated_at
+        )
+    `);
 
-    //     console.log('Expired items:', expiredItems);
+        const insertMany = db.transaction((items) => {
+            for (const item of items) {
+                insert.run({
+                    item_name: item.item_name || item['Item Name'],
+                    expiration_date: item.expiration_date ?? null,
+                    created_at: item.created_at ?? toSqliteDateString(new Date()),
+                    updated_at: item.updated_at ?? toSqliteDateString(new Date())
+                });
+            }
+        });
 
-    //     if (expiredItems.length > 0) {
-    //         // Copy expired items to expired_inventory table
-    //         const insertExpired = db.prepare(`
-    //             INSERT INTO expired_inventory (item_name, expiration_date)
-    //             VALUES (?, ?)
-    //             ON CONFLICT(item_name) DO NOTHING
-    //         `);
+        insertMany(items);
+    },
 
-    //         // Delete expired items from inventory table
-    //         const deleteBatch = db.prepare(`DELETE FROM batches WHERE inventory_id = ?`);
+    importBatches(batches) {
+        const insert = db.prepare(`
+        INSERT INTO batches (
+            inventory_id,
+            expiration_date,
+            quantity,
+            created_at,
+            updated_at
+        ) VALUES (
+            @inventory_id,
+            @expiration_date,
+            @quantity,
+            @created_at,
+            @updated_at
+        )
+    `);
 
-    //         // Execute the statements
-    //         db.transaction(() => {
-    //             for (const item of expiredItems) {
-    //                 const formattedDate = item.expiration_date
-    //                 // insert expired item into expired_inventory table
-    //                 insertExpired.run(item.item_name, formattedDate);
+        const insertMany = db.transaction((batches) => {
+            for (const batch of batches) {
+                insert.run({
+                    inventory_id: batch.inventory_id ?? null,
+                    expiration_date: batch.expiration_date ?? null,
+                    quantity: batch.quantity ?? 1,
+                    created_at: batch.created_at ?? toSqliteDateString(new Date()),
+                    updated_at: batch.updated_at ?? toSqliteDateString(new Date())
+                });
+            }
+        });
 
-    //                 // delete the batch from batches
-    //                 deleteBatch.run(item.id);
-
-    //                 // Update the days_until_next_expiration for this item
-    //                 const updateExpirationDays = db.prepare(`
-    //                     UPDATE inventory 
-    //                     SET days_until_next_expiration = (
-    //                         SELECT CAST(CEIL(MIN(JULIANDAY(expiration_date) - JULIANDAY(DATE('now')))) AS INTEGER)
-    //                         FROM batches 
-    //                         WHERE inventory_id = ?
-    //                         AND DATE(expiration_date) >= DATE('now')
-    //                     )
-    //                     WHERE id = ?
-    //                 `);
-    //                 updateExpirationDays.run(item.id, item.id);
-    //             }
-    //         })();
-
-    //         console.log(`Moved ${expiredItems.length} expired items`);
-    //         return expiredItems;
-    //     }
-    //     return [];
-
-    // },
+        insertMany(batches);
+    },
 
     moveExpiredItems: () => {
         const moveExpired = db.transaction(() => {

@@ -130,109 +130,6 @@ function createTray() {
     })
 }
 
-// Schedule a job to move expired items every day at 12:00 AM
-// function setupDailyCheck() {
-//     // console.log('Initial table state:');
-//     // dbOps.checkTables();
-//     // check for expired items
-//     const checkExpiredItems = async () => {
-//         try {
-//             const expiredItems = dbOps.moveExpiredItems();
-
-//             if (expiredItems.length > 0) {
-//                 // Show expired items notification
-//                 new Notification({
-//                     title: 'Spoilage Alert',
-//                     body: `${expiredItems.length} items have expired!`,
-//                 }).show();
-
-//                 await sendExpirationEmail(expiredItems);
-//                 console.log(`${expiredItems.length} expired items moved and notification sent`);
-
-//             } else {
-//                 console.log('No expired items found');
-//             }
-//         } catch (error) {
-//             console.error('Error moving expired items: ', error);
-//         }
-//     }
-
-//     checkExpiredItems();
-
-//     // schedule daily check
-//     schedule.scheduleJob('0 0 * * *', checkExpiredItems)
-// }
-
-// // set up weekly chcek
-
-// function setupPreemptiveExpirationCheck(numDays) {
-//     console.log('Checking for items expiring in %d days', numDays);
-
-//     // function to check for items expiring soon
-//     const checkExpiringSoon = async () => {
-//         try {
-//             const expiredItems = await dbOps.moveExpiredItems();
-//             const soonExpiringItems = await dbOps.getItemsExpiringSoon(numDays);
-
-//             if (expiredItems.length > 0) {
-//                 // Show expired items notification
-//                 new Notification({
-//                     title: 'Spoilage Alert',
-//                     body: `${expiredItems.length} items have expired!`,
-//                 }).show();
-//             } else {
-//                 console.log('No expired items found');
-//             }
-
-
-//             if (soonExpiringItems.length > 0) {
-//                 console.log(soonExpiringItems)
-
-//                 // send desktop notification
-//                 new Notification({
-//                     title: 'Spoilage Alert',
-//                     body: `${soonExpiringItems.length} items expiring in ${numDays} days!`,
-//                 }).show();
-
-//                 const emails = dbOps.getNotificationEmails();
-
-//                 // send email notification
-//                 await sendNotificationEmail(expiredItems, numDays, soonExpiringItems, emails);
-//                 console.log(`${soonExpiringItems.length} items expiring soon! Notifications sent!`);
-
-//             } else {
-//                 console.log('No items will spoil in %d days', numDays);
-//             }
-//         } catch (error) {
-//             console.error('Error finding items that will expire within the next %d days:', numDays, error)
-//         }
-//     };
-
-//     // initial check
-//     checkExpiringSoon();
-
-//     // schedule daily check
-//     schedule.scheduleJob('0 0 * * *', () => checkExpiringSoon());
-// }
-
-async function exportDbAsZip() {
-    const tables = ['inventory', 'batches', 'expired_inventory', 'users', 'emails'];
-    const zip = new JSZip();
-
-    for (const table of tables) {
-        const query = `SELECT * FROM ${table}`;
-        const rows = db.prepare(query).all();
-
-        if (rows.length > 0) {
-            const csv = Papa.unparse(rows);
-            zip.file(`${table}.csv`, csv);
-        }
-    }
-
-    // Generate the zip file
-    const content = await zip.generateAsync({ type: 'blob' });
-    fs.writeFileSync('inventory_export.zip', content);
-}
 
 function setupExpirationNotification(numDays = 30) {
     const today = new Date();
@@ -327,7 +224,7 @@ function setupIpcHandlers() {
 
     ipcMain.handle('db:exportDbZip', async () => {
         try {
-            const tables = ['inventory', 'batches', 'expired_inventory', 'users', 'emails'];
+            const tables = ['inventory', 'batches', 'expired_inventory'];
             const zip = new JSZip();
 
             for (const table of tables) {
@@ -359,6 +256,26 @@ function setupIpcHandlers() {
         }
     });
 
+    ipcMain.handle('db:handleTableData', (tableName, data) => {
+        try {
+            switch (tableName) {
+                case "inventory":
+                    dbOps.importInventory(data);
+                    break;
+                case "batches":
+                    dbOps.importBatches(data);
+                    break;
+                case "expired_inventory":
+                    dbOps.importExpiredInventory(data);
+                    break;
+                default:
+                    console.warn("Unknown table:", tableName);
+            }
+        } catch (error) {
+            console.error('Error importing inventory', error)
+            throw error;
+        }
+    })
 
     ipcMain.handle('db:isFirstLaunch', () => {
         try {

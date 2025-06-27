@@ -15,6 +15,10 @@ contextBridge.exposeInMainWorld('electron', {
                 console.log('Inventory exported to:', exportPath);
             });
         },
+        handleTableData: async () => {
+            console.log('handleTableData called');
+            return ipcRenderer.invoke('db:handleTableData');
+        },
         isOnboardingComplete: () => {
             console.log('isOnboardingComplete called');
             return ipcRenderer.invoke('db:isOnboardingComplete');

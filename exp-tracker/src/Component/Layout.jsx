@@ -6,6 +6,7 @@ import { Outlet, NavLink } from "react-router"
 import CircleButton from "./CustomButtons/CircleButton"
 import AddIcon from '@mui/icons-material/Add';
 import IosShareIcon from '@mui/icons-material/IosShare';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import UpdatedNewItemForm from "./PopUps/UpdatedNewItemForm";
 
@@ -122,6 +123,7 @@ export default function Layout(props) {
                         </NavLink>
                         <CircleButton color={'forest'} onClick={handleShowAddItemForm} icon={<AddIcon />} />
                         <CircleButton color={'washiPaper'} onClick={props.exportInventory} icon={<IosShareIcon color="black" />} />
+                        <CircleButton color={'washiPaper'} onClick={props.importInventory} icon={<FileDownloadIcon color="black" />} />
                     </Box>
                 </Box>
 
