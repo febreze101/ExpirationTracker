@@ -53,9 +53,8 @@ const dbOperations = {
     },
 
     // get emails
-    getNotificationEmails: () => {
-        const emails = db.prepare("SELECT email FROM emails WHERE user_id = 1").all();
-        return emails.map(email => email.email);
+    getNotificationEmails: async () => {
+        return db.prepare("SELECT id, email FROM emails").all();
     },
 
     checkReminderFrequency: async () => {

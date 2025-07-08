@@ -297,6 +297,17 @@ function setupIpcHandlers() {
         }
     });
 
+    ipcMain.handle('db:getNotificationEmails', async () => {
+        try {
+            const emails = await dbOps.getNotificationEmails();
+            console.log('Fetched emails: ', emails);
+            return emails;
+        } catch (error) {
+            console.error('Error fetching notification emails', error);
+            throw error;
+        }
+    })
+
     ipcMain.handle('db:checkReminderFrequency', async () => {
         try {
             return await dbOps.checkReminderFrequency();

@@ -19,6 +19,10 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('handleTableData called', tableName, data);
             return ipcRenderer.invoke('db:handleTableData', tableName, data);
         },
+        getNotificationEmails: async () => {
+            console.log('getNotificationEmails called');
+            return ipcRenderer.invoke('db:getNotificationEmails');
+        },
         isOnboardingComplete: () => {
             console.log('isOnboardingComplete called');
             return ipcRenderer.invoke('db:isOnboardingComplete');

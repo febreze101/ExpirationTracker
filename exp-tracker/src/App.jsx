@@ -13,6 +13,7 @@ import Layout from "./Component/Layout";
 import OnboardingForm from "./Component/Onboarding/OnboardingForm";
 import { useAlert } from "./context/AlertContext";
 import { importDbFromZip } from "./utils/importDbFromZip";
+import Settings from "./Component/Pages/Settings";
 
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
@@ -88,6 +89,7 @@ function App() {
   const [expiredItems, setExpiredItems] = useState([]);
   const [showOnboarding, setShowOnboarding] = useState(localStorage.getItem('hasCompletedOnboarding') !== "true");
   const MemoizedLayout = React.memo(Layout);
+  const [emails, setEmails] = useState([]);
 
   const { showAlert } = useAlert();
 
@@ -169,6 +171,14 @@ function App() {
     console.log("expiredItems", expiredItems);
     setExpiredItems(expiredItems);
   };
+
+  const fetchEmails = async () => {
+    if (!dbOps) return;
+    const result = await dbOps.getNotificationEmails();
+    console.log("Fetched emails: ", result);
+    setEmails(result || []);
+    return result || [];
+  }
 
   useEffect(() => {
     moveExpiredItems();
@@ -406,6 +416,14 @@ function App() {
                     items={expiredItems}
                     handleRestore={handleRestore}
                     handleOnDeleteItem={handleOnDeleteItem}
+                  />
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <Settings
+                    fetchEmails={fetchEmails}
                   />
                 }
               />

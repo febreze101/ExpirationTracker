@@ -121,6 +121,16 @@ export default function Layout(props) {
                         >
                             <Typography variant="body1">Expired Items</Typography>
                         </NavLink>
+                        <NavLink
+                            to="/settings"
+                            style={({ isActive }) => ({
+                                color: theme.palette.washiPaper.main,
+                                fontWeight: isActive ? 'bold' : 'normal',
+                                textDecoration: isActive ? 'underline' : 'none'
+                            })}
+                        >
+                            <Typography variant="body1">Settings</Typography>
+                        </NavLink>
                         <CircleButton color={'forest'} onClick={handleShowAddItemForm} icon={<AddIcon />} />
                         <CircleButton color={'washiPaper'} onClick={props.exportInventory} icon={<IosShareIcon color="black" />} />
                         <CircleButton color={'washiPaper'} onClick={props.importInventory} icon={<FileDownloadIcon color="black" />} />
