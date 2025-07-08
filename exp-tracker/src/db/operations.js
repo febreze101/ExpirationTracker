@@ -546,8 +546,43 @@ const dbOperations = {
         }
     },
 
+    updateNotificationEmail: (oldEmail, newEmail) => {
+    try {
+        const updateStmt = db.prepare(`
+            UPDATE emails
+            SET email = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE email = ?
+        `);
+        const result = updateStmt.run(newEmail, oldEmail);
+        return result.changes > 0;
+    } catch (error) {
+        console.error("Error updating notification email:", error);
+        return false;
+    }},
 
+    deleteNotificationEmail: (email) => {
+        try {
+            const deleteStmt = db.prepare(`
+                DELETE FROM emails WHERE email = ?
+            `);
+            const result = deleteStmt.run(email);
+            return result.changes > 0;
+        } catch (error) {
+            console.error("Error deleting notification email:", error);
+            return false;
+        }
+    },
 
+    addNotificationEmail: (newEmail) => {
+        try {
+            const addEmail = db.prepare(`INSERT INTO emails (user_id, email) values (?, ?)`)
+            addEmail.run(1, newEmail)
+            return true;
+        } catch (error) {
+            console.error("Error adding notification email:", error);
+            return false;
+        }
+    },
 
     // Add this function to check table contents
     checkTables: () => {

@@ -172,13 +172,18 @@ function App() {
     setExpiredItems(expiredItems);
   };
 
-  const fetchEmails = async () => {
-    if (!dbOps) return;
+  const fetchEmails = useCallback (async () => {
+    if (!dbOps) return [];
     const result = await dbOps.getNotificationEmails();
-    console.log("Fetched emails: ", result);
+    console.log("Fetched emails in App.jsx: ", result);
+
     setEmails(result || []);
     return result || [];
-  }
+  }, [setEmails])
+  
+    useEffect(() => {
+      fetchEmails();
+    }, [fetchEmails])
 
   useEffect(() => {
     moveExpiredItems();
@@ -424,6 +429,8 @@ function App() {
                 element={
                   <Settings
                     fetchEmails={fetchEmails}
+                    dbOps={dbOps}
+                    emails={emails}
                   />
                 }
               />

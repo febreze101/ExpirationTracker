@@ -23,6 +23,18 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('getNotificationEmails called');
             return ipcRenderer.invoke('db:getNotificationEmails');
         },
+        deleteNotificationEmail: async (email) => {
+            console.log('deleteNotificationEmail called with:', email);
+            return ipcRenderer.invoke('db:deleteNotificationEmail', email)
+        },
+        updateNotificationEmail: async (oldEmail, newEmail) => {   
+            console.log('updateNotificationEmail called with:', { oldEmail, newEmail });
+            return ipcRenderer.invoke('db:updateNotificationEmail', oldEmail, newEmail);
+        },
+        addNotificationEmail: async (email) => {
+            console.log('addNotificationEmail called with:', email);
+            return ipcRenderer.invoke('db:addNotificationEmail', email);
+        },
         isOnboardingComplete: () => {
             console.log('isOnboardingComplete called');
             return ipcRenderer.invoke('db:isOnboardingComplete');

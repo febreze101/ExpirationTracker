@@ -365,6 +365,50 @@ function setupIpcHandlers() {
         return dbOps.clearInventory();
     });
 
+    ipcMain.handle('db:updateNotificationEmail', (event, oldEmail, newEmail) => {
+        try {
+            console.log('Received update email request:', { oldEmail, newEmail });
+            if (!oldEmail || !newEmail) {
+                throw new Error('Both old and new email addresses are required');
+            }
+            if (oldEmail === newEmail) {
+                throw new Error('Old and new email addresses cannot be the same');
+            }
+            return dbOps.updateNotificationEmail(oldEmail, newEmail);
+        } catch (error) {
+            console.error('Error in updateNotificationEmail handler:', error);
+            return false;
+        }
+    });
+    
+    ipcMain.handle('db:deleteNotificationEmail', (event, email) => {
+        try {
+            console.log('Received delete email request:', email);
+            if (!email) {
+                throw new Error('Email address is required');
+            }
+
+            return dbOps.deleteNotificationEmail(email);
+        } catch (error) {
+            console.error('Error in deleteNotificationEmail handler:', error);
+            return false;
+        }
+    });
+
+    ipcMain.handle('db:addNotificationEmail', (event, email) => {
+        try {
+            console.log('Received add email request:', email);
+            if (!email) {
+                throw new Error('Email address is required');
+            }
+
+            return dbOps.addNotificationEmail(email);
+        } catch (error) {
+            console.error('Error in addNotificationEmail handler:', error);
+            return false;
+        }
+    });
+
     ipcMain.handle('db:deleteItem', (event, item) => {
         return dbOps.deleteItem(item);
     });
