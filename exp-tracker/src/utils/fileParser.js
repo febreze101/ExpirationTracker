@@ -1,87 +1,149 @@
 import Papa from "papaparse";
-import * as XLSX from "xlsx";
+import { supabase } from "../supabaseClient";
 
-const START_DATE = 25569;
+const EXPECTED_COLUMNS = [
+    'Item Name',
+    'GL Code',
+    'Catalog',
+    'Category',
+    'Cost',
+    'Price'
+]
 
-export const parseCSV = (file, handleNewData, setError) => {
-    Papa.parse(file, {
-        complete: (results) => {
-            console.log("Parsed CSV data:", results.data);
-            handleNewData(results.data);
-        },
-        header: true, // Use the first row as headers
-        skipEmptyLines: true, // Skip empty lines in the CSV
-        error: (err) => {
-            console.error("Error parsing CSV:", err);
-            setError("Failed to parse the CSV file");
-        },
-    });
+const REQUIRED_COLUMNS = [
+    'Item Name',
+    'Stock',
+    'Cost',
+    'Price'
+]
+
+export const parseCSV = (file, setError) => {
+    return new Promise((resolve, reject) => {
+        if (!file) {
+            setError("No file provided for parsing");
+            return;
+        }
+        console.log("Parsing CSV file:", file.name);
+        Papa.parse(file, {
+            header: true, // Use the first row as headers
+            skipEmptyLines: true, // Skip empty lines in the CSV
+            error: (err) => {
+                console.error("Error parsing CSV:", err);
+                setError("Failed to parse the CSV file");
+            },
+            complete: (results) => {
+                try {
+                    const rawData = results.data;
+
+                    if (rawData.length === 0) {
+                        setError("No data found in the CSV file");
+                        throw new Error("No data found in the CSV file");
+                    }
+                    // check required columns
+                    const headers = Object.keys(rawData[0]);
+                    const missingRequiredColumns = REQUIRED_COLUMNS.filter(col => !headers.includes(col));
+                    if (missingRequiredColumns.length > 0) {
+                        setError(`Missing required columns: ${missingRequiredColumns.join(', ')}`);
+                        throw new Error(`Missing required columns: ${missingRequiredColumns.join(', ')}`);
+                    }
+
+                    const cleanedData = rawData.map((item) => {
+                        const cleanedItem = {};
+
+                        // Check if the first row contains the expected headers
+                        EXPECTED_COLUMNS.forEach((key) => {
+                            let value = item[key] ?? "";
+
+                            if (typeof value === 'string') {
+                                value = value.trim();
+                            }
+
+                            // Cast number fields
+                            if (['Stock'].includes(key) && value !== "") {
+                                // Ensure Stock is a number
+                                value = parseInt(value, 10);
+                            } else if (['Cost', 'Price'].includes(key)) {
+                                if (value === '') {
+                                    value = 0;
+                                }
+                                value = parseFloat(value);
+                            }
+                            cleanedItem[key] = value;
+                        })
+                        return cleanedItem;
+                    });
+
+                    console.log("Parsed and Cleaned CSV data:", cleanedData);
+                    setError(null);
+                    resolve(cleanedData);
+                } catch (error) {
+                    console.error("Error parsing CSV:", error);
+                    setError("Failed to parse the CSV file");
+                    reject(error);
+                }
+            }
+        })
+
+    })
 }
 
-export const parseExcel = (file, handleNewData, setError) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        try {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: "array" });
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false });
+const getReferenceMap = async (tableName, col) => {
+    const { data, error } = await supabase.from(tableName).select(`id, ${col}`);
 
-            // Format the data to handle dates
-            const dateFormattedData = jsonData.map((row) => {
-                return row.map((cell) => {
-                    // If the cell is a date, convert it to a Javascript date obj
-                    if (typeof cell === "number" && cell >= START_DATE) {
-                        // Excel date format starts from 25569, which is equivalent to January 1, 1970
-                        return new Date((cell - START_DATE) * 86400 * 1000);
-                    }
-                    return cell;
-                });
-            });
+    if (error) {
+        console.error(`Error retrieving data from ${tableName}:`, error);
+        throw new Error(`Failed to retrieve data from ${tableName}`);
+    }
 
-            if (dateFormattedData.length === 0) {
-                setError("No data found in the Excel file");
-                throw new Error("No data found in the Excel file");
+    return new Map(data.map(entry => [entry[col]?.trim(), entry.id]));
+}
+
+export const uploadToServer = async (cleanedData) => {
+    showAlert("Attempting to upload data to server...");
+    if (!cleanedData || cleanedData.length === 0) {
+        throw new Error("No data to upload");
+    }
+
+    try {
+        const [glCodesMap, catalogsMap, categoriesMap] = await Promise.all([
+            getReferenceMap('inventory_gl_codes', 'gl_code'),
+            getReferenceMap('inventory_catalogs', 'catalog_type'),
+            getReferenceMap('inventory_categories', 'category')
+        ])
+
+        console.log('GL Codes Map:', glCodesMap);
+        console.log('Catalogs Map:', catalogsMap);
+        console.log('Categories Map:', categoriesMap);
+
+        const inventoryData = cleanedData.map(item => {
+            return {
+                item_name: item['Item Name']?.trim(),
+                gl_code_id: glCodesMap.get(item['GL Code']?.trim()) || null,
+                catalog_id: catalogsMap.get(item['Catalog']?.trim()) || null,
+                category_id: categoriesMap.get(item['Category']?.trim()) || null,
+                cost: item['Cost'],
+                price: item['Price'],
+                workspace_id: '554bac75-a8fd-4170-9336-b1541009a15e',
+                num_dates_set: 0,
+                date_set: false,
             }
+        })
 
-            // Convert array of arrays to an array of objects
-            const header = jsonData[0]; // The first row will be the header
-            if (!header || header.length === 0) {
-                setError("No headers found in the Excel file");
-                throw new Error("No headers found in the Excel file");
-            }
-            const dataRows = dateFormattedData.slice(1); // The rest are data rows
+        console.log("Inventory Data to Upload:", inventoryData[0]);
 
-            const finalFormattedData = dataRows.filter(row => {
-                return row.some(cell => {
-                    if (cell === null || cell === undefined) return false;
-                    if (typeof cell === 'string' && cell.trim() === '') return false;
-                    return true;
-                });
-            })
-                .map((row) => {
-                    return header.reduce((obj, headerKey, index) => {
+        const { data, error } = await supabase
+            .from('inventory')
+            .insert(inventoryData)
 
-                        obj[headerKey] = row[index];
-                        return obj
-                    }, {});
-                });
-
-            console.log("Parsed Excel data:", finalFormattedData);
-
-            handleNewData(finalFormattedData);
-            setError(null)
-        } catch (error) {
-            setError("Error reading or parsing the Excel file: ", error)
-            console.error("Error parsing Excel file: ", error)
+        if (error) {
+            console.error("Insert error:", error);
+        } else {
+            console.log("Data successfully uploaded:", data);
+            showAlert("Data successfully uploaded to the server.");
         }
-    };
 
-    reader.onerror = () => {
-        setError("Error reading the file.");
-        console.error("Error reading file.");
-    };
-
-    reader.readAsArrayBuffer(file);
-};
+    } catch (error) {
+        console.error("Error retrieving reference data:", error);
+        throw new Error("Failed to retrieve reference data");
+    }
+}

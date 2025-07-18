@@ -25,6 +25,7 @@ export default function OnboardingDone({
     const onSubmit = (data) => {
         setData((prev) => ({ ...prev, onboardingComplete: true }))
         handleOnboardingComplete()
+        
     }
 
     return (
