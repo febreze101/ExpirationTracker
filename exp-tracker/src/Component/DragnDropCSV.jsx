@@ -21,6 +21,7 @@ const DragAndDropCSV = ({ handleNewData, setFileName }) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   // On drop
+
   const handleFileUpload = async () => {
     if (selectedFile) {
       if (selectedFile) {

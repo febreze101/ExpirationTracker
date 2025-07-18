@@ -8,6 +8,33 @@ contextBridge.exposeInMainWorld('electron', {
             console.log('isFirstLaunch called');
             return ipcRenderer.invoke('db:isFirstLaunch');
         },
+        exportInventory: async () => {
+            console.log('Export inventory called');
+            return ipcRenderer.invoke('db:exportDbZip').then((exportPath) => {
+                alert(`Inventory exported to: ${exportPath}`);
+                console.log('Inventory exported to:', exportPath);
+            });
+        },
+        handleTableData: async (tableName, data) => {
+            console.log('handleTableData called', tableName, data);
+            return ipcRenderer.invoke('db:handleTableData', tableName, data);
+        },
+        getNotificationEmails: async () => {
+            console.log('getNotificationEmails called');
+            return ipcRenderer.invoke('db:getNotificationEmails');
+        },
+        deleteNotificationEmail: async (email) => {
+            console.log('deleteNotificationEmail called with:', email);
+            return ipcRenderer.invoke('db:deleteNotificationEmail', email)
+        },
+        updateNotificationEmail: async (oldEmail, newEmail) => {   
+            console.log('updateNotificationEmail called with:', { oldEmail, newEmail });
+            return ipcRenderer.invoke('db:updateNotificationEmail', oldEmail, newEmail);
+        },
+        addNotificationEmail: async (email) => {
+            console.log('addNotificationEmail called with:', email);
+            return ipcRenderer.invoke('db:addNotificationEmail', email);
+        },
         isOnboardingComplete: () => {
             console.log('isOnboardingComplete called');
             return ipcRenderer.invoke('db:isOnboardingComplete');
