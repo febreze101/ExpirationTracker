@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { parseCSV, uploadToServer } from "../utils/fileParser";
 import { Box, Typography, Button, styled } from "@mui/material";
 import ErrorDisplay from "./ErrorDisplay";
 import uploadCloud from './../assets/upload-to-cloud.svg'
+import { useAlert } from "../context/AlertContext.jsx";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -18,44 +19,50 @@ const VisuallyHiddenInput = styled('input')({
 
 const DragAndDropCSV = ({ handleNewData, setFileName }) => {
   const [error, setError] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const selectedFile = useRef(null);
+  const { showAlert } = useAlert();
 
   // On drop
-
   const handleFileUpload = async () => {
-    if (selectedFile) {
-      if (selectedFile) {
-        // csv files
-        if (selectedFile.type === "text/csv") {
-          setFileName(selectedFile.name);
+
+    console.log('handle file upload called');
+    
+    if (selectedFile && selectedFile.current) {
+        
+        // csv files 
+        console.log("Selected file:", selectedFile.current);
+
+        if (selectedFile.current.type === "text/csv") {
+          setFileName(selectedFile.current.name);
           
           // parse the CSV file and clean the data 
-          const cleanedData = await parseCSV(selectedFile, setError);
+          const cleanedData = await parseCSV(selectedFile.current, setError);
           
           // upload the cleaned data to the server
+          console.log("Cleaned Data:", cleanedData);
+          console.log("About to upload to server...");
           await uploadToServer(cleanedData)
         } else {
           setError("Please drop a valid CSV.");
           const message = 'Please drop a valid CSV.';
           showAlert(message, 'error');
-        }
       }
     }
   };
 
-  const handleDragUpload = (e) => {
+  const handleDragOpen = (e) => {
+    console.log('File dropped:', e.dataTransfer.files);
     try {
       e.preventDefault();
       e.stopPropagation();
 
+      // If no files are dropped, show an error message
       if (e.dataTransfer.files.length === 0) {
         const message = 'No file dropped. Please drop a valid CSV.';
         setError(message);
         showAlert(message, 'error');
       }
-      const file = e.dataTransfer.files[0];
-      
-      setSelectedFile(file);
+      selectedFile.current = e.dataTransfer.files[0];;
       handleFileUpload();
 
     } catch (error) {
@@ -65,12 +72,18 @@ const DragAndDropCSV = ({ handleNewData, setFileName }) => {
     }
   }
 
-  const handleButtonUpload = (e) => {
+  const handleDiagOpen = (e) => {
     try {
       const file = e.target.files[0];
-      console.log(file);
+      
+      if (!file) {
+        const message = 'No file selected. Please choose a valid CSV.';
+        setError(message);
+        showAlert(message, 'error');
+        return;
+      }
 
-      setSelectedFile(file);
+      selectedFile.current = file;
       handleFileUpload();
 
     } catch (error) {
@@ -89,7 +102,7 @@ const DragAndDropCSV = ({ handleNewData, setFileName }) => {
   return (
     <>
       <Box
-        onDrop={handleDragUpload}
+        onDrop={handleDragOpen}
         onDragOver={handleDragOver}
         display={'flex'}
         flexDirection={'column'}
@@ -125,7 +138,7 @@ const DragAndDropCSV = ({ handleNewData, setFileName }) => {
           >
             <VisuallyHiddenInput
               type="file"
-              onChange={handleButtonUpload}
+              onChange={handleDiagOpen}
             />
             <Typography
               variant="body1"

@@ -99,7 +99,9 @@ const getReferenceMap = async (tableName, col) => {
 }
 
 export const uploadToServer = async (cleanedData) => {
-    showAlert("Attempting to upload data to server...");
+    // const { showAlert } = useAlert();
+
+    // showAlert("Attempting to upload data to server...");
     if (!cleanedData || cleanedData.length === 0) {
         throw new Error("No data to upload");
     }
@@ -123,7 +125,7 @@ export const uploadToServer = async (cleanedData) => {
                 category_id: categoriesMap.get(item['Category']?.trim()) || null,
                 cost: item['Cost'],
                 price: item['Price'],
-                workspace_id: '554bac75-a8fd-4170-9336-b1541009a15e',
+                workspace_id: 'edf8e733-6b65-49a8-a7d8-2c345c76fac6',
                 num_dates_set: 0,
                 date_set: false,
             }
@@ -139,7 +141,7 @@ export const uploadToServer = async (cleanedData) => {
             console.error("Insert error:", error);
         } else {
             console.log("Data successfully uploaded:", data);
-            showAlert("Data successfully uploaded to the server.");
+            // showAlert("Data successfully uploaded to the server.");
         }
 
     } catch (error) {

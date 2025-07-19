@@ -14,8 +14,6 @@ import OnboardingForm from "./Component/Onboarding/OnboardingForm";
 import { useAlert } from "./context/AlertContext";
 import { importDbFromZip } from "./utils/importDbFromZip";
 import Settings from "./Component/Pages/Settings";
-import Login from "./Component/auth/Login";
-import SignUp from "./Component/auth/SignUp";
 import { supabase } from "./supabaseClient";
 import { sub } from "date-fns";
 import { Auth } from '@supabase/auth-ui-react'
@@ -412,7 +410,8 @@ function App() {
     }
   }
 
-  return (<>
+  return (
+  <>
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
@@ -428,35 +427,23 @@ function App() {
 
 
           {/* protected routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute session={session}>
-                <MemoizedLayout
-                  andleAddItem={handleAddItem}
-                  showOnboarding={showOnboarding}
-                  setShowOnboarding={setShowOnboarding}
-                  handleAddUser={handleAddUser}
-                />
-              </ProtectedRoute>
-            }
-          >
             {/* nested routes */}
             <Route
-              index
+              path="/"
               element={
                 <MemoizedLayout handleAddItem={handleAddItem} exportInventory={exportInventory} importInventory={importInventory} />
               }
             >
-              <Route path="/" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />
+              {/* <Route path="/" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} /> */}
               <Route
-                path="/dashboard"
+                index
+                path="dashboard"
                 element={
                   <DashboardPage handleNewData={handleNewData} setFileName={setFileName} />
                 }
               />
               <Route
-                path="/new-items"
+                path="new-items"
                 element={
                   <NewItemsPage
                     items={newItems}
@@ -466,7 +453,7 @@ function App() {
                 }
               />
               <Route
-                path="/expiring-items"
+                path="expiring-items"
                 element={
                   <ExpiringItemsPage
                     getExpirationDetails={getExpirationDetails}
@@ -477,7 +464,7 @@ function App() {
                 }
               />
               <Route
-                path="/expired-items"
+                path="expired-items"
                 element={
                   <ExpiredItemsPage
                     items={expiredItems}
@@ -487,7 +474,7 @@ function App() {
                 }
               />
               <Route
-                path="/settings"
+                path="settings"
                 element={
                   <Settings
                     fetchEmails={fetchEmails}
@@ -497,47 +484,9 @@ function App() {
                 }
               />
             </Route>
-          </Routes>
-        )}
-      </HashRouter>
-=======
-                <DashboardPage
-                  handleNewData={handleNewData}
-                  setFileName={setFileName} />
-              }
-            />
-            <Route path="new-items"
-              element={
-                <NewItemsPage
-                  items={newItems}
-                  handleExpirationDateChange={handleExpirationDateChange}
-                  handleExpired={handleExpired}
-                />
-              }
-            />
-            <Route path="expiring-items"
-              element={
-                <ExpiringItemsPage
-                  getExpirationDetails={getExpirationDetails}
-                  items={itemsWithExpiration}
-                  handleExpirationDateChange={handleExpirationDateChange}
-                  handleExpired={handleExpired}
-                />
-              }
-            />
-            <Route path="expired-items"
-              element={
-                <ExpiredItemsPage
-                  items={expiredItems}
-                  handleRestore={handleRestore}
-                  handleOnDeleteItem={handleOnDeleteItem}
-                />
-              }
-            />
-          </Route>
-
+                   </Routes>
+                
           {/* onboarding routes */}
-        </Routes>
       </Router>
     </ThemeProvider>
 
