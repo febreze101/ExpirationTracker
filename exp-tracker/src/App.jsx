@@ -12,7 +12,9 @@ import ExpiredItemsPage from "./Component/Pages/ExpiredItemsPage";
 import Layout from "./Component/Layout";
 import OnboardingForm from "./Component/Onboarding/OnboardingForm";
 import { useAlert } from "./context/AlertContext";
-import supabase from "./utils/supabaseClient";
+import { importDbFromZip } from "./utils/importDbFromZip";
+import Settings from "./Component/Pages/Settings";
+import { supabase } from "./supabaseClient";
 import { sub } from "date-fns";
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
@@ -96,6 +98,7 @@ function App() {
   const [expiredItems, setExpiredItems] = useState([]);
   const [showOnboarding, setShowOnboarding] = useState(localStorage.getItem('hasCompletedOnboarding') !== "true");
   const MemoizedLayout = React.memo(Layout);
+  const [emails, setEmails] = useState([]);
 
   const { showAlert } = useAlert();
 
@@ -210,6 +213,19 @@ function App() {
     setExpiredItems(expiredItems);
   };
 
+  const fetchEmails = useCallback (async () => {
+    if (!dbOps) return [];
+    const result = await dbOps.getNotificationEmails();
+    console.log("Fetched emails in App.jsx: ", result);
+
+    setEmails(result || []);
+    return result || [];
+  }, [setEmails])
+  
+    useEffect(() => {
+      fetchEmails();
+    }, [fetchEmails])
+
   useEffect(() => {
     moveExpiredItems();
     getExpiredItems();
@@ -309,14 +325,54 @@ function App() {
     await loadInventoryData();
   };
 
-  const handleAddUser = async (user) => {
-    console.log("Adding user:", user);
+  const exportInventory = async () => {
+    console.log("Exporting inventory...");
+    dbOps.exportInventory()
+  }
 
-    // try {
-    //   dbOps.addUser(user);
-    // } catch (error) {
-    //   console.error('Error adding user: ', error);
-    // }
+  const importInventory = async () => {
+    console.log("Importing inventory...");
+
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.zip'
+    input.style.display = 'none'
+
+    input.onchange = async (event) => {
+      const file = event.target.files[0]
+
+      if (!file) return;
+
+      try {
+        await importDbFromZip(
+          file,
+          async (tableName, data) => {
+            await dbOps.handleTableData(tableName, data);
+          },
+          (errMsg) => showAlert(errMsg, "error")
+        );
+
+        showAlert("Database imported successfully!", "success")
+        await loadInventoryData();
+        await getExpiredItems();
+      } catch (error) {
+        showAlert("Failed to import database.", "error");
+        console.error(error);
+      }
+    }
+
+    document.body.appendChild(input);
+    input.click();
+    document.body.removeChild(input);
+    // dbOps.exportInventory()
+  }
+
+  const handleAddUser = async (user) => {
+    try {
+      dbOps.addUser(user);
+    } catch (error) {
+      console.error('Error adding user: ', error);
+    }
   }
 
   const handleRestore = async (item) => {
@@ -359,15 +415,13 @@ function App() {
     }
   }
 
-  return (<>
-    <UserProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-          <Router>
-            <Routes>
-              {/* public routes */}
-              <Route path="*" element={<LandingPage />} />
-              <Route path="/landing" element={<LandingPage />} />
+  return (
+  <>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Routes>
+          {/* public routes */}
+          <Route path="/landing" element={<LandingPage />} />
 
               {/* auth route */}
               <Route path="/auth" element={
@@ -377,66 +431,69 @@ function App() {
               } />
 
 
-              {/* protected routes */}
+          {/* protected routes */}
+            {/* nested routes */}
+            <Route
+              path="/"
+              element={
+                <MemoizedLayout handleAddItem={handleAddItem} exportInventory={exportInventory} importInventory={importInventory} />
+              }
+            >
+              {/* <Route path="/" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} /> */}
               <Route
-                path="/dashboard"
+                index
+                path="dashboard"
                 element={
-                  <ProtectedRoute session={session}>
-                    <MemoizedLayout
-                      andleAddItem={handleAddItem}
-                      showOnboarding={showOnboarding}
-                      setShowOnboarding={setShowOnboarding}
-                      handleAddUser={handleAddUser}
-                    />
-                  </ProtectedRoute>
+                  <DashboardPage handleNewData={handleNewData} setFileName={setFileName} />
                 }
-              >
-                {/* nested routes */}
-                <Route
-                  index
-                  element={
-                    <DashboardPage
-                      handleNewData={handleNewData}
-                      setFileName={setFileName} />
-                  }
-                />
-                <Route path="new-items"
-                  element={
-                    <NewItemsPage
-                      items={newItems}
-                      handleExpirationDateChange={handleExpirationDateChange}
-                      handleExpired={handleExpired}
-                    />
-                  }
-                />
-                <Route path="expiring-items"
-                  element={
-                    <ExpiringItemsPage
-                      getExpirationDetails={getExpirationDetails}
-                      items={itemsWithExpiration}
-                      handleExpirationDateChange={handleExpirationDateChange}
-                      handleExpired={handleExpired}
-                    />
-                  }
-                />
-                <Route path="expired-items"
-                  element={
-                    <ExpiredItemsPage
-                      items={expiredItems}
-                      handleRestore={handleRestore}
-                      handleOnDeleteItem={handleOnDeleteItem}
-                    />
-                  }
-                />
-                <Route path="settings" element={<Settings />} />
-              </Route>
-
-              {/* onboarding routes */}
-            </Routes>
-          </Router>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </UserProvider>
+              />
+              <Route
+                path="new-items"
+                element={
+                  <NewItemsPage
+                    items={newItems}
+                    handleExpirationDateChange={handleExpirationDateChange}
+                    handleExpired={handleExpired}
+                  />
+                }
+              />
+              <Route
+                path="expiring-items"
+                element={
+                  <ExpiringItemsPage
+                    getExpirationDetails={getExpirationDetails}
+                    items={itemsWithExpiration}
+                    handleExpirationDateChange={handleExpirationDateChange}
+                    handleExpired={handleExpired}
+                  />
+                }
+              />
+              <Route
+                path="expired-items"
+                element={
+                  <ExpiredItemsPage
+                    items={expiredItems}
+                    handleRestore={handleRestore}
+                    handleOnDeleteItem={handleOnDeleteItem}
+                  />
+                }
+              />
+              <Route
+                path="settings"
+                element={
+                  <Settings
+                    fetchEmails={fetchEmails}
+                    dbOps={dbOps}
+                    emails={emails}
+                  />
+                }
+              />
+            </Route>
+                   </Routes>
+                
+          {/* onboarding routes */}
+      </Router>
+    </ThemeProvider>
 
   </>
   );
