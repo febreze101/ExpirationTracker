@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react"
-import { createTheme, ThemeProvider, Box, Typography, Modal, Fade } from "@mui/material"
+import { ThemeProvider, Box, Typography, Modal, Fade } from "@mui/material"
 
 import { Outlet, NavLink } from "react-router"
 
@@ -7,59 +7,10 @@ import CircleButton from "./CustomButtons/CircleButton"
 import AddIcon from '@mui/icons-material/Add';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import UpdatedNewItemForm from "./PopUps/UpdatedNewItemForm";
 import OnboardingForm from "./Onboarding/OnboardingForm";
 
-const theme = createTheme({
-    typography: {
-        fontFamily: [
-            'adobe-garamond-pro',
-            'ff-meta-headline-web-pro',
-        ].join(','),
-        h1: {
-            fontSize: '3.5rem',
-            fontFamily: ['adobe-garamond-pro', 'serif'].join(',')
-        },
-        h2: {
-            fontSize: '2.25rem',
-            fontFamily: ['adobe-garamond-pro', 'serif'].join(',')
-        },
-        h3: {
-            fontSize: '1rem',
-            fontFamily: ['adobe-garamond-pro', 'serif'].join(',')
-        },
-        body1: {
-            fontSize: '1rem',
-            fontFamily: ['ff-meta-headline-web-pro', 'sans-serif'].join(',')
-        },
-        body2: {
-            fontSize: '1rem',
-            fontFamily: ['ff-meta-headline-web-pro', 'sans-serif'].join(','),
-            color: 'rgba(128, 128, 128, 0.5)'
-        },
-    },
-    palette: {
-        black: {
-            main: '#171717'
-        },
-        forest: {
-            main: '#063B27'
-        },
-        washiPaper: {
-            main: '#F1EAE3'
-        },
-        red: {
-            main: '#91383A'
-        },
-        Tan: {
-            main: '#907C64'
-        },
-        grey: {
-            main: '#444444'
-        }
-    }
-})
+import { theme } from "../utils/theme";
 
 export default function Layout(props) {
     const [showAddItemForm, setShowAddItemForm] = useState(false);
@@ -88,63 +39,63 @@ export default function Layout(props) {
                         {/* header */}
                         <Typography variant="h1" color={theme.palette.washiPaper.main} >Campfield Spoilage Tracker</Typography>
 
-                    {/* links */}
-                    <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
-                        <NavLink
-                            to="/dashboard"
-                            style={({ isActive }) => ({
-                                color: theme.palette.washiPaper.main,
-                                fontWeight: isActive ? 'bold' : 'normal',
-                                textDecoration: isActive ? 'underline' : 'none'
-                            })}
-                        >
-                            <Typography color={theme.palette.washiPaper.main} variant="body1">Dashboard</Typography>
-                        </NavLink>
-                        <NavLink
-                            to="/new-items"
-                            style={({ isActive }) => ({
-                                color: theme.palette.washiPaper.main,
-                                fontWeight: isActive ? 'bold' : 'normal',
-                                textDecoration: isActive ? 'underline' : 'none'
-                            })}
-                        >
-                            <Typography color={theme.palette.washiPaper.main} variant="body1">New Items</Typography>
-                        </NavLink>
-                        <NavLink
-                            to="/expiring-items"
-                            style={({ isActive }) => ({
-                                color: theme.palette.washiPaper.main,
-                                fontWeight: isActive ? 'bold' : 'normal',
-                                textDecoration: isActive ? 'underline' : 'none'
-                            })}
-                        >
-                            <Typography variant="body1">Expiring Items</Typography>
-                        </NavLink>
-                        <NavLink
-                            to="/expired-items"
-                            style={({ isActive }) => ({
-                                color: theme.palette.washiPaper.main,
-                                fontWeight: isActive ? 'bold' : 'normal',
-                                textDecoration: isActive ? 'underline' : 'none'
-                            })}
-                        >
-                            <Typography variant="body1">Expired Items</Typography>
-                        </NavLink>
-                        <NavLink
-                            to="/settings"
-                            style={({ isActive }) => ({
-                                color: theme.palette.washiPaper.main,
-                                fontWeight: isActive ? 'bold' : 'normal',
-                                textDecoration: isActive ? 'underline' : 'none'
-                            })}
-                        >
-                            <Typography variant="body1">Settings</Typography>
-                        </NavLink>
-                        
-                        <CircleButton color={'forest'} onClick={handleShowAddItemForm} icon={<AddIcon />} />
-                        <CircleButton color={'washiPaper'} onClick={props.exportInventory} icon={<IosShareIcon color="black" />} />
-                        <CircleButton color={'washiPaper'} onClick={props.importInventory} icon={<FileDownloadIcon color="black" />} />
                         {/* links */}
+                        <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={2}>
+                            <NavLink
+                                to="/dashboard"
+                                style={({ isActive }) => ({
+                                    color: theme.palette.washiPaper.main,
+                                    fontWeight: isActive ? 'bold' : 'normal',
+                                    textDecoration: isActive ? 'underline' : 'none'
+                                })}
+                            >
+                                <Typography color={theme.palette.washiPaper.main} variant="body1">Dashboard</Typography>
+                            </NavLink>
+                            <NavLink
+                                to="/new-items"
+                                style={({ isActive }) => ({
+                                    color: theme.palette.washiPaper.main,
+                                    fontWeight: isActive ? 'bold' : 'normal',
+                                    textDecoration: isActive ? 'underline' : 'none'
+                                })}
+                            >
+                                <Typography color={theme.palette.washiPaper.main} variant="body1">New Items</Typography>
+                            </NavLink>
+                            <NavLink
+                                to="/expiring-items"
+                                style={({ isActive }) => ({
+                                    color: theme.palette.washiPaper.main,
+                                    fontWeight: isActive ? 'bold' : 'normal',
+                                    textDecoration: isActive ? 'underline' : 'none'
+                                })}
+                            >
+                                <Typography variant="body1">Expiring Items</Typography>
+                            </NavLink>
+                            <NavLink
+                                to="/expired-items"
+                                style={({ isActive }) => ({
+                                    color: theme.palette.washiPaper.main,
+                                    fontWeight: isActive ? 'bold' : 'normal',
+                                    textDecoration: isActive ? 'underline' : 'none'
+                                })}
+                            >
+                                <Typography variant="body1">Expired Items</Typography>
+                            </NavLink>
+                            <NavLink
+                                to="/settings"
+                                style={({ isActive }) => ({
+                                    color: theme.palette.washiPaper.main,
+                                    fontWeight: isActive ? 'bold' : 'normal',
+                                    textDecoration: isActive ? 'underline' : 'none'
+                                })}
+                            >
+                                <Typography variant="body1">Settings</Typography>
+                            </NavLink>
+
+                            <CircleButton color={'forest'} onClick={handleShowAddItemForm} icon={<AddIcon />} />
+                            <CircleButton color={'washiPaper'} onClick={props.exportInventory} icon={<IosShareIcon color="black" />} />
+                            <CircleButton color={'washiPaper'} onClick={props.importInventory} icon={<FileDownloadIcon color="black" />} />
+                            {/* links */}
                         </Box>
                     </Box>
 
@@ -152,7 +103,7 @@ export default function Layout(props) {
                     <Box flexGrow={1}>
                         <Outlet />
                     </Box>
-                {/* </Box> */}
+                    {/* </Box> */}
                 </Box>
 
                 <Modal
