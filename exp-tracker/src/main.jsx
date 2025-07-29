@@ -4,11 +4,16 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router'
 import { AlertProvider } from './context/AlertContext.jsx'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AlertProvider>
-      <App />
-    </AlertProvider>
+    <QueryClientProvider client={queryClient}>
+      <AlertProvider>
+        <App />
+      </AlertProvider>
+    </QueryClientProvider>
   </StrictMode>
 )

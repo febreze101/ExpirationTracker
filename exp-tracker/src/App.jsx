@@ -4,90 +4,27 @@ import {
   ThemeProvider,
 } from "@mui/material";
 
+import { theme } from "./utils/theme";
 import { Routes, Route, Navigate, BrowserRouter as Router } from 'react-router-dom';
 import DashboardPage from "./Component/Pages/DashbaordPage";
 import NewItemsPage from "./Component/Pages/NewItemsPage";
 import ExpiringItemsPage from "./Component/Pages/ExpiringItemsPage";
 import ExpiredItemsPage from "./Component/Pages/ExpiredItemsPage";
 import Layout from "./Component/Layout";
-import OnboardingForm from "./Component/Onboarding/OnboardingForm";
 import { useAlert } from "./context/AlertContext";
 import { importDbFromZip } from "./utils/importDbFromZip";
 import Settings from "./Component/Pages/Settings";
-import { supabase } from "./supabaseClient";
-import { sub } from "date-fns";
+import { supabase } from "./utils/supabaseClient";
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import LandingPage from "./Component/Pages/LandingPage";
-import ProtectedRoute from "./Component/ProtectedRoute";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { UserProvider } from "./Component/UserProvider";
-import Settings from "./Component/Pages/Settings";
+import useInventory from "./hooks/useInventory";
 
 // Access the exposed IPC functions
 const dbOps = window?.electron?.dbOps;
 if (!dbOps) {
   console.error("Electron IPC not available");
 }
-
-const theme = createTheme({
-  typography: {
-    fontFamily: [
-      'adobe-garamond-pro',
-      'ff-meta-headline-web-pro',
-    ].join(','),
-    h1: {
-      fontSize: '3.5rem',
-      fontFamily: ['adobe-garamond-pro', 'serif'].join(',')
-    },
-    h2: {
-      fontSize: '2.25rem',
-      fontFamily: ['adobe-garamond-pro', 'serif'].join(',')
-    },
-    h3: {
-      fontSize: '1rem',
-      fontFamily: ['adobe-garamond-pro', 'serif'].join(',')
-    },
-    body1: {
-      fontSize: '1rem',
-      fontFamily: ['ff-meta-headline-web-pro', 'sans-serif'].join(',')
-    },
-    body2: {
-      fontSize: '1rem',
-      fontFamily: ['ff-meta-headline-web-pro', 'sans-serif'].join(','),
-      color: 'rgba(128, 128, 128, 0.5)'
-    },
-  },
-  palette: {
-    black: {
-      main: '#171717'
-    },
-    forest: {
-      main: '#063B27'
-    },
-    washiPaper: {
-      main: '#F1EAE3'
-    },
-    red: {
-      main: '#91383A'
-    },
-    Tan: {
-      main: '#907C64'
-    },
-    grey: {
-      main: '#444444'
-    }
-  },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 480,
-      md: 768,
-      lg: 1024,
-      xl: 1440,
-    }
-  }
-})
 
 
 function App() {
@@ -104,7 +41,30 @@ function App() {
 
   const [session, setSession] = useState(null);
 
-  const queryClient = new QueryClient();
+  const {
+    inventoryQuery,
+    expiringInventoryQuery,
+    expiredInventoryQuery,
+    addInventoryMutation,
+    updateInventoryMutation,
+    deleteInventoryMutation
+  } = useInventory();
+
+  useEffect(() => {
+    if (inventoryQuery.data) {
+      // setInventoryData(inventoryData);
+      console.log("Inventory data loaded:", inventoryQuery.data);
+    }
+
+  }, [inventoryQuery]);
+
+
+  useEffect(() => {
+    if (expiredInventoryQuery.data) {
+      console.log("Expired inventory data loaded:", expiredInventoryQuery.data);
+      setExpiredItems(expiredInventoryQuery.data);
+    }
+  }, [expiredInventoryQuery])
 
   useEffect(() => {
     const checkSession = async () => {
@@ -213,7 +173,7 @@ function App() {
     setExpiredItems(expiredItems);
   };
 
-  const fetchEmails = useCallback (async () => {
+  const fetchEmails = useCallback(async () => {
     if (!dbOps) return [];
     const result = await dbOps.getNotificationEmails();
     console.log("Fetched emails in App.jsx: ", result);
@@ -221,10 +181,10 @@ function App() {
     setEmails(result || []);
     return result || [];
   }, [setEmails])
-  
-    useEffect(() => {
-      fetchEmails();
-    }, [fetchEmails])
+
+  useEffect(() => {
+    fetchEmails();
+  }, [fetchEmails])
 
   useEffect(() => {
     moveExpiredItems();
@@ -416,22 +376,22 @@ function App() {
   }
 
   return (
-  <>
-    <ThemeProvider theme={theme}>
-      <Router>
-        <Routes>
-          {/* public routes */}
-          <Route path="/landing" element={<LandingPage />} />
+    <>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Routes>
+            {/* public routes */}
+            <Route path="/landing" element={<LandingPage />} />
 
-              {/* auth route */}
-              <Route path="/auth" element={
-                !session
-                  ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
-                  : (<Navigate to="/dashboard" replace />)
-              } />
+            {/* auth route */}
+            <Route path="/auth" element={
+              !session
+                ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
+                : (<Navigate to="/dashboard" replace />)
+            } />
 
 
-          {/* protected routes */}
+            {/* protected routes */}
             {/* nested routes */}
             <Route
               path="/"
@@ -489,13 +449,13 @@ function App() {
                 }
               />
             </Route>
-                   </Routes>
-                
-          {/* onboarding routes */}
-      </Router>
-    </ThemeProvider>
+          </Routes>
 
-  </>
+          {/* onboarding routes */}
+        </Router>
+      </ThemeProvider>
+
+    </>
   );
 }
 
