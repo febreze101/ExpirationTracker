@@ -1,4 +1,4 @@
-import { supabase } from "../utils/supabaseClient.js";
+import supabase from "../utils/supabaseClient.js";
 
 export const fetchInventory = async (inventoryId = null) => {
     if (inventoryId !== null) {

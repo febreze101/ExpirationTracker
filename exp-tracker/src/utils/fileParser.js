@@ -1,5 +1,5 @@
 import Papa from "papaparse";
-import { supabase } from "../utils/supabaseClient";
+import supabase from "../utils/supabaseClient.js";
 
 
 const EXPECTED_COLUMNS = [

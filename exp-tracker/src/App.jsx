@@ -14,7 +14,7 @@ import Layout from "./Component/Layout";
 import { useAlert } from "./context/AlertContext";
 import { importDbFromZip } from "./utils/importDbFromZip";
 import Settings from "./Component/Pages/Settings";
-import { supabase } from "./utils/supabaseClient";
+import supabase from "./utils/supabaseClient";
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import LandingPage from "./Component/Pages/LandingPage";
