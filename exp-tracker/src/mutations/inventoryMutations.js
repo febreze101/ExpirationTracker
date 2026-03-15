@@ -4,7 +4,7 @@ export function addInventoryItemsMutation(queryClient) {
     return {
         mutationFn: addInventoryItems,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['inventory'] });
+            queryClient.invalidateQueries({ queryKey: ['inventoryData'] });
         }
     }
 }
@@ -13,7 +13,7 @@ export function updateInventoryItemMutation(queryClient) {
     return {
         mutationFn: updateInventoryItem,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['inventory'] });
+            queryClient.invalidateQueries({ queryKey: ['inventoryData'] });
         }
     }
 }
@@ -22,7 +22,7 @@ export function deleteInventoryItemMutation(queryClient) {
     return {
         mutationFn: deleteInventoryItem,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['inventory'] });
+            queryClient.invalidateQueries({ queryKey: ['inventoryData'] });
         }
     }
 }

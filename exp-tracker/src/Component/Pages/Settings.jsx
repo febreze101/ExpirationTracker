@@ -14,23 +14,23 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AddIcon from "@mui/icons-material/Add";
+import { addNotificationEmail, deleteNotificationEmail, updateNotificationEmail } from "../../api/notifications";
 
 
 
-export default function Settings({ fetchEmails, dbOps, emails: appEmails }) {
+export default function Settings({ fetchEmails, emails }) {
     const [editingIndex, setEditingIndex] = useState(null);
     const [editedEmail, setEditedEmail] = useState("");
     const [newEmail, setNewEmail] = useState("");
 
 
     useEffect(() => {
-        console.log("Settings component mounted or updated. Current emails:", appEmails);
-    }, [appEmails]);
+        console.log("Settings component mounted or updated. Current emails:", emails);
+    }, [emails]);
 
     // Delete email
-    const handleDelete = async (email) => {
-        if (!dbOps) return;
-        await dbOps.deleteNotificationEmail(email);
+    const handleDelete = async (id) => {
+        await deleteNotificationEmail(id);
         await fetchEmails();
     };
 
@@ -47,18 +47,17 @@ export default function Settings({ fetchEmails, dbOps, emails: appEmails }) {
     };
 
     // Save updated email
-    const handleSave = async (oldEmail) => {
-        if (!dbOps) return;
-        await dbOps.updateNotificationEmail(oldEmail, editedEmail);
+    const handleSave = async (id) => {
+        await updateNotificationEmail(id, editedEmail);
         setEditingIndex(null);
         setEditedEmail("");
         await fetchEmails()
     };
 
     const handleAddEmail = async () => {
-        if (!dbOps || !newEmail.trim()) return;
+        if (!newEmail.trim()) return;
         try {
-            await dbOps.addNotificationEmail(newEmail);
+            await addNotificationEmail(newEmail);
             setNewEmail("");
             await fetchEmails();
         } catch (error) {
@@ -95,9 +94,9 @@ export default function Settings({ fetchEmails, dbOps, emails: appEmails }) {
                 </IconButton>
             </Box>
             <List>
-                {appEmails && appEmails.length > 0 ? (
-                    appEmails.map((emailObj, idx) => (
-                    <React.Fragment key={emailObj.email}>
+                {emails && emails.length > 0 ? (
+                    emails.map((emailObj, idx) => (
+                    <React.Fragment key={emailObj.id}>
                         <ListItem
                             alignItems="center"
                             disablePadding
@@ -107,7 +106,7 @@ export default function Settings({ fetchEmails, dbOps, emails: appEmails }) {
                                         <IconButton
                                             edge="end"
                                             aria-label="save"
-                                            onClick={() => handleSave(emailObj.email)}
+                                            onClick={() => handleSave(emailObj.id)}
                                             sx={{ color: "white" }} // ensure visible on dark bg
                                         >
                                             <SaveIcon />
@@ -130,11 +129,11 @@ export default function Settings({ fetchEmails, dbOps, emails: appEmails }) {
                                             sx={{ color: "white" }}
                                         >
                                             <EditIcon />
-                                        </IconButton>
+.                                        </IconButton>
                                         <IconButton
                                             edge="end"
                                             aria-label="delete"
-                                            onClick={() => handleDelete(emailObj.email)}
+                                            onClick={() => handleDelete(emailObj.id)}
                                             sx={{ color: "white" }}
                                         >
                                             <DeleteIcon />

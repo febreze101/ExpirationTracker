@@ -1,233 +1,162 @@
-import supabase from "../utils/supabaseClient.js";
+import supabase from "../utils/supabaseClient";
 
-export const fetchInventory = async (inventoryId = null) => {
-    if (inventoryId !== null) {
-        const { data, error } = await supabase
-            .from('inventory')
-            .select('*')
-            .eq('id', inventoryId)
-            .single();
-
-        if (error) {
-            console.error("Error fetching item from Supabase:", error);
-            throw new Error("Failed to fetch item from Supabase");
-        }
-
-        if (!data) {
-            console.warn(`No item found with ID ${inventoryId}`);
-            return null;
-        }
-
-        return data;
-    } else {
-        let { data, error } = await supabase
-            .from('inventory')
-            .select('*');
-
-        if (error) {
-            console.error("Error fetching data from Supabase:", error);
-            throw new Error("Failed to fetch data from Supabase");
-        }
-
-        if (!data || data.length === 0) {
-            console.warn("No data found in Supabase");
-            return [];
-        }
-
-        return data
+async function getCurrentUser() {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+        console.error("Error getting user:", error);
+        return null;
     }
+    return data.user;
 }
 
-export const fetchExpiredInventory = async (expiredId = null) => {
-    if (expiredId !== null) {
-        const { data, error } = await supabase
-            .from('batches')
-            .select(`
-                id,
-                expiration_date,
-                starting_stock,
-                expired_stock,
-                cost,
-                price,
-                supplier,
-                notes,
-                inventory (
-                    id,
-                    item_name
-                )
-        `)
-            .eq('id', expiredId)
-            .single();
+async function getWorkspaceId() {
+    const user = await getCurrentUser();
+    if (!user) return null;
 
-        if (error) {
-            console.error("Error fetching expired item from Supabase:", error);
-            throw new Error("Failed to fetch expired item from Supabase");
-        }
-
-        if (!data) {
-            console.warn(`No expired item found with ID ${expiredId}`);
-            return null;
-        }
-
-        return data;
-    } else {
-        const { data: expiredInventory, error } = await supabase
-            .from('batches')
-            .select(`
-                id,
-                expiration_date,
-                starting_stock,
-                expired_stock,
-                cost,
-                price,
-                supplier,
-                notes,
-                inventory (
-                    id,
-                    item_name
-                )
-        `)
-            .lt('expiration_date', new Date().toISOString())
-            .order('expiration_date', { ascending: true });
-
-        if (error) {
-            console.error("Error fetching expired inventory from Supabase:", error);
-            throw new Error("Failed to fetch expired inventory from Supabase");
-        }
-
-        if (!expiredInventory || expiredInventory.length === 0) {
-            console.warn("No expired inventory found in Supabase");
-            return [];
-        }
-
-        console.log("Fetched expired inventory:", expiredInventory);
-        return expiredInventory;
-    }
-}
-
-export const fetchExpiringInventory = async (expiringId = null) => {
-    if (expiringId !== null) {
-        const { data, error } = await supabase
-            .from('batches')
-            .select(`
-                id,
-                expiration_date,
-                starting_stock,
-                expired_stock,
-                cost,
-                price,
-                supplier,
-                notes,
-                inventory (
-                    id,
-                    item_name
-                )
-        `)
-            .eq('id', expiringId)
-            .single();
-
-        if (error) {
-            console.error("Error fetching expiring item from Supabase:", error);
-            throw new Error("Failed to fetch expiring item from Supabase");
-        }
-
-        if (!data) {
-            console.warn(`No expiring item found with ID ${expiringId}`);
-            return null;
-        }
-
-        return data;
-    } else {
-        const { data: expiringInventory, error } = await supabase
-            .from('batches')
-            .select(`
-                id,
-                expiration_date,
-                starting_stock,
-                expired_stock,
-                cost,
-                price,
-                supplier,
-                notes,
-                inventory (
-                    id,
-                    item_name
-                )
-        `)
-            .gt('expiration_date', new Date().toISOString())
-            .order('expiration_date', { ascending: true });
-
-        if (error) {
-            console.error("Error fetching expiring inventory from Supabase:", error);
-            throw new Error("Failed to fetch expiring inventory from Supabase");
-        }
-
-        if (!expiringInventory || expiringInventory.length === 0) {
-            console.warn("No expiring inventory found in Supabase");
-            return [];
-        }
-
-        console.log("Fetched expiring inventory:", expiringInventory);
-        return expiringInventory;
-    }
-}
-
-export const addInventoryItems = async (items) => {
-    // Validate input
-    if (!Array.isArray(items) || items.length === 0) {
-        throw new Error("Invalid input: items must be a non-empty array");
-    }
-
-    // Add a single item or multiple items
-    if (items.length() === 1) {
-        const { data, error } = await supabase
-            .from('inventory')
-            .insert([items[0]]);
-
-        if (error) {
-            console.error("Error adding item to Supabase:", error);
-            throw new Error("Failed to add item to Supabase");
-        }
-
-        return data;
-    } else if (items.length > 1) {
-        const { data, error } = await supabase
-            .from('inventory')
-            .insert(items);
-
-        if (error) {
-            console.error("Error adding items to Supabase:", error);
-            throw new Error("Failed to add items to Supabase");
-        }
-
-        return data;
-    }
-}
-
-export const updateInventoryItem = async (id, updates) => {
-    const { data: updatedData, error } = await supabase
-        .from('inventory')
-        .update(updates)
-        .eq('id', id);
+    const { data, error } = await supabase
+        .from('workspace_users')
+        .select('workspace_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
     if (error) {
-        console.error("Error updating item in Supabase:", error);
-        throw new Error("Failed to update item in Supabase");
+        console.error("Error getting workspace ID:", error);
+        return null;
     }
-
-    return updatedData;
+    return data?.workspace_id || null;
 }
 
-export const deleteInventoryItem = async (id) => {
+export async function fetchInventory() {
+    const workspaceId = await getWorkspaceId();
+    if (!workspaceId) return [];
+
+    const { data, error } = await supabase
+        .from('inventory')
+        .select('*')
+        .eq('workspace_id', workspaceId);
+
+    if (error) {
+        console.error("Error fetching inventory:", error);
+        return [];
+    }
+    return data;
+}
+
+export async function fetchExpiringInventory() {
+    const workspaceId = await getWorkspaceId();
+    if (!workspaceId) return [];
+
+    const today = new Date();
+    const nextWeek = new Date(today);
+    nextWeek.setDate(today.getDate() + 7);
+
+    const { data: inventoryIds, error: inventoryError } = await supabase
+        .from('inventory')
+        .select('id')
+        .eq('workspace_id', workspaceId);
+
+    if (inventoryError) {
+        console.error("Error fetching inventory IDs:", inventoryError);
+        return [];
+    }
+
+    const { data, error } = await supabase
+        .from('batches')
+        .select(`
+            *,
+            inventory:inventory_id (
+                item_name
+            )
+        `)
+        .in('inventory_id', inventoryIds.map(i => i.id))
+        .gte('expiration_date', today.toISOString())
+        .lte('expiration_date', nextWeek.toISOString());
+
+    if (error) {
+        console.error("Error fetching expiring inventory:", error);
+        return [];
+    }
+    return data;
+}
+
+export async function fetchExpiredInventory() {
+    const workspaceId = await getWorkspaceId();
+    if (!workspaceId) return [];
+
+    const today = new Date();
+
+    const { data: inventoryIds, error: inventoryError } = await supabase
+        .from('inventory')
+        .select('id')
+        .eq('workspace_id', workspaceId);
+
+    if (inventoryError) {
+        console.error("Error fetching inventory IDs:", inventoryError);
+        return [];
+    }
+
+    const { data, error } = await supabase
+        .from('batches')
+        .select(`
+            *,
+            inventory:inventory_id (
+                item_name
+            )
+        `)
+        .in('inventory_id', inventoryIds.map(i => i.id))
+        .lt('expiration_date', today.toISOString());
+
+    if (error) {
+        console.error("Error fetching expired inventory:", error);
+        return [];
+    }
+    return data;
+}
+
+export async function addInventoryItems(items) {
+    const workspaceId = await getWorkspaceId();
+    if (!workspaceId) return null;
+
+    const newItems = items.map(item => ({
+        ...item,
+        workspace_id: workspaceId
+    }));
+
+    const { data, error } = await supabase
+        .from('inventory')
+        .insert(newItems)
+        .select();
+
+    if (error) {
+        console.error("Error adding inventory items:", error);
+        return null;
+    }
+    return data;
+}
+
+export async function updateInventoryItem(item) {
+    const { data, error } = await supabase
+        .from('inventory')
+        .update(item)
+        .eq('id', item.id)
+        .select();
+
+    if (error) {
+        console.error("Error updating inventory item:", error);
+        return null;
+    }
+    return data;
+}
+
+export async function deleteInventoryItem(itemId) {
     const { data, error } = await supabase
         .from('inventory')
         .delete()
-        .eq('id', id);
+        .eq('id', itemId);
 
     if (error) {
-        console.error("Error deleting item from Supabase:", error);
-        throw new Error("Failed to delete item from Supabase");
+        console.error("Error deleting inventory item:", error);
+        return null;
     }
-
     return data;
 }

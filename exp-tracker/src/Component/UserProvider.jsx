@@ -19,55 +19,73 @@ export function UserProvider({ children }) {
     // The useEffect hook will be used to subscribe to authentication state changes
 
 
-    useEffect(() => {
-        const init = async () => {
-            // retrieve current session and user
-            const { data } = await supabase.auth.getSession();
-            const sessionUser = data?.session?.user ?? null;
-            setUser(sessionUser);
+    // check if user is part of a workspace
+    const checkIfUserHasWorkspace = async (userId) => {
+        try {
+            let { data: workspace, error } = await supabase
+                .from('workspace_users')
+                .select('*')
+                .eq('user_id', userId)
+                .maybeSingle();
 
-            // if user is logged in, check if they have a workspace
-            if (sessionUser) {
-                await checkIfUserHasWorkspace(sessionUser.id);
+            if (error) {
+                console.error("Error fetching workspace users:", error.message);
+                setError(error.message);
+                setWorkspace(null);
+                return;
             }
 
-            setLoading(false);
-            console.log("UserProvider initialized with user:", sessionUser);
+            setWorkspace(workspace);
+        } catch (err) {
+            console.error("Error occurred while verifying workspace:", err);
+            setError(err.message);
+            setWorkspace(null);
         }
+    };
 
-        // run the init function to set the initial user state
-        init();
+    useEffect(() => {
+        let mounted = true;
 
+        supabase.auth.getSession().then(({ data: { session }, error }) => {
+            if (error) {
+                console.error("Error getting session:", error);
+                if (mounted) setLoading(false);
+                return;
+            }
+            if (mounted) {
+                setUser(session?.user ?? null);
+                setLoading(false);
+                console.log("UserProvider initialized with user:", session?.user?.email);
+            }
+        });
 
-        // subscribe to auth state changes
         const { data: authListener } = supabase.auth.onAuthStateChange(
-            async (event, session) => {
-                const sessionUser = session?.user ?? null;
-                setUser(sessionUser);
-                console.log("Auth state changed:", event, sessionUser);
-
-                // if user is logged in, check if they have a workspace
-                if (sessionUser) {
-                    await checkIfUserHasWorkspace(sessionUser.id);
-                } else {
-                    // if user is logged out, reset workspace state
-                    setWorkspace(null);
-                    console.log("User logged out, resetting workspace state.");
+            (event, session) => {
+                if (mounted) {
+                    setUser(session?.user ?? null);
+                    if (event === 'SIGNED_OUT') {
+                        setWorkspace(null);
+                    }
+                    console.log("Auth state changed:", event, session?.user?.email);
                 }
-            });
+            }
+        );
 
         return () => {
+            mounted = false;
             authListener?.subscription.unsubscribe();
         };
-    }, [])
+    }, []);
 
-    // generate an invite code
-    const generateInviteCode = () => {
-        const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 12);
-        const code = nanoid();
-        console.log("Generated invite code:", code);
-        return code;
-    }
+    useEffect(() => {
+        // Only fetch workspace if we have a user and we haven't fetched it yet
+        // or if it changed
+        if (user) {
+            checkIfUserHasWorkspace(user.id);
+        } else if (!loading) {
+            setWorkspace(null);
+        }
+    }, [user, loading]);
 
     // Join an existing workspace
     const joinWorkspace = async (inviteCode) => {
@@ -120,104 +138,12 @@ export function UserProvider({ children }) {
         console.log("User joined workspace successfully:", workspace);
     }
 
-    // check if user is part of a workspace
-    const checkIfUserHasWorkspace = async (userId) => {
-        let { data: workspace, error } = await supabase
-            .from('workspace_users')
-            .select('*')
-            .eq('user_id', userId)
-            .maybeSingle();
 
-        if (error) {
-            console.error("Error fetching workspace users:", error.message);
-            setError(error.message);
-            setWorkspace(null);
-            return;
-        }
-
-        setWorkspace(workspace);
-    }
-
-    // This function will be used to create a new workspace for the user
-    const createNewWorkspace = async (workspaceName) => {
-        if (!user) {
-            console.error("No user is logged in.");
-            setError("No user is logged in.");
-            return;
-        }
-
-        if (user && workspace) {
-            console.warn("User already has a workspace.");
-            setError("User already has a workspace.");
-            return;
-        }
-
-        console.log("Creating new workspace:", workspaceName);
-
-        const invite_code = generateInviteCode()
-
-
-        // Insert the new workspace into the workspaces table
-        const { data: newWorkspace, error: workspaceError } = await supabase
-            .from('workspaces')
-            .insert({
-                workspace_name: workspaceName,
-                onboarding_completed: false,
-                invite_code
-            })
-            .select()
-            .single();
-
-        console.log('Insert response:', { newWorkspace, workspaceError });
-
-
-        if (workspaceError) {
-            console.error("Error creating workspace:", workspaceError);
-            setError(workspaceError.message);
-            return;
-        }
-        console.log("New workspace created:", newWorkspace);
-
-        let retries = 0;
-        const maxRetries = 3;
-        let joinError = null;
-
-        while (retries < maxRetries) {
-            // Insert the user into the workspace_users table
-            const { error } = await supabase
-                .from('workspace_users')
-                .insert({
-                    user_id: user.id,
-                    workspace_id: newWorkspace.id,
-                    role: 'owner'
-                });
-
-            if (!error) {
-                joinError = null;
-                break;
-            }
-
-            joinError = error;
-            retries++;
-            console.warn(`Retrying to link user to workspace: ${workspaceName} (${retries}/${maxRetries})...`);
-            await new Promise(resolve => setTimeout(resolve, 1000)); // wait 1 second before retrying
-        }
-
-        if (joinError) {
-            console.error("Failed to link user to workspace after multiple attempts:", joinError.message);
-            setError(joinError.message);
-            return;
-        }
-
-        setWorkspace(newWorkspace);
-        console.log("Workspace created and linked successfully:", newWorkspace);
-    }
 
     const value = {
         user,
         workspace,
         hasWorkspace: !!workspace,
-        createNewWorkspace,
         joinWorkspace,
         checkIfUserHasWorkspace,
         loading,

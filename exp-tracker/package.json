@@ -5,39 +5,12 @@
   "description": "Tracks expiration dates of perishables",
   "author": "Inexperienced Expert",
   "type": "module",
-  "main": "main.js",
-  "build": {
-    "files": [
-      "dist/**/*",
-      "main.js",
-      "preload.cjs",
-      "src/**/*",
-      "node_modules/**/*",
-      "package.json"
-    ],
-    "appId": "com.inexperiencedexpert.spoilagetracker",
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "febreze101",
-        "repo": "ExpirationTracker"
-      }
-    ],
-    "productName": "Spoilage Tracker",
-    "win": {
-      "target": "nsis"
-    }
-  },
   "scripts": {
-    "build": "npx vite build && electron-builder",
-    "rebuild": "electron-rebuild -f -w better-sqlite3",
-    "release": "electron-builder",
-    "postinstall": "electron-builder install-app-deps && node src/utils/storeCredentials.js",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "vite",
-    "electron": "electron main.js",
-    "dev": "concurrently \"npm run start\" \"npm run electron\""
+    "dev": "vite",
+    "start": "vite"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -55,20 +28,13 @@
     "@supabase/supabase-js": "^2.50.0",
     "@tanstack/react-query": "^5.83.0",
     "@tanstack/react-query-devtools": "^5.83.0",
-    "better-sqlite3": "^11.8.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
-    "electron-is-dev": "^3.0.1",
-    "electron-updater": "^6.6.2",
     "framer-motion": "^12.6.2",
-    "jszip": "^3.10.1",
-    "keytar": "^7.9.0",
     "lucide-react": "^0.514.0",
     "nanoid": "^5.1.5",
-    "node-schedule": "^2.1.1",
-    "nodemailer": "^6.10.0",
     "papaparse": "^5.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -82,16 +48,12 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@electron/rebuild": "^3.7.1",
     "@eslint/js": "^9.17.0",
     "@tanstack/eslint-plugin-query": "^5.81.2",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
-    "concurrently": "^9.1.2",
-    "electron": "^34.0.0",
-    "electron-builder": "^25.1.8",
     "eslint": "^9.17.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",

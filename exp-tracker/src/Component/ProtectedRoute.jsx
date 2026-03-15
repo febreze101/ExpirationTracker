@@ -1,11 +1,24 @@
-import { Navigate } from "react-router-dom";
-import React from "react";
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useUser } from './UserProvider';
+import Layout from './Layout';
 
-export default function ProtectedRoute({ session, children }) {
+const ProtectedRoute = ({ handleAddItem }) => {
+    const { user, loading } = useUser();
 
-    if (!session) {
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!user) {
         return <Navigate to="/auth" replace />;
     }
 
-    return children;
-}
+    return (
+        <Layout handleAddItem={handleAddItem}>
+            <Outlet />
+        </Layout>
+    );
+};
+
+export default ProtectedRoute;
