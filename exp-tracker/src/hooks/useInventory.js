@@ -10,10 +10,6 @@ export default function useInventory(session) {
 
     const { workspace } = useUser();
 
-    useEffect(() => {
-        console.log("Workspace ID:", workspace?.workspace_id);
-    }, [workspace]);
-
     // Fetching all inventory, expiring inventory, and expired inventory using React Query
     const inventoryQuery = useQuery({ ...loadInventoryQuery(workspace?.workspace_id), enabled: !!session && !!workspace?.workspace_id });
     const expiringInventoryQuery = useQuery({ ...loadExpiringInventoryQuery(workspace?.workspace_id), enabled: !!session && !!workspace?.workspace_id });
