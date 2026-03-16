@@ -25,7 +25,7 @@ function App() {
   const [emails, setEmails] = useState([]);
 
   const { showAlert } = useAlert();
-  const { user } = useUser();
+  const { user, workspace, hasWorkspace, loading, joinWorkspace } = useUser();
 
   const {
     inventoryQuery,
@@ -52,7 +52,6 @@ function App() {
   const fetchEmails = useCallback(async () => {
     if (!user) return;
     const result = await getNotificationEmails();
-    console.log("Fetched emails in App.jsx: ", result);
     setEmails(result || []);
   }, [user]);
 

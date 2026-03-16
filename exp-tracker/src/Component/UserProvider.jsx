@@ -20,7 +20,7 @@ export function UserProvider({ children }) {
 
 
     // check if user is part of a workspace
-    const checkIfUserHasWorkspace = async (userId) => {
+    const checkAndSetUserWorkspace = async (userId) => {
         try {
             let { data: workspace, error } = await supabase
                 .from('workspace_users')
@@ -81,11 +81,15 @@ export function UserProvider({ children }) {
         // Only fetch workspace if we have a user and we haven't fetched it yet
         // or if it changed
         if (user) {
-            checkIfUserHasWorkspace(user.id);
+            checkAndSetUserWorkspace(user.id);
         } else if (!loading) {
             setWorkspace(null);
         }
     }, [user, loading]);
+
+    useEffect(() => {
+        console.log("Workspace ID in UserProvider:", workspace?.workspace_id);
+    }, [workspace]);
 
     // Join an existing workspace
     const joinWorkspace = async (inviteCode) => {
@@ -138,14 +142,12 @@ export function UserProvider({ children }) {
         console.log("User joined workspace successfully:", workspace);
     }
 
-
-
     const value = {
         user,
         workspace,
         hasWorkspace: !!workspace,
         joinWorkspace,
-        checkIfUserHasWorkspace,
+        checkIfUserHasWorkspace: checkAndSetUserWorkspace,
         loading,
         error,
     }

@@ -1,33 +1,6 @@
 import supabase from "../utils/supabaseClient";
 
-async function getCurrentUser() {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
-        console.error("Error getting user:", error);
-        return null;
-    }
-    return data.user;
-}
-
-async function getWorkspaceId() {
-    const user = await getCurrentUser();
-    if (!user) return null;
-
-    const { data, error } = await supabase
-        .from('workspace_users')
-        .select('workspace_id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-    if (error) {
-        console.error("Error getting workspace ID:", error);
-        return null;
-    }
-    return data?.workspace_id || null;
-}
-
-export async function fetchInventory() {
-    const workspaceId = await getWorkspaceId();
+export async function fetchInventory(workspaceId) {
     if (!workspaceId) return [];
 
     const { data, error } = await supabase
@@ -42,8 +15,7 @@ export async function fetchInventory() {
     return data;
 }
 
-export async function fetchExpiringInventory() {
-    const workspaceId = await getWorkspaceId();
+export async function fetchExpiringInventory(workspaceId) {
     if (!workspaceId) return [];
 
     const today = new Date();
@@ -79,8 +51,7 @@ export async function fetchExpiringInventory() {
     return data;
 }
 
-export async function fetchExpiredInventory() {
-    const workspaceId = await getWorkspaceId();
+export async function fetchExpiredInventory(workspaceId) {
     if (!workspaceId) return [];
 
     const today = new Date();
