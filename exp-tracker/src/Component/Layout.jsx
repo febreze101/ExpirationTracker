@@ -62,36 +62,7 @@ export default function Layout(props) {
                             >
                                 <Typography color={theme.palette.washiPaper.main} variant="body1">Dashboard</Typography>
                             </NavLink>
-                            <NavLink
-                                to="/new-items"
-                                style={({ isActive }) => ({
-                                    color: theme.palette.washiPaper.main,
-                                    fontWeight: isActive ? 'bold' : 'normal',
-                                    textDecoration: isActive ? 'underline' : 'none'
-                                })}
-                            >
-                                <Typography color={theme.palette.washiPaper.main} variant="body1">New Items</Typography>
-                            </NavLink>
-                            <NavLink
-                                to="/expiring-items"
-                                style={({ isActive }) => ({
-                                    color: theme.palette.washiPaper.main,
-                                    fontWeight: isActive ? 'bold' : 'normal',
-                                    textDecoration: isActive ? 'underline' : 'none'
-                                })}
-                            >
-                                <Typography variant="body1">Expiring Items</Typography>
-                            </NavLink>
-                            <NavLink
-                                to="/expired-items"
-                                style={({ isActive }) => ({
-                                    color: theme.palette.washiPaper.main,
-                                    fontWeight: isActive ? 'bold' : 'normal',
-                                    textDecoration: isActive ? 'underline' : 'none'
-                                })}
-                            >
-                                <Typography variant="body1">Expired Items</Typography>
-                            </NavLink>
+
                             <NavLink
                                 to="/settings"
                                 style={({ isActive }) => ({

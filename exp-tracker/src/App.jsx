@@ -3,9 +3,7 @@ import { ThemeProvider } from "@mui/material";
 import { theme } from "./utils/theme";
 import { Routes, Route, Navigate, BrowserRouter as Router } from 'react-router-dom';
 import DashboardPage from "./Component/Pages/DashbaordPage";
-import NewItemsPage from "./Component/Pages/NewItemsPage";
-import ExpiringItemsPage from "./Component/Pages/ExpiringItemsPage";
-import ExpiredItemsPage from "./Component/Pages/ExpiredItemsPage";
+
 import { useAlert } from "./context/AlertContext";
 import Settings from "./Component/Pages/Settings";
 import supabase from "./utils/supabaseClient";
@@ -145,14 +143,12 @@ function App() {
       } />
       <Route path="/auth" element={
         !user
-           ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
-           : <Navigate to="/dashboard" replace />
+          ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
+          : <Navigate to="/dashboard" replace />
       } />
       <Route element={<ProtectedRoute handleAddItem={handleAddItem} />}>
         <Route path="dashboard" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />
-        <Route path="new-items" element={<NewItemsPage items={newItems} handleExpirationDateChange={handleExpirationDateChange} />} />
-        <Route path="expiring-items" element={<ExpiringItemsPage items={itemsWithExpiration} handleExpirationDateChange={handleExpirationDateChange} />} />
-        <Route path="expired-items" element={<ExpiredItemsPage items={expiredItems} handleRestore={handleRestore} handleOnDeleteItem={handleOnDeleteItem} />} />
+
         <Route path="settings" element={<Settings fetchEmails={fetchEmails} emails={emails} />} />
       </Route>
     </Routes>
