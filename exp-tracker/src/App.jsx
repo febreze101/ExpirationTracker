@@ -138,14 +138,18 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/landing" element={<LandingPage />} />
-      <Route path="/auth" element={
+      <Route path="/" element={
         !user
-          ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
+          ? <LandingPage />
           : <Navigate to="/dashboard" replace />
       } />
-      <Route path="/" element={<ProtectedRoute handleAddItem={handleAddItem} />}>
-        <Route index path="dashboard" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />
+      <Route path="/auth" element={
+        !user
+           ? <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
+           : <Navigate to="/dashboard" replace />
+      } />
+      <Route element={<ProtectedRoute handleAddItem={handleAddItem} />}>
+        <Route path="dashboard" element={<DashboardPage handleNewData={handleNewData} setFileName={setFileName} />} />
         <Route path="new-items" element={<NewItemsPage items={newItems} handleExpirationDateChange={handleExpirationDateChange} />} />
         <Route path="expiring-items" element={<ExpiringItemsPage items={itemsWithExpiration} handleExpirationDateChange={handleExpirationDateChange} />} />
         <Route path="expired-items" element={<ExpiredItemsPage items={expiredItems} handleRestore={handleRestore} handleOnDeleteItem={handleOnDeleteItem} />} />

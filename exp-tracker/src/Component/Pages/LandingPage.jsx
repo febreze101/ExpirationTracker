@@ -11,8 +11,8 @@ export default function LandingPage() {
 
     return (
         <Box maxWidth={400} alignContent={'center'}>
-            <Typography variant="h1">Welcome to the Expense Tracker</Typography>
-            <Typography variant="body">Track your expenses easily and efficiently.</Typography>
+            <Typography variant="h1">Welcome to the Expiration Tracker</Typography>
+            <Typography variant="body1">Track your expirations easily and efficiently.</Typography>
             <Stack gap={2} >
                 <Button variant="contained" color="primary" onClick={handleLogin}>
                     Login
